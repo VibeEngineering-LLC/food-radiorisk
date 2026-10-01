@@ -102,6 +102,8 @@ export default function App() {
       <header className="titlebar">
         <span className="appicon" aria-hidden="true"></span>
         <h1 title="Оценка ожидаемой эффективной дозы и радиационного риска при потреблении пищевых продуктов">Доза и риск от радионуклидов в пище</h1>
+        {/* кнопки заголовка окна — часть вида из макета, не управляют ничем */}
+        <span className="caption" aria-hidden="true"><span>–</span><span>☐</span><span>✕</span></span>
       </header>
       <main className="split">
         {boot?.choices && raw && <Form choices={boot.choices} raw={raw} setRaw={setRaw} onPreset={onPreset} onExport={onExport} />}
@@ -114,7 +116,6 @@ export default function App() {
       {/* D-019: строка состояния окна — итог расчёта и команды всегда на виду */}
       <footer className="statusbar">
         <span className="stat"><i className={'lvl ' + statusLevel(calc)} aria-hidden="true"></i><span className="txt" id="statusText">{statusText(calc)}</span></span>
-        <span id="dataInfo" className="muted" title="Оценка справочная; числа из первоисточников (ICRP, IAEA, ТР ТС, МУК), у каждого — ссылка и уровень проверки">{boot?.metaInfo ? `данные: ${boot.metaInfo.datasets} наборов, ${boot.metaInfo.records} записей` : ''}</span>
         <span className="cmds">
           <button type="button" id="preset" onClick={onPreset} disabled={!boot?.choices}>Пример</button>
           <button type="button" id="exportJson" onClick={onExport} disabled={!calc?.input}>Сохранить расчёт…</button>

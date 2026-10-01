@@ -1,4 +1,4 @@
-import { fmtNum, fmtSci, fmtDose, fmtRiskPerMillion, fmtOneIn, fmtCases, fmtPct, levelClass, verdictText } from '../ui/fmt.js';
+import { esc, fmtNum, fmtSci, fmtDose, fmtRiskPerMillion, fmtOneIn, fmtCases, fmtPct, levelClass, verdictText } from '../ui/fmt.js';
 import { depositionHtml } from '../ui/product.js';
 import { AGE_LABEL, SOURCE_LABEL } from '../ui/form.js';
 import { locRu, unitRu } from '../ui/ru.js';
@@ -54,7 +54,7 @@ export function DataTable({ rows, cols }) {
   if (!rows.length) return null;
   // заголовок числовой колонки выравнивается так же, как числа под ним (класс num у ячеек первой строки)
   const numCol = (c) => /\bnum\b/.test((typeof c.c === 'function' ? c.c(rows[0]) : c.c) || '');
-  return <div className="tablewrap"><table><thead><tr>{cols.map((c, i) => <th key={i} className={numCol(c) ? 'num' : undefined}>{c.h}</th>)}</tr></thead><tbody>
+  return <div className="tablewrap"><table><thead><tr>{cols.map((c, i) => <th key={i}>{numCol(c) ? <span style={{ display: 'block', textAlign: 'right' }}>{c.h}</span> : c.h}</th>)}</tr></thead><tbody>
     {rows.map((r, ri) => <tr key={ri}>
       {cols.map((c, ci) => {
         const cls = (typeof c.c === 'function' ? c.c(r) : c.c) || '';
@@ -105,7 +105,8 @@ export default function Result({ result, input, meta }) {
 
   const hasRu = !!(input.foodGroupCode && limits.ru.length), hasForeign = limits.foreign.length > 0;
   // D-019: группы таблиц в две колонки (слева расчёт и нормы, справа источники); последняя группа колонки тянется до низа
-  const grp = (key, grow) => ({ className: 'gbox rgroup' + (grow ? ' grow' : '') });
+  const grp = (key, grow) => ({ className: 'rgroup' + (grow ? ' grow' : '') });
+  const massKg = input.portionKg * input.portionsPerYear;
 
   return <div className="science">
     {messages}
@@ -114,19 +115,25 @@ export default function Result({ result, input, meta }) {
     <div className={'riskbox risk risk-' + (totals.riskAssessment?.level || 'none')}><RiskBlock totals={totals} years={input.years} /></div>
     </div>
 
-    <div className="rgrid"><div className="rcol wide">
+    <div className="rgrid"><div className="rcol">
     <fieldset {...grp('calc', !hasRu && !hasForeign)}><legend>Расчёт по нуклидам</legend>
     <DataTable rows={rows} cols={[
       { h: 'Нуклид', f: r => r.nuclide },
-      { h: 'A продукта, Бк/кг', f: r => fmtNum(r.rawBqPerKg), c: 'num' },
+      { h: 'A, Бк/кг', f: r => fmtNum(r.rawBqPerKg), c: 'num' },
       { h: 'Fr', f: r => fmtNum(r.frUsed), c: 'num' },
-      { h: 'Поступление, Бк/год', f: r => fmtNum(r.intakeBqPerYear), c: 'num' },
-      { h: 'e(g), Зв/Бк', f: r => fmtSci(r.eSvPerBq), c: 'num' },
-      { h: 'Доза, мкЗв/год', f: r => fmtNum(r.doseSvPerYear * 1e6), c: 'num' },
-      { h: 'Пожизненный риск за период', f: r => fmtRiskPerMillion(r.riskTotal), c: 'num' },
-      { h: 'ПГП, Бк/год', f: r => fmtNum(r.pgpBqPerYear), c: 'num' },
-      { h: 'Доля ПГП', f: r => fmtPct(r.pgpShare), c: 'num' }
+      { h: 'M, кг/год', f: () => fmtNum(massKg), c: 'num' },
+      { h: 'e, Зв/Бк', f: r => fmtSci(r.eSvPerBq), c: 'num' },
+      { h: 'Доза, мкЗв/год', f: r => fmtNum(r.doseSvPerYear * 1e6), c: 'num' }
     ]} />
+    <details className="more"><summary>Поступление, риск и ПГП по нуклидам</summary>
+      <DataTable rows={rows} cols={[
+        { h: 'Нуклид', f: r => r.nuclide },
+        { h: 'Поступление, Бк/год', f: r => fmtNum(r.intakeBqPerYear), c: 'num' },
+        { h: 'Пожизненный риск за период', f: r => fmtRiskPerMillion(r.riskTotal), c: 'num' },
+        { h: 'ПГП, Бк/год', f: r => fmtNum(r.pgpBqPerYear), c: 'num' },
+        { h: 'Доля ПГП', f: r => fmtPct(r.pgpShare), c: 'num' }
+      ]} />
+    </details>
 
     {dep && <div style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: dep }} />}
     </fieldset>
@@ -171,14 +178,11 @@ export default function Result({ result, input, meta }) {
       </fieldset>;
     })()}
     </div>
-  <div className="rcol narrow"><fieldset className="gbox rgroup grow"><legend>Источники чисел ({provRows.length})</legend>
+  <div className="rcol"><fieldset className="gbox rgroup grow"><legend>Источники</legend>
       <DataTable rows={provRows} cols={[
         { h: 'Величина', f: p => `${p.nuclide} · ${p.step}${p.what ? ': ' + p.what : ''}` },
         { h: 'Значение', f: p => `${fmtNum(p.value)} ${unitRu(p.unit)}`.trim(), c: 'num' },
-        { h: 'Источник', f: p => sourceFull(p.source), html: true },
-        { h: 'Место', f: p => locRu(p.loc) },
-        { h: 'Уровень', f: p => p.level ? <span className={'chip ' + levelClass(p.level)}>{p.level}</span> : '', raw: true },
-        { h: 'Примечание', f: p => p.note || '' }
+        { h: 'Источник', html: true, f: p => sourceFull(p.source) + (p.loc ? ', ' + esc(locRu(p.loc)) : '') + (p.level ? ` <span class="chip ${levelClass(p.level)}">${esc(p.level)}</span>` : '') + (p.note ? `<br><span style="color:var(--muted)">${esc(p.note)}</span>` : '') }
       ]} />
     </fieldset></div>
     </div>

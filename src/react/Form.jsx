@@ -101,16 +101,16 @@ export default function Form({ choices, raw, setRaw, onPreset, onExport }) {
           <button type="button" id="delNuclide" className="btn" disabled={raw.nuclides.length < 2} onClick={() => { setRaw(r => S.removeNuclide(r, cur)); setSel(Math.max(0, cur - 1)); }}>удалить</button>
         </div>
         <TransferPick n={raw.nuclides[cur]} view={tv(cur)} onField={(name, v) => setRaw(r => S.setNuclideField(r, cur, name, v))} />
-        <details className="prep" id="prepBox" open={!!(raw.rawMass || raw.probeMass) || undefined}>
-          <summary>Подготовка пробы (если пробу сушили или озоляли)</summary>
-          <div className="grid2">
-            <label>Масса сырья, г <input id="rawMass" type="number" min="0" step="any" value={raw.rawMass} onChange={set('rawMass')} /></label>
-            <label>Масса пробы после сушки, г <input id="probeMass" type="number" min="0" step="any" value={raw.probeMass} onChange={set('probeMass')} /></label>
-            <label>Сухое вещество, % <input id="dryMatter" type="number" min="0" max="100" step="any" value={raw.dryMatter} onChange={set('dryMatter')} /></label>
-          </div>
-          <p className="hint" id="prepHint">{h.prep}</p>
-        </details>
       </fieldset>
+      <details className="prep" id="prepBox" open={!!(raw.rawMass || raw.probeMass) || undefined}>
+        <summary>Подготовка пробы (если пробу сушили или озоляли)</summary>
+        <div className="grid2">
+          <label className="r3">Масса сырья <input id="rawMass" type="number" min="0" step="any" value={raw.rawMass} onChange={set('rawMass')} /> <span>г</span></label>
+          <label className="r3">Масса пробы после сушки <input id="probeMass" type="number" min="0" step="any" value={raw.probeMass} onChange={set('probeMass')} /> <span>г</span></label>
+          <label className="r3">Сухое вещество <input id="dryMatter" type="number" min="0" max="100" step="any" value={raw.dryMatter} onChange={set('dryMatter')} /> <span>%</span></label>
+        </div>
+        <p className="hint" id="prepHint">{h.prep}</p>
+      </details>
       </div>
 
       <div {...page(1)}>
@@ -125,7 +125,7 @@ export default function Form({ choices, raw, setRaw, onPreset, onExport }) {
               {pv.options.length === 0 && <p className="hint">Введите продукт — здесь появятся способы обработки для него. Для продукта вне справочника задайте свой Fr.</p>}
               {pv.options.map(o => <label className={'check' + (raw.procMode !== 'record' ? ' dis' : '')} key={o.value}><input type="checkbox" value={o.value} disabled={raw.procMode !== 'record'} checked={pv.checked.includes(o.value)} onChange={e => setRaw(r => ({ ...r, procRecs: e.target.checked ? [...pv.checked, o.value] : pv.checked.filter(x => x !== o.value) }))} /> {o.label}</label>)}
             </div>
-            <label className={raw.procMode !== 'record' ? 'dis' : undefined}>Значение Fr <select id="procVar" value={raw.procVar} disabled={raw.procMode !== 'record'} onChange={set('procVar')}>
+            <label className={'r132' + (raw.procMode !== 'record' ? ' dis' : '')}>Значение Fr <select id="procVar" value={raw.procVar} disabled={raw.procMode !== 'record'} onChange={set('procVar')}>
               <option value="best">рекомендованное</option>
               <option value="min">минимум диапазона</option>
               <option value="max">максимум диапазона</option>
@@ -137,12 +137,12 @@ export default function Form({ choices, raw, setRaw, onPreset, onExport }) {
 
       <fieldset className="gbox"><legend>Рацион</legend>
         <div className="grid3">
-          <label>Порция, г <input id="portionG" type="number" min="0" step="any" value={raw.portionG} onChange={set('portionG')} /></label>
-          <label>Раз в день <input id="timesPerDay" type="number" min="0" step="any" value={raw.timesPerDay} onChange={set('timesPerDay')} /></label>
-          <label>Дней в неделю <input id="daysPerWeek" type="number" min="0" max="7" step="any" value={raw.daysPerWeek} onChange={set('daysPerWeek')} /></label>
-          <label>Недель в месяц <input id="weeksPerMonth" type="number" min="0" max="4.35" step="any" value={raw.weeksPerMonth} onChange={set('weeksPerMonth')} /></label>
-          <label>Месяцев в году <input id="monthsPerYear" type="number" min="0" max="12" step="any" value={raw.monthsPerYear} onChange={set('monthsPerYear')} /></label>
-          <label>Сколько лет <input id="years" type="number" min="1" step="1" value={raw.years} onChange={set('years')} /></label>
+          <label className="r3">Порция <input id="portionG" type="number" min="0" step="any" value={raw.portionG} onChange={set('portionG')} /> <span>г</span></label>
+          <label className="r3">Раз в день <input id="timesPerDay" type="number" min="0" step="any" value={raw.timesPerDay} onChange={set('timesPerDay')} /></label>
+          <label className="r3">Дней в неделю <input id="daysPerWeek" type="number" min="0" max="7" step="any" value={raw.daysPerWeek} onChange={set('daysPerWeek')} /></label>
+          <label className="r3">Недель в месяц <input id="weeksPerMonth" type="number" min="0" max="4.35" step="any" value={raw.weeksPerMonth} onChange={set('weeksPerMonth')} /></label>
+          <label className="r3">Месяцев в году <input id="monthsPerYear" type="number" min="0" max="12" step="any" value={raw.monthsPerYear} onChange={set('monthsPerYear')} /></label>
+          <label className="r3">Сколько лет <input id="years" type="number" min="1" step="1" value={raw.years} onChange={set('years')} /></label>
         </div>
         <p className="ration" id="dietHint">{h.diet}</p>
       </fieldset>
