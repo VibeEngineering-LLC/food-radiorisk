@@ -1,0 +1,560 @@
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --ink: #1b2430;
+  --muted: #5b6675;
+  --line: #d9dee6;
+  --accent: #1f5fbf;
+  --accent-ink: #ffffff;
+  --ok: #1e7a46;
+  --warn: #a15c00;
+  --bad: #b3261e;
+  --ok-bg: #e6f4ec;
+  --warn-bg: #fff3dc;
+  --bad-bg: #fde8e6;
+  --chip: #eef1f6;
+  --mono: ui-monospace,"Cascadia Mono","SF Mono",Consolas,monospace;
+  --sans: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10151c;
+    --panel: #171e28;
+    --ink: #e6ebf2;
+    --muted: #9aa6b6;
+    --line: #2a3443;
+    --accent: #6ea8ff;
+    --accent-ink: #0b1320;
+    --ok: #5fd08d;
+    --warn: #f0b35a;
+    --bad: #ff8a80;
+    --ok-bg: #12291d;
+    --warn-bg: #2d2412;
+    --bad-bg: #33181a;
+    --chip: #1f2836;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #10151c;
+  --panel: #171e28;
+  --ink: #e6ebf2;
+  --muted: #9aa6b6;
+  --line: #2a3443;
+  --accent: #6ea8ff;
+  --accent-ink: #0b1320;
+  --ok: #5fd08d;
+  --warn: #f0b35a;
+  --bad: #ff8a80;
+  --ok-bg: #12291d;
+  --warn-bg: #2d2412;
+  --bad-bg: #33181a;
+  --chip: #1f2836;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body, p, li, td, th, figcaption, caption {
+  text-align: left;
+}
+
+p, li {
+  max-width: 78ch;
+  text-wrap: pretty;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.5 var(--sans);
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+h2 {
+  font-size: 1.05rem;
+  margin: 0 0 .6rem;
+}
+
+h3 {
+  font-size: .95rem;
+  margin: 1.1rem 0 .4rem;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.sub {
+  color: var(--muted);
+  margin: .2rem 0 0;
+}
+
+.view-switch {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.view-switch button {
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  padding: .5rem 1rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.view-switch button[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(300px,440px) 1fr;
+  gap: 1rem;
+  padding: 1rem 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* hidden должен побеждать любые display из авторских правил (иначе видны скрытые поля карточки) */
+[hidden] { display: none !important; }
+
+/* строка карточки нуклида: перенос по ширине, кнопка «×» справа */
+.nuc .row { display: flex; flex-wrap: wrap; gap: .6rem; align-items: flex-end; }
+.nuc .row label { flex: 1 1 150px; }
+.nuc .row .del { margin-left: auto; }
+
+/* колонка и её содержимое обязаны сжиматься: иначе длинный текст в <option> раздвигает страницу */
+.layout > * { min-width: 0; }
+label, .grid2 > *, .grid3 > *, .nuc .row > *, .nuc .fields > * { min-width: 0; }
+select { max-width: 100%; text-overflow: ellipsis; }
+
+.panel, .result {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.panel section {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.panel section:last-child {
+  border-bottom: none;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .6rem;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .6rem;
+}
+
+@media (max-width: 560px) {
+  .grid2, .grid3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  font-size: .85rem;
+  color: var(--muted);
+}
+
+label[hidden] {
+  display: none;
+}
+
+/* #FR-48: список способов обработки с галочками */
+.checklist-wrap { grid-column: 1 / -1; font-size: .85rem; color: var(--muted); }
+.checklist { max-height: 14rem; overflow-y: auto; margin-top: .25rem; padding: .35rem .5rem; border: 1px solid var(--line); border-radius: 6px; }
+.checklist label.check { flex-direction: row; align-items: flex-start; gap: .4rem; padding: .15rem 0; color: inherit; }
+.checklist input[type=checkbox] { width: auto; flex: none; margin: .2rem 0 0; padding: 0; }
+
+input, select, button {
+  font: inherit;
+}
+
+input, select {
+  padding: .45rem .5rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--ink);
+  min-width: 0;
+  width: 100%;
+}
+
+input:focus-visible, select:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.ghost {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  border-radius: 6px;
+  padding: .45rem .8rem;
+  cursor: pointer;
+}
+
+.ghost:hover {
+  border-color: var(--accent);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: .85rem;
+  margin: .6rem 0 0;
+}
+
+.nuc {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: .7rem;
+  margin-bottom: .6rem;
+  background: var(--bg);
+}
+
+.nuc .row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: .6rem;
+  align-items: end;
+}
+
+.nuc .fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .6rem;
+  margin-top: .6rem;
+}
+
+.nuc .del {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.2rem;
+  padding: .2rem .5rem;
+  cursor: pointer;
+}
+
+.empty {
+  color: var(--muted);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: .85rem;
+}
+
+th, td {
+  padding: .35rem .5rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+td.num, th.num {
+  text-align: right;
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+
+.tablewrap {
+  overflow-x: auto;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+  gap: .6rem;
+}
+
+.kpi {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: .7rem;
+  background: var(--bg);
+}
+
+.kpi .v {
+  font-weight: 600;
+  font-size: 1.35rem;
+  font-family: var(--mono);
+}
+
+.kpi .l {
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.msg {
+  border-radius: 8px;
+  padding: .5rem .7rem;
+  margin: .4rem 0;
+  font-size: .88rem;
+  max-width: 90ch;
+}
+
+.msg.err {
+  background: var(--bad-bg);
+  color: var(--bad);
+}
+
+.msg.warn {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.chip {
+  display: inline-block;
+  background: var(--chip);
+  border-radius: 999px;
+  padding: .05rem .55rem;
+  font-size: .75rem;
+  color: var(--muted);
+}
+
+.lvl-ok {
+  color: var(--ok);
+}
+
+.lvl-w {
+  color: var(--warn);
+}
+
+.verdict {
+  display: inline-block;
+  border-radius: 6px;
+  padding: .1rem .5rem;
+  font-weight: 600;
+}
+
+.verdict.conforms {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+
+.verdict.nonconforms {
+  background: var(--bad-bg);
+  color: var(--bad);
+}
+
+.verdict.undetermined {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.foot {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 16px 2rem;
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+code, .mono {
+  font-family: var(--mono);
+  font-size: .85em;
+}
+
+.poster {
+  display: none;
+}
+
+body[data-view="poster"] .science {
+  display: none;
+}
+
+body[data-view="poster"] .poster {
+  display: block;
+}
+
+.poster-card {
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  padding: 1.4rem;
+  background: var(--panel);
+}
+
+.poster-card h2 {
+  font-size: 1.4rem;
+  margin: 0 0 .2rem;
+}
+
+.poster-big {
+  font-weight: 700;
+  font-family: var(--mono);
+  font-size: clamp(2.4rem,7vw,4.6rem);
+  line-height: 1.05;
+  margin: .6rem 0 0;
+}
+
+.poster-unit {
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+.poster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+.poster-cell {
+  border-top: 3px solid var(--accent);
+  padding-top: .6rem;
+}
+
+.poster-cell .n {
+  font-weight: 700;
+  font-size: 2rem;
+  font-family: var(--mono);
+}
+
+.poster-cell .t {
+  color: var(--muted);
+  font-size: .95rem;
+  max-width: 32ch;
+}
+
+.gauge {
+  height: 16px;
+  border-radius: 8px;
+  background: var(--chip);
+  overflow: hidden;
+  margin: .5rem 0;
+}
+
+.gauge > i {
+  display: block;
+  height: 100%;
+  background: var(--ok);
+}
+
+.gauge.warn > i {
+  background: var(--warn);
+}
+
+.gauge.bad > i {
+  background: var(--bad);
+}
+
+/* #FR-20: риск — цвет по уровню НРБ, шкала log 10⁻⁸…10⁻³ */
+.riskbox { margin-top: .8rem; padding: .7rem; border-radius: 8px; border: 1px solid var(--line); }
+.risk .n { font-weight: 700; font-size: 1.6rem; font-family: var(--mono); }
+.risk-negligible { background: var(--ok-bg); } .risk-negligible .n, .risk-negligible b { color: var(--ok); }
+.risk-within { background: var(--warn-bg); } .risk-within .n, .risk-within b { color: var(--warn); }
+.risk-exceeds { background: var(--bad-bg); } .risk-exceeds .n, .risk-exceeds b { color: var(--bad); }
+.poster-cell.risk { padding: .6rem; }
+/* #FR-29: карточки с нормой подсвечиваются тем же цветом уровня */
+.kpi.risk-negligible .v { color: var(--ok); } .kpi.risk-within .v { color: var(--warn); } .kpi.risk-exceeds .v { color: var(--bad); }
+.riskscale { position: relative; height: 12px; margin: .6rem 0 .2rem; border-radius: 6px;
+  background: linear-gradient(90deg, var(--ok) 0 40%, var(--warn) 40% 74%, var(--bad) 74% 100%); opacity: .85; }
+.riskscale .tick { position: absolute; top: -3px; width: 2px; height: 18px; background: var(--ink); }
+.riskscale .dot { position: absolute; top: -5px; width: 22px; height: 22px; margin-left: -11px; border-radius: 50%; background: var(--panel); border: 4px solid var(--ink); }
+td.cond { min-width: 14rem; max-width: 26rem; }
+td.cond details summary { cursor: pointer; color: var(--muted); font-size: .85em; }
+td.cond details p { margin: .3rem 0 0; }
+.riskscale .dot2 { background: var(--ink); width: 18px; height: 18px; margin-left: -9px; top: -3px; border-width: 2px; }
+.risk .n2 { margin-top: .6rem; }
+.riskbox p.risksrc { max-width: none; margin: .5rem 0 0; }
+.scalelbl { position: relative; height: 1.1rem; font-size: .75rem; color: var(--muted); }
+.scalelbl span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.scalelbl span:first-child { transform: none; } .scalelbl span:last-child { transform: translateX(-100%); }
+
+.poster-foot {
+  margin-top: 1.2rem;
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+@media print {
+  .top, .panel, .foot, .view-switch {
+    display: none !important;
+  }
+  .layout {
+    display: block;
+    padding: 0;
+  }
+  .result {
+    border: 0;
+    padding: 0;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+}
+
+/* #FR-37: подготовка пробы — сворачиваемый блок под вводом активности */
+details.prep { margin-top: .8rem; border: 1px solid var(--line); border-radius: 8px; padding: .4rem .7rem; }
+details.prep > summary { cursor: pointer; font-weight: 600; }
+details.prep[open] > summary { margin-bottom: .5rem; }
+
+/* #FR-36: подсказка названия продукта */
+ul.suggest { position: absolute; left: 0; right: 0; top: 100%; z-index: 20; margin: 2px 0 0; padding: 0; list-style: none;
+  max-height: 18rem; overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+ul.suggest li { padding: .4rem .6rem; cursor: pointer; max-width: none; }
+ul.suggest li.active, ul.suggest li:hover { background: var(--line); }
+
+/* #FR-39: «Откуда каждое число» — свёрнутый блок */
+details.prov { margin: 1rem 0; border: 1px solid var(--line); border-radius: 8px; padding: .4rem .7rem; }
+details.prov > summary { cursor: pointer; font-weight: 600; }
+details.prov[open] > summary { margin-bottom: .5rem; }
+
+/* #FR-40: утративший силу норматив — приглушённо */
+td.muted { color: var(--muted); font-style: italic; }

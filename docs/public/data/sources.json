@@ -1,0 +1,807 @@
+{
+ "schema_version": 1,
+ "sources": {
+  "TRS472": {
+   "title": "Handbook of parameter values for the prediction of radionuclide transfer in terrestrial and freshwater environments",
+   "title_ru": "Справочник значений параметров для прогнозирования переноса радионуклидов в наземных и пресноводных средах",
+   "authors": "International Atomic Energy Agency",
+   "year": 2010,
+   "publisher": "IAEA (TRS-472)",
+   "doi": null,
+   "url": "https://www.iaea.org/publications/8201/handbook-of-parameter-values-for-the-prediction-of-radionuclide-transfer-in-terrestrial-and-freshwater-environments",
+   "local": "библиотека оператора/IAEA. Handbook of parameter values for the prediction of radionuclide transfer (TRS-472). - 2010.pdf",
+   "kind": "справочник МАГАТЭ",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:21170",
+    "библиотека оператора/catalog.json:21172",
+    "библиотека оператора/catalog.json:21174",
+    "DECISIONS.md:121",
+    "audit/sci-transfer-2026-09-30.md:17",
+    "библиотека оператора/catalog.json:21196"
+   ]
+  },
+  "TECDOC1616": {
+   "title": "Quantification of Radionuclide Transfer in Terrestrial and Freshwater Environments for Radiological Assessments",
+   "title_ru": "Количественная оценка переноса радионуклидов в наземных и пресноводных средах для радиологических оценок",
+   "authors": "IAEA",
+   "year": 2009,
+   "publisher": "IAEA (IAEA-TECDOC-1616)",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/IAEA. Quantification of radionuclide transfer for radiological assessments (TECDOC-1616). - 2009.pdf",
+   "kind": "справочник МАГАТЭ",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:21203",
+    "библиотека оператора/catalog.json:21205",
+    "audit/sci-soil-density-2026-09-30.md:21",
+    "библиотека оператора/catalog.json:21226"
+   ]
+  },
+  "SRS19": {
+   "title": "Generic Models for Use in Assessing the Impact of Discharges of Radioactive Substances to the Environment",
+   "title_ru": "Универсальные модели для оценки воздействия сбросов радиоактивных веществ на окружающую среду",
+   "authors": null,
+   "year": 2001,
+   "publisher": "IAEA, Safety Reports Series No. 19",
+   "doi": null,
+   "url": "https://www-pub.iaea.org/MTCD/Publications/PDF/Pub1103_scr.pdf",
+   "local": null,
+   "kind": "справочник МАГАТЭ",
+   "same_as": null,
+   "evidence": [
+    "audit/sci-soil-density-2026-09-30.md:20",
+    "audit/sci-soil-density-2026-09-30.md:134"
+   ]
+  },
+  "TECDOC1162R": {
+   "title": "Общие инструкции оценки и реагирования на радиологические аварийные ситуации",
+   "title_ru": "Общие инструкции оценки и реагирования на радиологические аварийные ситуации",
+   "authors": null,
+   "year": 2004,
+   "publisher": "IAEA-TECDOC-1162/R, русское издание (испр. 2013)",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Общие инструкции оценки и реагирования на радиологические аварийные ситуации.pdf",
+   "kind": "справочник МАГАТЭ",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:15749",
+    "библиотека оператора/catalog.json:15751",
+    "audit/sci-gaps-library-2026-09-30.md:23",
+    "библиотека оператора/catalog.json:15772"
+   ]
+  },
+  "UNSCEAR2000": {
+   "title": "Sources and Effects of Ionizing Radiation. UNSCEAR 2000 Report, Vol. I",
+   "title_ru": "Источники и эффекты ионизирующего излучения. Доклад НКДАР ООН 2000 г., т. I",
+   "authors": "United Nations Scientific Committee on the Effects of Atomic Radiation",
+   "year": 2000,
+   "publisher": "UNSCEAR 2000 Report, Vol. I",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/UNSCEAR. Sources and effects of ionizing radiation. 2000 Report, Vol. I. - 2000.pdf",
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:21670",
+    "библиотека оператора/catalog.json:21672",
+    "библиотека оператора/catalog.json:21668",
+    "audit/sci-gaps-library-2026-09-30.md:22",
+    "библиотека оператора/catalog.json:21694"
+   ]
+  },
+  "RESRAD_DCH1993": {
+   "title": "Data Collection Handbook to Support Modeling Impacts of Radioactive Material in Soil",
+   "title_ru": "Справочник по сбору данных для моделирования воздействия радиоактивного материала в почве",
+   "authors": "Yu C. и др.",
+   "year": 1993,
+   "publisher": "Argonne National Laboratory, апрель 1993",
+   "doi": null,
+   "url": "https://resrad.evs.anl.gov/docs/data_collection_1993.pdf",
+   "local": null,
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "audit/sci-soil-density-2026-09-30.md:25",
+    "audit/sci-soil-density-2026-09-30.md:135"
+   ]
+  },
+  "EPA_ORNL2017": {
+   "title": "Handbook of Parameters for U.S. and International Governments Risk and Dose Assessment Models…",
+   "title_ru": "Справочник параметров моделей оценки риска и доз правительств США и международных организаций…",
+   "authors": "Shubayr N.",
+   "year": 2017,
+   "publisher": "EPA/ORISE (вторичная компиляция)",
+   "doi": null,
+   "url": "https://epa-dccs.ornl.gov/documents/Handbook_of_parameters_for_rad_models.pdf",
+   "local": null,
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "audit/sci-soil-density-2026-09-30.md:27",
+    "audit/sci-soil-density-2026-09-30.md:136"
+   ]
+  },
+  "ICRP119_F1": {
+   "title": "ICRP Publication 119",
+   "title_ru": "Публикация 119 МКРЗ",
+   "authors": "Eckerman et al.",
+   "year": 2012,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": null,
+   "kind": "публикация МКРЗ",
+   "same_as": null,
+   "evidence": [
+    "data-src/dose_coeff.yaml:3"
+   ]
+  },
+  "ICRP103_ru": {
+   "title": "Рекомендации Международной комиссии по радиационной защите от 2007 года",
+   "title_ru": "Рекомендации Международной комиссии по радиационной защите от 2007 года",
+   "authors": "Киселёв М.Ф., Шандала Н.К. (указаны в каталоге; оригинал — ICRP Publication 103)",
+   "year": 2007,
+   "publisher": "русский перевод ICRP Publication 103; год издания перевода по каталогу — 2009",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/p103_russian.pdf",
+   "kind": "публикация МКРЗ",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:20706",
+    "библиотека оператора/catalog.json:20708",
+    "библиотека оператора/catalog.json:20711",
+    "data-src/risk.yaml:3",
+    "библиотека оператора/catalog.json:20733"
+   ]
+  },
+  "NRB2009": {
+   "title": "Нормы радиационной безопасности (НРБ-99/2009)",
+   "title_ru": "Нормы радиационной безопасности (НРБ-99/2009)",
+   "authors": null,
+   "year": 2009,
+   "publisher": "СанПиН 2.6.1.2523-09",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Фгун, Ф. Н. и др. Нормы радиационной безопасности (НРБ-99-2009). - 2009.pdf",
+   "kind": "норматив",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:13767",
+    "библиотека оператора/catalog.json:13787",
+    "data-src/risk.yaml:4",
+    "библиотека оператора/catalog.json:13809"
+   ]
+  },
+  "NRB2009_App2": {
+   "title": "Нормы радиационной безопасности (НРБ-99/2009)",
+   "title_ru": "Нормы радиационной безопасности (НРБ-99/2009)",
+   "authors": null,
+   "year": 2009,
+   "publisher": "СанПиН 2.6.1.2523-09, Приложение 2",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Фгун, Ф. Н. и др. Нормы радиационной безопасности (НРБ-99-2009). - 2009.pdf",
+   "kind": "норматив",
+   "same_as": "NRB2009",
+   "evidence": [
+    "data-src/dose_coeff.yaml:4",
+    "библиотека оператора/catalog.json:13767",
+    "библиотека оператора/catalog.json:13787",
+    "библиотека оператора/catalog.json:13809"
+   ]
+  },
+  "NRB2009_App2a": {
+   "title": "Нормы радиационной безопасности (НРБ-99/2009)",
+   "title_ru": "Нормы радиационной безопасности (НРБ-99/2009)",
+   "authors": null,
+   "year": 2009,
+   "publisher": "СанПиН 2.6.1.2523-09, Приложение 2а",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Фгун, Ф. Н. и др. Нормы радиационной безопасности (НРБ-99-2009). - 2009.pdf",
+   "kind": "норматив",
+   "same_as": "NRB2009",
+   "evidence": [
+    "data-src/dose_coeff.yaml:5",
+    "библиотека оператора/catalog.json:13767",
+    "библиотека оператора/catalog.json:13787",
+    "библиотека оператора/catalog.json:13809"
+   ]
+  },
+  "OSPORB2010": {
+   "title": "Основные санитарные правила обеспечения радиационной безопасности (ОСПОРБ-99/2010)",
+   "title_ru": "Основные санитарные правила обеспечения радиационной безопасности (ОСПОРБ-99/2010)",
+   "authors": null,
+   "year": 2010,
+   "publisher": "СП 2.6.1.2612-10 (ред. от 16.09.2013), PDF-печать КонсультантПлюс",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Об утверждении СП 2.6.1.2612-10 (ОСПОРБ-99-2010). - 2010.pdf",
+   "kind": "норматив",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:21479",
+    "библиотека оператора/catalog.json:21481",
+    "data-src/risk.yaml:5",
+    "библиотека оператора/catalog.json:21502"
+   ]
+  },
+  "MCHS2009": {
+   "title": "Атлас современных и прогнозных аспектов последствий аварии на Чернобыльской АЭС на пострадавших территориях России и Беларуси",
+   "title_ru": "Атлас современных и прогнозных аспектов последствий аварии на Чернобыльской АЭС на пострадавших территориях России и Беларуси",
+   "authors": "МЧС России; МЧС Республики Беларусь",
+   "year": 2009,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Мчс, М. Р. Атлас современных и прогнозных аспектов последствий аварии НА. - 2009.pdf",
+   "kind": "атлас",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:20110",
+    "библиотека оператора/catalog.json:20112",
+    "библиотека оператора/catalog.json:20115",
+    "audit/sci-transfer-2026-09-30.md:20",
+    "библиотека оператора/catalog.json:20137"
+   ]
+  },
+  "Marey1974": {
+   "title": "Глобальные выпадения цезия-137 и человек",
+   "title_ru": "Глобальные выпадения цезия-137 и человек",
+   "authors": "Марей А.Н., Бархударов Р.М., Новикова Н.Я.",
+   "year": 1974,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Марей, А. Н. Глобальные выпадения цезия-137 и человек. - 1974.pdf",
+   "kind": "монография",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:18907",
+    "библиотека оператора/catalog.json:18909",
+    "библиотека оператора/catalog.json:18913",
+    "audit/sci-processing-2026-09-30.md:20",
+    "библиотека оператора/catalog.json:18934"
+   ]
+  },
+  "Gudkov1991": {
+   "title": "Основы общей и с.-х. радиобиологии",
+   "title_ru": "Основы общей и с.-х. радиобиологии",
+   "authors": "Гудков И.Н.",
+   "year": 1991,
+   "publisher": "Киев",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Сельскохозяйственнная радиобилогия.djvu",
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "audit/sci-processing-2026-09-30.md:21",
+    "библиотека оператора/catalog.json:15303",
+    "библиотека оператора/catalog.json:15305",
+    "библиотека оператора/catalog.json:15329"
+   ]
+  },
+  "Lysenko2017": {
+   "title": "Радиобиология: Учебник",
+   "title_ru": "Радиобиология: Учебник",
+   "authors": "Н.П. Лысенко, В.В. Пак, Л.В. Рогожина, З.Г. Кусурова",
+   "year": 2017,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Учебник по радиобиологии.pdf",
+   "kind": "учебник",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:20740",
+    "библиотека оператора/catalog.json:20742",
+    "библиотека оператора/catalog.json:20747",
+    "audit/sci-processing-2026-09-30.md:22",
+    "public/data/processing.json:8171",
+    "библиотека оператора/catalog.json:20769"
+   ]
+  },
+  "RADIOBIOL_TEXTBOOK": {
+   "title": "Радиобиология: Учебник",
+   "title_ru": "Радиобиология: Учебник",
+   "authors": "Н.П. Лысенко, В.В. Пак, Л.В. Рогожина, З.Г. Кусурова",
+   "year": 2017,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Учебник по радиобиологии.pdf",
+   "kind": "учебник",
+   "same_as": "Lysenko2017",
+   "evidence": [
+    "public/data/transfer.json:22454",
+    "public/data/processing.json:8171",
+    "библиотека оператора/catalog.json:20740",
+    "библиотека оператора/catalog.json:20747",
+    "библиотека оператора/catalog.json:20769"
+   ]
+  },
+  "Golovkina": {
+   "title": "Способы очистки молока от радионуклидов",
+   "title_ru": "Способы очистки молока от радионуклидов",
+   "authors": "А.А. Головкина, Н.Г. Курочкина",
+   "year": null,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Головкина, А. А. Способы очистки молока от радионуклидов.pdf",
+   "kind": "статья",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:15030",
+    "библиотека оператора/catalog.json:15033",
+    "audit/sci-processing-2026-09-30.md:24",
+    "библиотека оператора/catalog.json:15058"
+   ]
+  },
+  "Melchenko2016": {
+   "title": "Миграция радионуклидов в агроэкоценозах в условиях лесостепной и степной черноземной биогеохимической зоны юга России",
+   "title_ru": "Миграция радионуклидов в агроэкоценозах в условиях лесостепной и степной черноземной биогеохимической зоны юга России",
+   "authors": "Мельченко Александр Иванович",
+   "year": 2016,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Мельченко, А. И. Миграция радионуклидов в агроэкоценозах в условиях лесостепной И. - 2016.pdf",
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:15169",
+    "библиотека оператора/catalog.json:15171",
+    "библиотека оператора/catalog.json:15173",
+    "audit/sci-processing-2026-09-30.md:23",
+    "библиотека оператора/catalog.json:15194"
+   ]
+  },
+  "MELCHENKO2016": {
+   "title": "Миграция радионуклидов в агроэкоценозах в условиях лесостепной и степной черноземной биогеохимической зоны юга России",
+   "title_ru": "Миграция радионуклидов в агроэкоценозах в условиях лесостепной и степной черноземной биогеохимической зоны юга России",
+   "authors": "Мельченко Александр Иванович",
+   "year": 2016,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Мельченко, А. И. Миграция радионуклидов в агроэкоценозах в условиях лесостепной И. - 2016.pdf",
+   "kind": "прочее",
+   "same_as": "Melchenko2016",
+   "evidence": [
+    "public/data/transfer.json:19133",
+    "public/data/transfer.json:19160",
+    "библиотека оператора/catalog.json:15169",
+    "библиотека оператора/catalog.json:15173",
+    "библиотека оператора/catalog.json:15194"
+   ]
+  },
+  "Nevdakh": {
+   "title": "Определение способов снижения удельной активности 137Cs в грибах с целью повышения радиологической культуры населения загрязненных территорий",
+   "title_ru": "Определение способов снижения удельной активности 137Cs в грибах с целью повышения радиологической культуры населения загрязненных территорий",
+   "authors": "Невдах К.Г., Стожаров А.Н., Прудников Г.А.",
+   "year": null,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Невдах, К. Г. Определение способов снижения удельной активности ${}^{137}$ Cs в.pdf",
+   "kind": "статья",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:18973",
+    "библиотека оператора/catalog.json:18975",
+    "audit/sci-processing-2026-09-30.md:116",
+    "библиотека оператора/catalog.json:19001"
+   ]
+  },
+  "Varfolomeeva2019": {
+   "title": "Исследование эффективности снижения цезия-137 при кулинарной обработке лесных грибов",
+   "title_ru": "Исследование эффективности снижения цезия-137 при кулинарной обработке лесных грибов",
+   "authors": "К.В. Варфоломеева",
+   "year": 2019,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Варфоломеева, К. В. Исследование эффективности снижения цезия-137 при кулинарной обработке.pdf",
+   "kind": "статья",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:18589",
+    "библиотека оператора/catalog.json:18591",
+    "audit/sci-processing-2026-09-30.md:99",
+    "библиотека оператора/catalog.json:18614"
+   ]
+  },
+  "Varfolomeeva2015": {
+   "title": "Содержание цезия-137 в домашних заготовках грибов в 2014 году у жителей территорий, подвергшихся радиоактивному загрязнению после аварии на ЧАЭС",
+   "title_ru": "Содержание цезия-137 в домашних заготовках грибов в 2014 году у жителей территорий, подвергшихся радиоактивному загрязнению после аварии на ЧАЭС",
+   "authors": "К.В. Варфоломеева",
+   "year": 2015,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Варфоломеева, К. Содержание цезия-137 в домашних заготовках грибов в 2014 году у. - 2015.pdf",
+   "kind": "статья",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:18620",
+    "библиотека оператора/catalog.json:18622",
+    "библиотека оператора/catalog.json:18624",
+    "библиотека оператора/catalog.json:18645"
+   ]
+  },
+  "Vasilenko2001": {
+   "title": "Радиоактивный цезий",
+   "title_ru": "Радиоактивный цезий",
+   "authors": "И.Я. Василенко, О.И. Василенко",
+   "year": 2001,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Василенко, И. Я. Радиоактивный цезий. - 2001.pdf",
+   "kind": "статья",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:18651",
+    "библиотека оператора/catalog.json:18653",
+    "библиотека оператора/catalog.json:18656",
+    "библиотека оператора/catalog.json:18677"
+   ]
+  },
+  "Panchenko2000": {
+   "title": "Роль лесных экосистем в формировании дозовых нагрузок на население",
+   "title_ru": "Роль лесных экосистем в формировании дозовых нагрузок на население",
+   "authors": "Панченко С.В., Панфилова А.А.",
+   "year": 2000,
+   "publisher": "препринт ИБРАЭ РАН",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Панченко, С. Роль лесных экосистем в формировании дозовых нагрузок на население. - 2000.pdf",
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:19071",
+    "библиотека оператора/catalog.json:19073",
+    "библиотека оператора/catalog.json:19076",
+    "audit/sci-gaps-library-2026-09-30.md:418",
+    "библиотека оператора/catalog.json:19096"
+   ]
+  },
+  "PANCHENKO2000": {
+   "title": "Роль лесных экосистем в формировании дозовых нагрузок на население",
+   "title_ru": "Роль лесных экосистем в формировании дозовых нагрузок на население",
+   "authors": "Панченко С.В., Панфилова А.А.",
+   "year": 2000,
+   "publisher": "препринт ИБРАЭ РАН",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Панченко, С. Роль лесных экосистем в формировании дозовых нагрузок на население. - 2000.pdf",
+   "kind": "прочее",
+   "same_as": "Panchenko2000",
+   "evidence": [
+    "public/data/transfer.json:22292",
+    "audit/sci-gaps-library-2026-09-30.md:418",
+    "библиотека оператора/catalog.json:19071",
+    "библиотека оператора/catalog.json:19096"
+   ]
+  },
+  "Yanin2017": {
+   "title": "Экологическая экспертиза",
+   "title_ru": "Экологическая экспертиза",
+   "authors": "Е.П. Янин",
+   "year": 2017,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Янин, Е. Экологическая экспертиза. - 2017.pdf",
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:15944",
+    "библиотека оператора/catalog.json:15946",
+    "библиотека оператора/catalog.json:15948",
+    "библиотека оператора/catalog.json:15968"
+   ]
+  },
+  "Otvety": {
+   "title": "Ответы к экзамену по радиационной медицине и экологии",
+   "title_ru": "Ответы к экзамену по радиационной медицине и экологии",
+   "authors": null,
+   "year": null,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Ответы по радиационной медицине.doc",
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:14905",
+    "audit/sci-processing-2026-09-30.md:27",
+    "библиотека оператора/catalog.json:14928"
+   ]
+  },
+  "Perevolotsky2006": {
+   "title": "Распределение 137Cs и 90Sr в лесных биогеоценозах",
+   "title_ru": "Распределение 137Cs и 90Sr в лесных биогеоценозах",
+   "authors": "Переволоцкий А.Н.",
+   "year": 2006,
+   "publisher": "Гомель: РНИУП «Институт радиологии», 255 с., ISBN 985-6765-18-8",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Переволоцкий, А. Переволоцкий А.Н. Распределение ${}^{137}Cs$ и ${}^{90}Sr$ в лесных. - 2006.pdf",
+   "kind": "монография",
+   "same_as": null,
+   "evidence": [
+    "audit/sci-perevolotsky-2026-09-30.md:5",
+    "библиотека оператора/catalog.json:19127"
+   ]
+  },
+  "PEREVOLOTSKY2006": {
+   "title": "Распределение 137Cs и 90Sr в лесных биогеоценозах",
+   "title_ru": "Распределение 137Cs и 90Sr в лесных биогеоценозах",
+   "authors": "Переволоцкий А.Н.",
+   "year": 2006,
+   "publisher": "Гомель: РНИУП «Институт радиологии», 255 с., ISBN 985-6765-18-8",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Переволоцкий, А. Переволоцкий А.Н. Распределение ${}^{137}Cs$ и ${}^{90}Sr$ в лесных. - 2006.pdf",
+   "kind": "монография",
+   "same_as": "Perevolotsky2006",
+   "evidence": [
+    "public/data/transfer.json:19241",
+    "audit/sci-perevolotsky-2026-09-30.md:5",
+    "библиотека оператора/catalog.json:19127"
+   ]
+  },
+  "Kogan1991": {
+   "title": "Основы гамма-спектрометрии природных сред",
+   "title_ru": "Основы гамма-спектрометрии природных сред",
+   "authors": "Коган Р.М., Назаров И.М., Фридман Ш.Д.",
+   "year": 1991,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Коган, Р. Основы гамма-спектрометрии природных сред. - 1991.djvu",
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:7862",
+    "библиотека оператора/catalog.json:7864",
+    "библиотека оператора/catalog.json:7868",
+    "audit/sci-transfer-2026-09-30.md:23",
+    "библиотека оператора/catalog.json:7889"
+   ]
+  },
+  "BEKMAN2015": {
+   "title": "Экологическая радиохимия и радиоэкология",
+   "title_ru": "Экологическая радиохимия и радиоэкология",
+   "authors": "Бекман И.Н.",
+   "year": 2015,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Бекман, И. Н. Экологическая радиохимия и радиоэкология. - 2015.pdf",
+   "kind": "учебник",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:15365",
+    "библиотека оператора/catalog.json:15367",
+    "библиотека оператора/catalog.json:15369",
+    "public/data/transfer.json:19125",
+    "библиотека оператора/catalog.json:15390"
+   ]
+  },
+  "ANISIMOV2018": {
+   "title": "Радиоэкологические последствия аварии на Чернобыльской АЭС: биологические эффекты, миграция, реабилитация загрязненных территорий",
+   "title_ru": "Радиоэкологические последствия аварии на Чернобыльской АЭС: биологические эффекты, миграция, реабилитация загрязненных территорий",
+   "authors": "Анисимов В.С., Гераськин С.А., Гешель И.В. и др.",
+   "year": 2018,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Анисимов, В. и др. Радиоэкологические последствия аварии на Чернобыльской АЭС. - 2018.pdf",
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:19666",
+    "библиотека оператора/catalog.json:19668",
+    "библиотека оператора/catalog.json:19691",
+    "public/data/transfer.json:19268",
+    "библиотека оператора/catalog.json:19712"
+   ]
+  },
+  "IZRAEL1990": {
+   "title": "Радиоактивное загрязнение ... Чернобыльской АЭС",
+   "title_ru": "Радиоактивное загрязнение ... Чернобыльской АЭС",
+   "authors": "Ю.А. Израэль, С.М. Вакуловский, В.А. Ветров, В.Н. Петров, Ф.Я. Ровинский, Е.Д. Стукин",
+   "year": 1990,
+   "publisher": "Гидрометеоиздат",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Израэль, Ю. и др. в книге собраны обобщенные данные о радиоактивном загрязнении. - 1990.pdf",
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "audit/sci-gaps-library-2026-09-30.md:19",
+    "библиотека оператора/catalog.json:19956",
+    "библиотека оператора/catalog.json:19963",
+    "библиотека оператора/catalog.json:19987"
+   ]
+  },
+  "IZRAEL1967": {
+   "title": "Гамма-излучение радиоактивных выпадений",
+   "title_ru": "Гамма-излучение радиоактивных выпадений",
+   "authors": "Ю.А. Израэль, Е.Д. Стукин",
+   "year": 1967,
+   "publisher": "Атомиздат",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Израэль, Ю. А. Гамма-излучение радиоактивных выпадений. - 1967.pdf",
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "audit/sci-gaps-library-2026-09-30.md:20",
+    "библиотека оператора/catalog.json:7807",
+    "библиотека оператора/catalog.json:7804",
+    "библиотека оператора/catalog.json:7827"
+   ]
+  },
+  "IZRAEL1996": {
+   "title": "Радиоактивные выпадения после ядерных взрывов и аварий",
+   "title_ru": "Радиоактивные выпадения после ядерных взрывов и аварий",
+   "authors": "Ю.А. Израэль",
+   "year": 1996,
+   "publisher": "СПб: Гидрометеоиздат",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Yu., A. Radioactive Fallout after Nuclear Explosions and Accidents. - 1996.pdf",
+   "kind": "монография",
+   "same_as": null,
+   "evidence": [
+    "audit/sci-gaps-library-2026-09-30.md:21",
+    "audit/sci-gaps-library-2026-09-30.md:14",
+    "библиотека оператора/catalog.json:3363",
+    "библиотека оператора/catalog.json:3365",
+    "библиотека оператора/catalog.json:3386"
+   ]
+  },
+  "MARCHENKO2023": {
+   "title": "Оценка мощности амбиентного эквивалента дозы на лесных участках в юго-западных районах Брянской области",
+   "title_ru": "Оценка мощности амбиентного эквивалента дозы на лесных участках в юго-западных районах Брянской области",
+   "authors": "Марченко Т.А., Рadin А.И., Раздайводин А.Н.",
+   "year": 2023,
+   "publisher": "Радиация и риск 2023, т. 32, №4, с. 67-78",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Марченко, Т. Оценка мощности амбиентного эквивалента дозы на лесных участках в. - 2023.pdf",
+   "kind": "статья",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:18940",
+    "библиотека оператора/catalog.json:18942",
+    "библиотека оператора/catalog.json:18946",
+    "audit/sci-gaps-library-2026-09-30.md:24",
+    "библиотека оператора/catalog.json:18967"
+   ]
+  },
+  "SHEVCHENKO2020": {
+   "title": "Исследование накопления радионуклидов ягодными кустарниками в лесной экосистеме на территории, прилегающей к Семипалатинскому испытательному полигону",
+   "title_ru": "Исследование накопления радионуклидов ягодными кустарниками в лесной экосистеме на территории, прилегающей к Семипалатинскому испытательному полигону",
+   "authors": "Шевченко Ю.С., Ларионова Н.В., Топорова А.В., Айдарханов А.О.",
+   "year": 2020,
+   "publisher": "Мед. радиол. и радиац. безопасность 2020, т. 29, №3, с. 71-78",
+   "doi": "10.21870/0131-3878-2020-29-3-71-78",
+   "url": null,
+   "local": "библиотека оператора/Шевченко, Ю. и др. Исследование накопления радионуклидов ягодными кустарниками в лесной.pdf",
+   "kind": "статья",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:19562",
+    "библиотека оператора/catalog.json:19564",
+    "audit/sci-gaps-library-2026-09-30.md:729",
+    "библиотека оператора/catalog.json:19591"
+   ]
+  },
+  "DYAKOVA2022": {
+   "title": "Изучение накопления радионуклидов лекарственным растительным сырьем Центрального Черноземья",
+   "title_ru": "Изучение накопления радионуклидов лекарственным растительным сырьем Центрального Черноземья",
+   "authors": "Дьякова Н.А.",
+   "year": 2022,
+   "publisher": "Вестник Смоленской ГМА 2022, т. 21, №3, с. 170-175",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Дьякова, Н. Изучение накопления радионуклидов лекарственным растительным сырьем. - 2022.pdf",
+   "kind": "статья",
+   "same_as": null,
+   "evidence": [
+    "библиотека оператора/catalog.json:18776",
+    "библиотека оператора/catalog.json:18778",
+    "библиотека оператора/catalog.json:18780",
+    "audit/sci-gaps-library-2026-09-30.md:730",
+    "библиотека оператора/catalog.json:18801"
+   ]
+  },
+  "PEREVOLOTSKAYA2023": {
+   "title": "Дозы облучения сосновых насаждений…",
+   "title_ru": "Дозы облучения сосновых насаждений…",
+   "authors": "Переволоцкая Т.В., Переволоцкий А.Н., Гераськин С.А.",
+   "year": 2023,
+   "publisher": "Радиац. биол. Радиоэкол. 63(3) 300–310",
+   "doi": null,
+   "url": "https://journals.rcsi.science/0869-8031/article/download/137688/115622",
+   "local": null,
+   "kind": "статья",
+   "same_as": null,
+   "evidence": [
+    "audit/sci-soil-density-2026-09-30.md:33",
+    "audit/sci-soil-density-2026-09-30.md:137"
+   ]
+  },
+  "Uddin2019": {
+   "title": null,
+   "title_ru": null,
+   "authors": "Uddin S. et al.",
+   "year": 2019,
+   "publisher": "J Environ Radioact 205-206 (2019) 1-6",
+   "doi": "10.1016/j.jenvrad.2019.05.001",
+   "url": null,
+   "local": null,
+   "kind": "статья",
+   "same_as": null,
+   "evidence": [
+    "audit/sci-processing-2026-09-30.md:26",
+    "public/data/processing.json:11038"
+   ]
+  },
+  "VURS2013": {
+   "title": "Атлас ВУРС",
+   "title_ru": "Атлас ВУРС",
+   "authors": null,
+   "year": 2013,
+   "publisher": "ИГКЭ Росгидромета",
+   "doi": null,
+   "url": null,
+   "local": null,
+   "kind": "атлас",
+   "same_as": null,
+   "evidence": [
+    "audit/sci-gaps-library-2026-09-30.md:422"
+   ]
+  },
+  "BGTU2018": {
+   "title": null,
+   "title_ru": null,
+   "authors": null,
+   "year": 2018,
+   "publisher": "Труды БГТУ 2018, сер. 1, №2, с. 251-258",
+   "doi": null,
+   "url": null,
+   "local": null,
+   "kind": "статья",
+   "same_as": null,
+   "evidence": [
+    "audit/sci-gaps-library-2026-09-30.md:424"
+   ]
+  },
+  "PPSR2025": {
+   "title": "Сборник тезисов ППСР-2025",
+   "title_ru": "Сборник тезисов ППСР-2025",
+   "authors": null,
+   "year": 2025,
+   "publisher": null,
+   "doi": null,
+   "url": null,
+   "local": null,
+   "kind": "тезисы",
+   "same_as": null,
+   "evidence": [
+    "audit/sci-gaps-library-2026-09-30.md:731"
+   ]
+  }
+ }
+}

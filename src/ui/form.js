@@ -6,7 +6,7 @@ import { categoryOf, limitGroupFor, dryMatterFor, processingMatches, dryingFacto
 import FOOD_RU from './food_ru.json' with { type: 'json' };
 import SOURCE_SHORT from './source_short.json' with { type: 'json' };
 import { attachSuggest, cleanProductNames } from './suggest.js';
-const COMMON_PRODUCTS = ['Молоко', 'Молоко сухое', 'Творог', 'Сыр', 'Говядина', 'Свинина', 'Картофель', 'Морковь', 'Капуста', 'Свёкла',
+export const COMMON_PRODUCTS = ['Молоко', 'Молоко сухое', 'Творог', 'Сыр', 'Говядина', 'Свинина', 'Картофель', 'Морковь', 'Капуста', 'Свёкла',
   'Хлеб', 'Мука пшеничная', 'Крупа гречневая', 'Рыба речная', 'Вода питьевая', 'Чай травяной'];
 export { SOURCE_SHORT };
 

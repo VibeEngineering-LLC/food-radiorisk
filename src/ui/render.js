@@ -4,7 +4,7 @@ import { AGE_LABEL, SOURCE_LABEL, SOURCE_SHORT } from './form.js';
 import { locRu, unitRu } from './ru.js';
 import SOURCES from '../../public/data/sources.json' with { type: 'json' };
 // полное описание источника из реестра (#FR-24): авторы. Название. Выходные данные, год — ссылкой на страницу документов
-function sourceFull(code) {
+export function sourceFull(code) {
   if (!code) return '';
   let r = SOURCES.sources[code];
   if (r?.same_as) r = SOURCES.sources[r.same_as] || r;
@@ -12,17 +12,17 @@ function sourceFull(code) {
   const parts = [r.authors, r.title_ru, r.publisher, r.year].filter(Boolean).map(x => String(x).replace(/\.\s*$/, '')); // без «et al..»
   return `<a href="sources.html">${esc(parts.join('. '))}</a>`;
 }
-const JUR_RU = { Codex: 'Кодекс Алиментариус', EU: 'ЕС', Japan: 'Япония', USA: 'США', IAEA: 'МАГАТЭ' };
+export const JUR_RU = { Codex: 'Кодекс Алиментариус', EU: 'ЕС', Japan: 'Япония', USA: 'США', IAEA: 'МАГАТЭ' };
 import { FOOD_CLASS_RU } from '../calc/foodclass.js';
 
 // «1 год», «2 года», «5 лет», «11 лет», «21 год»
-const yearsWord = (n) => {
+export const yearsWord = (n) => {
   const k = Math.abs(Math.trunc(n)) % 100, d = k % 10;
   return k >= 11 && k <= 14 ? 'лет' : d === 1 ? 'год' : d >= 2 && d <= 4 ? 'года' : 'лет';
 };
 // #FR-20: добавочный риск — «1 на N», цвет по уровням НРБ-99/2009 п. 2.3, логарифмическая шкала 10⁻⁸…10⁻³ с отметками уровней
-const RISK_TXT = { negligible: 'пренебрежимо малый риск (не больше 1 случая на 1 млн в год, НРБ-99/2009)', within: 'выше пренебрежимого (1 на млн), но не выше 50 случаев на 1 млн в год — уровня, от которого установлены пределы доз населения', exceeds: 'выше 50 случаев на 1 млн в год — уровня, от которого установлены пределы доз населения' };
-const logPos = (x) => Math.max(0, Math.min(100, (Math.log10(x) + 8) / 5 * 100));
+export const RISK_TXT = { negligible: 'пренебрежимо малый риск (не больше 1 случая на 1 млн в год, НРБ-99/2009)', within: 'выше пренебрежимого (1 на млн), но не выше 50 случаев на 1 млн в год — уровня, от которого установлены пределы доз населения', exceeds: 'выше 50 случаев на 1 млн в год — уровня, от которого установлены пределы доз населения' };
+export const logPos = (x) => Math.max(0, Math.min(100, (Math.log10(x) + 8) / 5 * 100));
 function riskBlock(totals, years) {
   const ra = totals.riskAssessment;
   if (!ra) return `<div class="n">${esc(fmtRiskPerMillion(totals.riskTotal))}</div><div class="t">добавочный риск за ${esc(String(years))} ${yearsWord(years)}</div>`;
@@ -43,7 +43,7 @@ function riskBlock(totals, years) {
 // lvl: negligible | within | exceeds — подсветка по норме (#FR-29); без нормы карточка серая
 const kpi = (v, l, lvl) => `<div class="kpi${lvl ? ' risk-' + esc(lvl) : ''}"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`;
 // годовая доза: ≤ 10 мкЗв — пренебрежимо малая (НРБ-99/2009 п. 1.4), ≤ 1 мЗв — в пределах бюджета пищевого пути (МУК 2.6.1.1194-03)
-const doseLvl = (svPerYear) => !Number.isFinite(svPerYear) ? '' : svPerYear <= 1e-5 ? 'negligible' : svPerYear <= 1e-3 ? 'within' : 'exceeds';
+export const doseLvl = (svPerYear) => !Number.isFinite(svPerYear) ? '' : svPerYear <= 1e-5 ? 'negligible' : svPerYear <= 1e-3 ? 'within' : 'exceeds';
 const th = t => `<th>${esc(t)}</th>`;
 // raw=true: содержимое уже собрано из esc()-значений (например <code>, <span class="chip">) и повторно не экранируется
 const td = (t, c = '', raw = false) => `<td${c ? ` class="${esc(c)}"` : ''}>${raw ? t : esc(t)}</td>`;
