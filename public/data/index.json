@@ -1,0 +1,54 @@
+{
+ "schema_version": 1,
+ "datasets": [
+  {
+   "dataset": "dose_coeff",
+   "file": "dose_coeff.json",
+   "record_count": 95,
+   "source_sha256": "fa6a1ada045bccd120ab889f68863cca1ec7ecd5905f73bd5490a881637cfc9c",
+   "json_sha256": "436a1863aeebc179b898bf828e0e8896a4007c90696cc59911de246818c715cb"
+  },
+  {
+   "dataset": "limits_foreign",
+   "file": "limits_foreign.json",
+   "record_count": 52,
+   "source_sha256": "b18f9ca154b62048d2ce0f77e6127daafc97ef016977676992be94dc8c1fcd1a",
+   "json_sha256": "9f08b26c040baa426fe8acc9bbc1bbcf0796aded22953cdadfbc628d639ef689"
+  },
+  {
+   "dataset": "limits_ru",
+   "file": "limits_ru.json",
+   "record_count": 79,
+   "source_sha256": "bf7e721916a8362f0bc2dccfa54af2ea964a034be99e1870d7631b84f532ae5e",
+   "json_sha256": "69079dc0cb88bdcb5ba2ec845a451d504ca45fd45b4cec786c5f58ede62eff32"
+  },
+  {
+   "dataset": "nuclides",
+   "file": "nuclides.json",
+   "record_count": 60,
+   "source_sha256": "c88b31fe78020a5a43a6142d0aca2758d12fba6c070b35e85229684e43fb0056",
+   "json_sha256": "ffd37e296cb0953dc8c6227b391c7f532721e566b8493abbc4a6275d2d16937c"
+  },
+  {
+   "dataset": "processing",
+   "file": "processing.json",
+   "record_count": 437,
+   "source_sha256": "600acfeb02885f26a7c74fa1726fb17bf07e57898a01cedab7e3d018611890f7",
+   "json_sha256": "bd6efad0c31fe14d22ce3a3af55ae11ce43ecf8e018f83294b9a1f02ed766d2d"
+  },
+  {
+   "dataset": "risk",
+   "file": "risk.json",
+   "record_count": 40,
+   "source_sha256": "f091bcd344c3d567b011f51a1720aaebeb7a0b54ff7dcf777c9ee1856ef5c016",
+   "json_sha256": "dd6c5bea377f92a39585e193e0a79a7d00a46d09780181d13ad74e9bc4afb161"
+  },
+  {
+   "dataset": "transfer",
+   "file": "transfer.json",
+   "record_count": 846,
+   "source_sha256": "499098e877189382b9256b98a7b0285068ae3c380c0fbae2485a4b6993a28832",
+   "json_sha256": "bfc56434a0a93273b880551dfe1978d754bc77d7c3dfea5a589aaa92030ae675"
+  }
+ ]
+}

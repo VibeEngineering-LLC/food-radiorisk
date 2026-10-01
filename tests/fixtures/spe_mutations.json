@@ -1,0 +1,12 @@
+[
+ {"name": "k_inverted",        "from": "return rawG / probeG;", "to": "return probeG / rawG;"},
+ {"name": "date_mm_dd",        "from": "let [, dStr, monStr, yStr] = m;", "to": "let [, monStr, dStr, yStr] = m;"},
+ {"name": "date_no_2000",      "from": "yStr.length === 2 ? 2000 + Number(yStr)", "to": "yStr.length === 2 ? 1900 + Number(yStr)"},
+ {"name": "date_no_roundtrip", "from": "if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== mon - 1 || dt.getUTCDate() !== d) return null;", "to": ""},
+ {"name": "comma_first_only",  "from": ".replace(/,/g, '.')", "to": ".replace(',', '.')"},
+ {"name": "read_after_spectr", "from": "if (/^SPECTR=/.test(line)) break;", "to": "if (/^SPECTR=/.test(line)) continue;"},
+ {"name": "last_key_wins",     "from": "if (m && !(m[1] in raw))", "to": "if (m)"},
+ {"name": "shifr_suffix_kept", "from": ".replace(/(_\\d+)+$/, '')", "to": ""},
+ {"name": "no_type_warning",   "from": "if (h.type && h.type !== 'Образец') {", "to": "if (false) {"},
+ {"name": "zero_mass_ok",      "from": "if (!Number.isFinite(val) || val <= 0) return null;", "to": "if (!Number.isFinite(val)) return null;"}
+]

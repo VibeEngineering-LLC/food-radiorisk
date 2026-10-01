@@ -1,0 +1,4 @@
+# Данные с контрольными sha256 (index.json, source_sha256): байты не должны меняться при checkout (autocrlf) — D-010
+data-src/*.yaml text eol=lf
+public/data/*.json text eol=lf
+schema/*.json text eol=lf

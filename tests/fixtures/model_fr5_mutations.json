@@ -1,0 +1,10 @@
+[
+ {"name": "foreign_by_element",   "from": "f.nuclides.some(n => n === elem || n.includes(r.nuclide))", "to": "f.nuclides.some(n => n.startsWith(elem))"},
+ {"name": "foreign_no_class",     "from": "if (!appliesTo(f.food_category_ru, input.foodGroupCode)) continue;", "to": ""},
+ {"name": "k_not_applied",        "from": "rawBqPerKg = productFromSample(rawBqPerKg, K);", "to": "rawBqPerKg = rawBqPerKg;"},
+ {"name": "k_null_allowed",       "from": "if ((K === undefined || K === null) && prepMode && prepMode !== 'as_is') throw", "to": "if (false) throw"},
+ {"name": "dep_after_decay",      "from": "depositionEstimate(atSampleBqPerKg, tRec,", "to": "depositionEstimate(rawBqPerKg * 2, tRec,"},
+ {"name": "dep_state_ignored",    "from": "depositionEstimate(atSampleBqPerKg, tRec, input.product?.state || 'fresh',", "to": "depositionEstimate(atSampleBqPerKg, tRec, 'fresh',"},
+ {"name": "dep_error_swallowed",  "from": "} catch (e) { warn(`оценка загрязнения не выполнена: ${e.message}`); }", "to": "} catch (e) { }"},
+ {"name": "dep_not_returned",     "from": "depositionEstimate: depEst,", "to": "depositionEstimate: null,"}
+]

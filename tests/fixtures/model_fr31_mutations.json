@@ -1,0 +1,11 @@
+[
+ {"name": "level_filter_dropped", "from": "const used = recs.filter(r => r.mass_basis != null && r.level === '✅' && !r.source_anomaly && !early(r));", "to": "const used = recs.filter(r => r.mass_basis != null && !r.source_anomaly && !early(r));"},
+ {"name": "early_not_excluded", "from": "const used = recs.filter(r => r.mass_basis != null && r.level === '✅' && !r.source_anomaly && !early(r));", "to": "const used = recs.filter(r => r.mass_basis != null && r.level === '✅' && !r.source_anomaly);"},
+ {"name": "point_is_min", "from": "const point = (k) => k.central ?? (", "to": "const point = (k) => k.min ?? k.central ?? ("},
+ {"name": "point_arith_mean", "from": "? Math.sqrt(k.min * k.max) : (k.min ?? k.max));", "to": "? (k.min + k.max) / 2 : (k.min ?? k.max));"},
+ {"name": "median_is_max", "from": "const m = pts.length, median = m % 2 ? pts[(m - 1) / 2]", "to": "const m = pts.length, median = m % 2 ? pts[m - 1]"},
+ {"name": "bounds_full_range", "from": "const min = q(0.25), max = q(0.75),", "to": "const min = pts[0], max = pts[m - 1],"},
+ {"name": "q3_is_median", "from": "max = q(0.75)", "to": "max = q(0.5)"},
+ {"name": "q_arith_interp", "from": "a * Math.pow(b / a, f) : a + (b - a) * f", "to": "a + (b - a) * f : a + (b - a) * f"},
+ {"name": "prov_raw_field", "from": "value: c.central ?? c.min ?? c.max, unit: 'm2/kg' }); });", "to": "value: r.gm ?? r.am ?? r.min, unit: 'm2/kg' }); });"}
+]

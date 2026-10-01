@@ -1,0 +1,6 @@
+[
+ {"name": "query_ignored", "from": "n > 0 && !fallback && String(query ?? '').trim() !== ''", "to": "n > 0 && !fallback"},
+ {"name": "fallback_ignored", "from": "n > 0 && !fallback && String(query", "to": "n > 0 && String(query"},
+ {"name": "empty_allowed", "from": "n > 0 && !fallback", "to": "n >= 0 && !fallback"},
+ {"name": "query_not_passed", "from": "o.groups, o.fallback, query);", "to": "o.groups, o.fallback);"}
+]

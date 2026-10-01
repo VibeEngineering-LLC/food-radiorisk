@@ -1,0 +1,6 @@
+[
+ {"name": "md_lines_after_split", "from": "  s = s.replace(/,?\\s*(?:djvu\\s*)?\\.?md lines? [\\d\\s,–-]+/gi, '');\n\n  // 3.", "to": "\n\n  // 3."},
+ {"name": "pdf_page_untranslated", "from": "[/PDF p\\.\\s*/g, 'с. PDF '],", "to": "[/PDF p\\.\\s*/g, 'PDF p.'],"},
+ {"name": "prefix_kept", "from": "while (parts.length > 1 && !isLocator(parts[0])) parts.shift();", "to": ""},
+ {"name": "and_before_shift", "from": "  for (const [p, r] of EXTRA) s = s.replace(p, r);", "to": "  for (const [p, r] of EXTRA) s = s.replace(p, r); s = s.replace(/ and /g, ', ');"}
+]

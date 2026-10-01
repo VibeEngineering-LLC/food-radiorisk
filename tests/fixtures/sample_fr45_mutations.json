@@ -1,0 +1,7 @@
+[
+ {"name": "lo_plus_rel", "from": "base.lo * Math.max(0, 1 - rel)", "to": "base.lo * (1 + rel)"},
+ {"name": "hi_minus_rel", "from": "base.hi * (1 + rel)", "to": "base.hi * Math.max(0, 1 - rel)"},
+ {"name": "no_clamp", "from": "Math.max(0, 1 - rel)", "to": "(1 - rel)"},
+ {"name": "unbounded_ignored", "from": "hi: kBq.unbounded ? null : pick(", "to": "hi: false ? null : pick("},
+ {"name": "lo_from_max", "from": "lo: pick(kBq.min, kBq.central, kBq.max)", "to": "lo: pick(kBq.max, kBq.central, kBq.min)"}
+]

@@ -1,0 +1,225 @@
+/* src/ui/poster.css */
+body[data-view="poster"] {
+    --bg: #f3ede2;
+    --panel: #fffdf8;
+    --ink: #141414;
+    --muted: #4a4a4a;
+    --line: #141414;
+    --accent: #d8431e;
+    --accent-ink: #ffffff;
+    --hi: #f2c230;
+    --shadow: 6px 6px 0 var(--ink);
+    background: var(--bg);
+    color: var(--ink);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) body[data-view="poster"] {
+        --bg: #121212;
+        --panel: #1c1b19;
+        --ink: #f3ede2;
+        --muted: #bdb6aa;
+        --line: #f3ede2;
+        --accent: #ff6a3d;
+        --accent-ink: #121212;
+        --hi: #f2c230;
+    }
+}
+
+:root[data-theme="dark"] body[data-view="poster"] {
+    --bg: #121212;
+    --panel: #1c1b19;
+    --ink: #f3ede2;
+    --muted: #bdb6aa;
+    --line: #f3ede2;
+    --accent: #ff6a3d;
+    --accent-ink: #121212;
+    --hi: #f2c230;
+}
+
+body[data-view="poster"] h1 {
+    font-size: 2.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    line-height: 1.05;
+}
+
+body[data-view="poster"] .panel section h2 {
+    font-size: 1.15rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    border-left: 6px solid var(--accent);
+    padding-left: .5rem;
+}
+
+body[data-view="poster"] label {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+body[data-view="poster"] .hint,
+body[data-view="poster"] .sub {
+    color: var(--muted);
+}
+
+body[data-view="poster"] header.top {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-bottom: 4px solid var(--ink);
+}
+
+body[data-view="poster"] header.top .sub {
+    color: var(--accent-ink);
+    opacity: .9;
+}
+
+body[data-view="poster"] .view-switch {
+    border: 2px solid var(--accent-ink);
+    border-radius: 0;
+}
+
+body[data-view="poster"] .view-switch button {
+    color: var(--accent-ink);
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+body[data-view="poster"] .view-switch button[aria-pressed="true"] {
+    background: var(--ink);
+    color: var(--bg);
+}
+
+body[data-view="poster"] .panel,
+body[data-view="poster"] .result {
+    border: 3px solid var(--ink);
+    border-radius: 0;
+    box-shadow: var(--shadow);
+}
+
+body[data-view="poster"] .panel section {
+    border-bottom: 2px dashed var(--ink);
+}
+
+body[data-view="poster"] input,
+body[data-view="poster"] select {
+    border: 2px solid var(--ink);
+    border-radius: 0;
+    background: var(--panel);
+    font-weight: 600;
+}
+
+body[data-view="poster"] input:focus,
+body[data-view="poster"] select:focus {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+}
+
+body[data-view="poster"] .nuc {
+    border: 2px solid var(--ink);
+    border-radius: 0;
+    background: var(--bg);
+}
+
+body[data-view="poster"] button.ghost {
+    background: var(--ink);
+    color: var(--bg);
+    border: 2px solid var(--ink);
+    border-radius: 0;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+body[data-view="poster"] button.ghost:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+}
+
+body[data-view="poster"] .nuc .del {
+    color: var(--accent);
+    font-weight: 900;
+}
+
+body[data-view="poster"] .poster-card {
+    border: 4px solid var(--ink);
+    border-radius: 0;
+    box-shadow: var(--shadow);
+    background: var(--panel);
+}
+
+body[data-view="poster"] .poster-big {
+    color: var(--accent);
+    font-weight: 900;
+}
+
+body[data-view="poster"] .poster-cell {
+    border-top: 6px solid var(--ink);
+}
+
+body[data-view="poster"] .poster-cell .n {
+    font-weight: 900;
+}
+
+body[data-view="poster"] .gauge {
+    border-radius: 0;
+    border: 2px solid var(--ink);
+    background: var(--bg);
+}
+
+body[data-view="poster"] table th {
+    background: var(--ink);
+    color: var(--bg);
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+body[data-view="poster"] table th,
+body[data-view="poster"] table td {
+    border-bottom: 2px solid var(--ink);
+}
+
+body[data-view="poster"] .chip {
+    background: var(--hi);
+    color: #141414;
+    border-radius: 0;
+    font-weight: 700;
+}
+
+body[data-view="poster"] .msg {
+    border-radius: 0;
+    border-left: 6px solid currentColor;
+}
+
+body[data-view="poster"] footer.foot {
+    border-top: 4px solid var(--ink);
+    color: var(--ink);
+}
+
+body[data-view="poster"] p,
+body[data-view="poster"] li {
+    max-width: 78ch;
+}
+
+@media print {
+    body[data-view="poster"] .panel,
+    body[data-view="poster"] .result,
+    body[data-view="poster"] .poster-card {
+        box-shadow: none;
+    }
+    body[data-view="poster"] header.top {
+        background: transparent;
+        color: var(--ink);
+    }
+}
+
+@media (max-width: 560px) {
+    body[data-view="poster"] h1 {
+        font-size: 1.6rem;
+    }
+    body[data-view="poster"] .poster-big {
+        font-size: clamp(2rem, 11vw, 3rem);
+    }
+}

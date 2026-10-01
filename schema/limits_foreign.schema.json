@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "food-radiorisk/limits_foreign.schema.json",
+  "title": "Запись зарубежного норматива содержания радионуклидов в пище",
+  "type": "object",
+  "additionalProperties": false,
+  "$comment": "Пустой nuclides допустим только у записи без числа (value = null, напр. «в GSR Part 3 норм для пищи нет»).",
+  "if": {"properties": {"value": {"type": "number"}}, "required": ["value"]},
+  "then": {"properties": {"nuclides": {"minItems": 1}}},
+  "required": ["id", "jurisdiction", "document", "edition", "status", "nuclides", "sum_rule", "food_category", "food_category_ru", "value", "unit", "loc", "url", "quote", "level", "retrieved", "unit_norm", "unit_factor", "unit_inferred"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9_.\\-]+$"},
+    "jurisdiction": {"type": "string", "minLength": 1},
+    "document": {"type": "string", "minLength": 1},
+    "edition": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "minLength": 1},
+    "nuclides": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "sum_rule": {"type": "string"},
+    "food_category": {"type": "string", "minLength": 1},
+    "food_category_ru": {"type": "string", "minLength": 1},
+    "value": {"type": ["number", "null"]},
+    "unit": {"enum": ["Bq/kg", "Bq/L"]},
+    "loc": {"type": "string", "minLength": 1},
+    "url": {"type": "string", "pattern": "^https?://"},
+    "quote": {"type": "string"},
+    "level": {"enum": ["✅", "📗", "⚠️"]},
+    "retrieved": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "source_anomaly": {"type": "string", "minLength": 1},
+    "unit_norm": {"type": ["string", "null"]},
+    "unit_factor": {"type": ["number", "null"]},
+    "unit_inferred": {"type": "boolean"}
+  }
+}

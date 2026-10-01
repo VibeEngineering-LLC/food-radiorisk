@@ -1,0 +1,803 @@
+# sci-search 2026-09-30, G1–G4, отчёт audit/sci-gaps-library-2026-09-30.md
+- id: "izrael1990_dose_rate_per_deposition_cs_137_plane_eps0"
+  source: "IZRAEL1990"
+  loc: "PDF p.123, табл. 5.11 (определения PDF p.121)"
+  quantity: "dose_rate_per_deposition"
+  nuclide: "Cs-137"
+  item: "exposure dose rate 1 m above thin infinite plane source (eps0), converted to air absorbed dose rate"
+  item_ru: "Конверсионный фактор eps0, плоский бесконечный источник, пересчитан в поглощённую дозу в воздухе"
+  food_group: "n/a"
+  soil_type: null
+  mass_basis: null
+  unit: "(nGy/h)/(kBq/m2)"
+  n: null
+  gm: null
+  gsd: null
+  am: 2.513
+  sd: null
+  min: null
+  max: null
+  quote: "137Cs 10,7 0,94"
+  checked_against: "PDF p.123 page image (PyMuPDF render), digits match .md; factor 8.69 nGy/h per uR/h from UNSCEAR 2000 table 12 note a"
+  level: "✅"
+  note: "Source value 10.7 (uR/h)/(Ci/km2) is an exposure rate; sigma 0.94 Ci/km2 per 10 uR/h. am is own conversion 10.7*8.69/37. Kogan planar value 2.919 is 16 percent higher."
+- id: "izrael1990_depth_attenuation_factor_cs_137_kl_fit"
+  source: "IZRAEL1990"
+  loc: "PDF p.123, рис. 5.8 (определение L PDF p.121)"
+  quantity: "depth_attenuation_factor"
+  nuclide: "Cs-137"
+  item: "K_L(L), exposure-rate attenuation for exponential depth distribution, L in g/cm2 (beta = 1/L)"
+  item_ru: "Коэффициент ослабления МЭД при экспоненциальном заглублении, L в г/см2"
+  food_group: "n/a"
+  soil_type: null
+  mass_basis: null
+  unit: "dimensionless"
+  n: null
+  gm: null
+  gsd: null
+  am: null
+  sd: null
+  min: 0.217
+  max: 1.0
+  quote: "KL = 0,63 - 0,29 lgL; KL = 0,65 - 0,36 lgL"
+  checked_against: "PDF p.123 figure crop at 3x zoom; segment formulas reproduce plotted points 0.87 (L=0.16), 0.58 (L=1.6), 0.22 (L=16)"
+  level: "✅"
+  note: "Formula: K_L = 0.63 - 0.29*lg(L) for 0.16<=L<=1.6 g/cm2; K_L = 0.65 - 0.36*lg(L) for 1.6<=L<=16 g/cm2; K_L = 1 at L = 0. Rate = K_L * eps0 (record izrael1990_dose_rate_per_deposition_cs_137_plane_eps0). min/max are the K_L values at L=16 and L=0. Examples: beta 1.0 -> 1.58, beta 0.5 -> 1.36 (nGy/h)/(kBq/m2)."
+- id: "izrael1967_dose_rate_per_deposition_cs_137_plane_tab15"
+  source: "IZRAEL1967"
+  loc: "печ. стр. 96 (PDF p.50), табл. 15"
+  quantity: "dose_rate_per_deposition"
+  nuclide: "Cs-137"
+  item: "dose rate 1 m above isotropic plane source Cs-137+Ba-137m, 100 uCi/km2, converted to air absorbed dose rate"
+  item_ru: "Мощность дозы на 1 м над плоским источником Cs-137+Ba-137m, 100 мкКи/км2, пересчитана в нГр/ч"
+  food_group: "n/a"
+  soil_type: null
+  mass_basis: null
+  unit: "(nGy/h)/(kBq/m2)"
+  n: 3
+  gm: null
+  gsd: null
+  am: 2.466
+  sd: null
+  min: 2.349
+  max: 2.466
+  quote: "Cs137+Ba137m 0,20 | 1,00 | 0,74 | 1,05 | 1,05"
+  checked_against: "PDF p.50 page image; 1.00 (authors [163]), 1.05 ([9],[165]) used; 0.74 ([164]) declared erroneous by the authors and excluded"
+  level: "✅"
+  note: "Source values in uR/h at 100 uCi/km2 = 3.7 kBq/m2. am = 1.05*8.69/3.7, min = 1.00*8.69/3.7. Value 0.74 would give 1.738."
+- id: "izrael1967_burial_coefficient_cs_137_dark_grey_forest_loam"
+  source: "IZRAEL1967"
+  loc: "печ. стр. 75 (PDF p.39), табл. 9, площадка I"
+  quantity: "burial_coefficient"
+  nuclide: "Cs-137"
+  item: "burial coefficient m in A(r)=A0*exp(-m*r*rho), global fallout"
+  item_ru: "Коэффициент заглубления, темно-серая лесная суглинистая почва"
+  food_group: "n/a"
+  soil_type: "dark-grey forest loam"
+  mass_basis: null
+  unit: "cm2/g"
+  n: null
+  gm: null
+  gsd: null
+  am: 1.15
+  sd: null
+  min: null
+  max: null
+  quote: "Темно-серая лесная почва, суглинистая 1,15"
+  checked_against: "PDF p.39 page image, all eight values match .md"
+  level: "✅"
+  note: "Global fallout of 1960s, USSR middle belt."
+- id: "izrael1967_burial_coefficient_cs_137_leached_chernozem"
+  source: "IZRAEL1967"
+  loc: "печ. стр. 75 (PDF p.39), табл. 9, площадка II"
+  quantity: "burial_coefficient"
+  nuclide: "Cs-137"
+  item: "burial coefficient, leached chernozem loam"
+  item_ru: "Коэффициент заглубления, чернозём оподзоленный суглинистый"
+  food_group: "n/a"
+  soil_type: "leached chernozem, loam"
+  mass_basis: null
+  unit: "cm2/g"
+  n: null
+  gm: null
+  gsd: null
+  am: 0.77
+  sd: null
+  min: null
+  max: null
+  quote: "Чернозем оподзоленный, суглинистый 0,77"
+  checked_against: "PDF p.39 page image"
+  level: "✅"
+  note: "Table 9 of Izrael and Stukin 1967."
+- id: "izrael1967_burial_coefficient_cs_137_sod_podzol_light_loam"
+  source: "IZRAEL1967"
+  loc: "печ. стр. 75 (PDF p.39), табл. 9, площадка III"
+  quantity: "burial_coefficient"
+  nuclide: "Cs-137"
+  item: "burial coefficient, sod-strongly-podzolic light loam"
+  item_ru: "Коэффициент заглубления, дерново-сильноподзолистая, лёгкий суглинок"
+  food_group: "n/a"
+  soil_type: "sod-podzolic, light loam"
+  mass_basis: null
+  unit: "cm2/g"
+  n: null
+  gm: null
+  gsd: null
+  am: 1.35
+  sd: null
+  min: null
+  max: null
+  quote: "Дерново-сильноподзолистая почва, относящаяся по механическому составу к легкому суглинку 1,35"
+  checked_against: "PDF p.39 page image"
+  level: "✅"
+  note: "Table 9 of Izrael and Stukin 1967."
+- id: "izrael1967_burial_coefficient_cs_137_peat"
+  source: "IZRAEL1967"
+  loc: "печ. стр. 75 (PDF p.39), табл. 9, площадка IV"
+  quantity: "burial_coefficient"
+  nuclide: "Cs-137"
+  item: "burial coefficient, peat soil"
+  item_ru: "Коэффициент заглубления, торфяная почва"
+  food_group: "n/a"
+  soil_type: "peat"
+  mass_basis: null
+  unit: "cm2/g"
+  n: null
+  gm: null
+  gsd: null
+  am: 6.7
+  sd: null
+  min: null
+  max: null
+  quote: "Торфяная почва 6,7"
+  checked_against: "PDF p.39 page image"
+  level: "✅"
+  note: "Largest value in the table (shallowest distribution)."
+- id: "izrael1967_burial_coefficient_cs_137_sod_gley_medium_loam_floodplain"
+  source: "IZRAEL1967"
+  loc: "печ. стр. 75 (PDF p.39), табл. 9, площадка V"
+  quantity: "burial_coefficient"
+  nuclide: "Cs-137"
+  item: "burial coefficient, sod-gley medium loam, floodplain"
+  item_ru: "Коэффициент заглубления, дерново-глеевая средний суглинок, пойма"
+  food_group: "n/a"
+  soil_type: "sod-gley, medium loam, floodplain"
+  mass_basis: null
+  unit: "cm2/g"
+  n: null
+  gm: null
+  gsd: null
+  am: 2.3
+  sd: null
+  min: null
+  max: null
+  quote: "Дерново-глеевая почва, относящаяся по механическому составу к среднему суглинку и расположенная в пойме 2,3"
+  checked_against: "PDF p.39 page image"
+  level: "✅"
+  note: "Table 9 of Izrael and Stukin 1967."
+- id: "izrael1967_burial_coefficient_cs_137_sod_podzol_sandy_loam"
+  source: "IZRAEL1967"
+  loc: "печ. стр. 75 (PDF p.39), табл. 9, площадка VI"
+  quantity: "burial_coefficient"
+  nuclide: "Cs-137"
+  item: "burial coefficient, sod-strongly-podzolic sandy loam"
+  item_ru: "Коэффициент заглубления, дерново-сильноподзолистая супесчаная"
+  food_group: "n/a"
+  soil_type: "sod-podzolic, sandy loam"
+  mass_basis: null
+  unit: "cm2/g"
+  n: null
+  gm: null
+  gsd: null
+  am: 1.14
+  sd: null
+  min: null
+  max: null
+  quote: "Дерново-сильноподзолистая супесчаная почва 1,14"
+  checked_against: "PDF p.39 page image"
+  level: "✅"
+  note: "Table 9 of Izrael and Stukin 1967."
+- id: "izrael1967_burial_coefficient_cs_137_sod_gley_heavy_loam_floodplain"
+  source: "IZRAEL1967"
+  loc: "печ. стр. 75 (PDF p.39), табл. 9, площадка VII"
+  quantity: "burial_coefficient"
+  nuclide: "Cs-137"
+  item: "burial coefficient, sod-gley heavy loam, floodplain"
+  item_ru: "Коэффициент заглубления, дерново-глеевая тяжёлый суглинок, пойма"
+  food_group: "n/a"
+  soil_type: "sod-gley, heavy loam, floodplain"
+  mass_basis: null
+  unit: "cm2/g"
+  n: null
+  gm: null
+  gsd: null
+  am: 1.79
+  sd: null
+  min: null
+  max: null
+  quote: "Дерново-глеевая почва, относящаяся по механическому составу к тяжелому суглинку, расположенному в пойме 1,79"
+  checked_against: "PDF p.39 page image"
+  level: "✅"
+  note: "Table 9 of Izrael and Stukin 1967."
+- id: "izrael1967_burial_coefficient_cs_137_sod_sandy"
+  source: "IZRAEL1967"
+  loc: "печ. стр. 75 (PDF p.39), табл. 9, площадка VIII"
+  quantity: "burial_coefficient"
+  nuclide: "Cs-137"
+  item: "burial coefficient, sod-sandy soil"
+  item_ru: "Коэффициент заглубления, дерново-песчаная почва"
+  food_group: "n/a"
+  soil_type: "sod-sandy"
+  mass_basis: null
+  unit: "cm2/g"
+  n: null
+  gm: null
+  gsd: null
+  am: 0.29
+  sd: null
+  min: null
+  max: null
+  quote: "Дерново-песчаная почва 0,29"
+  checked_against: "PDF p.39 page image"
+  level: "✅"
+  note: "Smallest value in the table (deepest distribution)."
+- id: "izrael1996_dose_rate_per_deposition_cs_137_beta_0_6"
+  source: "IZRAEL1996"
+  loc: "PDF p.160 (гл. 3, рис. 3.7)"
+  quantity: "dose_rate_per_deposition"
+  nuclide: "Cs-137"
+  item: "dose rate 1 m above undisturbed soil, exponential depth beta = 0.6 +- 0.2 cm2/g, converted to air absorbed dose rate"
+  item_ru: "Связь МЭД на 1 м с запасом Cs-137, целина, коэффициент заглубления 0,6 см2/г, пересчитана в нГр/ч"
+  food_group: "n/a"
+  soil_type: "undisturbed land"
+  mass_basis: null
+  unit: "(nGy/h)/(kBq/m2)"
+  n: null
+  gm: null
+  gsd: null
+  am: 1.527
+  sd: null
+  min: 1.298
+  max: 1.756
+  quote: "P мкР/ч = 6,5 · 10⁻³ q мКи/км²"
+  checked_against: "PDF p.160 crop at 2.5x zoom: minus sign of exponent present; +-15 percent variation stated in text"
+  level: "✅"
+  note: "Source: exposure rate 6.5e-3 uR/h per mCi/km2 (global fallout, 1972). am = 6.5*8.69/37; min/max = -15/+15 percent from beta variation. Same author group as Izrael 1990, not fully independent."
+- id: "unscear2000_dose_rate_per_deposition_cs_137_relaxation_3cm"
+  source: "UNSCEAR2000"
+  loc: "Vol. I Annex A, табл. 12, PDF p.65 (печ. 60)"
+  quantity: "dose_rate_per_deposition"
+  nuclide: "Cs-137"
+  item: "absorbed dose rate in air per unit deposition density, relaxation length in soil 3 cm"
+  item_ru: "Мощность поглощённой дозы в воздухе на единицу плотности выпадений, длина релаксации 3 см"
+  food_group: "n/a"
+  soil_type: null
+  mass_basis: null
+  unit: "(nGy/h)/(kBq/m2)"
+  n: null
+  gm: null
+  gsd: null
+  am: 1.014
+  sd: null
+  min: null
+  max: null
+  quote: "137Cs 30.07 a 8.89 97.2"
+  checked_against: "PDF p.65 page image; footnote a read from image (0.869 rad per R; relaxation lengths 0.1, 1, 3 cm)"
+  level: "✅"
+  note: "Source value 8.89 nGy/a per Bq/m2; am = 8.89e3/8766 h. Relaxation length is linear (cm), soil density not stated; with rho 1.5 g/cm3 (own assumption) L = 4.5 g/cm2 and Izrael K_L gives 1.04."
+- id: "tecdoc1162_ambient_dose_rate_per_deposition_cs_137_cf3"
+  source: "TECDOC1162R"
+  loc: "Инструкция Д3, PDF p.116 (печ. 108), определение PDF p.118 (печ. 110)"
+  quantity: "ambient_dose_rate_per_deposition"
+  nuclide: "Cs-137"
+  item: "ambient dose equivalent rate H*(10) at 1 m per unit deposition, incl. surface roughness correction (CF3), Cs-137+Ba-137m"
+  item_ru: "Коэффициент перехода мощности амбиентной дозы CF3, Cs-137+Ba-137m"
+  food_group: "n/a"
+  soil_type: null
+  mass_basis: null
+  unit: "(nSv/h)/(kBq/m2)"
+  n: null
+  gm: null
+  gsd: null
+  am: 2.1
+  sd: null
+  min: null
+  max: null
+  quote: "Cs-137+Ba-137m 2.1E-06"
+  checked_against: "PDF p.116 page image; definition on PDF p.118 image"
+  level: "✅"
+  note: "Source value 2.1E-06 (mSv/h)/(kBq/m2), times 1e6 = 2.1 nSv/h per kBq/m2. H*(10), not air kerma; conversion to kerma needs H*(10)/Ka at 662 keV (about 1.2 Sv/Gy per ICRP 74, NOT verified in library). Based on RASCAL (NRC95)."
+- id: "marchenko2023_ambient_dose_rate_per_deposition_cs_137_bryansk_forest"
+  source: "MARCHENKO2023"
+  loc: "Радиация и риск 2023 т.32 №4, табл. 4, PDF p.7 (печ. 73)"
+  quantity: "ambient_dose_rate_per_deposition"
+  nuclide: "Cs-137"
+  item: "normalized ambient dose equivalent rate from Cs-137 in Bryansk forests, summer"
+  item_ru: "Нормированная МАЭД от Cs-137 в лесах Брянской обл., лето"
+  food_group: "n/a"
+  soil_type: "forest (conifer and deciduous)"
+  mass_basis: null
+  unit: "(nSv/h)/(kBq/m2)"
+  n: 1107
+  gm: null
+  gsd: null
+  am: 1.455
+  sd: 0.846
+  min: null
+  max: null
+  quote: "Число наблюдений 978 129 1107; Среднее 1,448 1,504 1,455"
+  checked_against: ".md text layer table; order of magnitude cross-checked by 2.37 uSv/h at 2.8 MBq/m2 (page 72)"
+  level: "✅"
+  note: "Source unit 1e-3 (uSv/h)/(kBq/m2) = nSv/h per kBq/m2. Conifer 1.448 (n 978), deciduous 1.504 (n 129); text quotes ref [8] value 1.36. H*(10), field data, includes forest attenuation."
+- id: "panchenko2000_kp_cs_137_rovno_mushrooms"
+  source: "PANCHENKO2000"
+  loc: "PDF p.34, табл. 35 (данные «10 лет, Украина, 1996»)"
+  quantity: "KP"
+  nuclide: "Cs-137"
+  item: "mushrooms, Rovno region (Ukrainian Polesie)"
+  item_ru: "Грибы, Ровенская обл."
+  food_group: "mushrooms"
+  soil_type: "light Polesie soils"
+  mass_basis: "fresh"
+  mass_basis_status: "stated"
+  mass_basis_note: "Общая оговорка автора: «в этих и многих последующих результатах используется сырой вес продукта» (Панченко 2000, PDF с. 19); к табл. 35 отдельно не привязана (gaps-fr32 §2.4)."
+  unit: "(Bq/kg)/(kBq/m2)"
+  n: null
+  gm: null
+  gsd: null
+  am: 83.0
+  sd: null
+  min: 57.0
+  max: 109.0
+  quote: "Грибы 57 83 109"
+  checked_against: "PDF p.34 text layer"
+  level: "✅"
+  note: "Mean and range of the sample. Mass basis not stated in the table (text p.19 says fresh weight is used in most results: assumption)."
+- id: "panchenko2000_kp_cs_137_rovno_berries"
+  source: "PANCHENKO2000"
+  loc: "PDF p.34, табл. 35"
+  quantity: "KP"
+  nuclide: "Cs-137"
+  item: "forest berries, Rovno region (Ukrainian Polesie)"
+  item_ru: "Лесные ягоды, Ровенская обл."
+  food_group: "berries"
+  soil_type: "light Polesie soils"
+  mass_basis: "fresh"
+  mass_basis_status: "stated"
+  mass_basis_note: "Общая оговорка автора: «в этих и многих последующих результатах используется сырой вес продукта» (Панченко 2000, PDF с. 19); к табл. 35 отдельно не привязана (gaps-fr32 §2.4)."
+  unit: "(Bq/kg)/(kBq/m2)"
+  n: null
+  gm: null
+  gsd: null
+  am: 10.0
+  sd: null
+  min: 4.0
+  max: 18.0
+  quote: "Ягоды 4 10 18"
+  checked_against: "PDF p.34 text layer"
+  level: "✅"
+  note: "Mass basis not stated in the table (assumed fresh, see text p.19)."
+- id: "panchenko2000_kp_cs_137_mushroom_basket_weighted"
+  source: "PANCHENKO2000"
+  loc: "PDF p.34-35"
+  quantity: "KP"
+  nuclide: "Cs-137"
+  item: "weighted mean for the mushroom basket, various regions"
+  item_ru: "Средневзвешенное для грибной корзины"
+  food_group: "mushrooms"
+  soil_type: null
+  mass_basis: "fresh"
+  mass_basis_status: "stated"
+  mass_basis_note: "Общая оговорка автора: «в этих и многих последующих результатах используется сырой вес продукта» (Панченко 2000, PDF с. 19); к табл. 35 отдельно не привязана (gaps-fr32 §2.4)."
+  unit: "(Bq/kg)/(kBq/m2)"
+  n: null
+  gm: null
+  gsd: null
+  am: 9.0
+  sd: null
+  min: 4.0
+  max: 20.0
+  quote: "Средневзвешанное значение коэффициента перехода для грибной корзины оценивается величиной близкой к 9 Бк⋅кг-1/(кБк⋅м-2), а разброс значений ... от 4 до 20"
+  checked_against: "PDF p.34-35 text layer"
+  level: "✅"
+  note: "Author estimate for dose calculations; individual places or diets up to 80-100. Mass basis not stated (fresh assumed)."
+- id: "panchenko2000_kp_cs_137_bilberry_1986_dry_deposition_fresh"
+  source: "PANCHENKO2000"
+  loc: "PDF p.24"
+  quantity: "KP"
+  nuclide: "Cs-137"
+  item: "bilberry edible part, dry deposition about 2.5 months before ripening (Chernobyl 1986), fresh weight"
+  item_ru: "Черника, сухие выпадения 1986, сырой вес"
+  food_group: "berries"
+  soil_type: null
+  mass_basis: "fresh"
+  unit: "(Bq/kg)/(kBq/m2)"
+  n: null
+  gm: null
+  gsd: null
+  am: null
+  sd: null
+  min: 30.0
+  max: 70.0
+  quote: "200÷400 Бк⋅кг-1/(кБк⋅м-2) для сухо-воздушного веса или 30÷70 Бк⋅кг-1/(кБк⋅м-2) для сырого веса ягод"
+  checked_against: "PDF p.24 text layer"
+  level: "✅"
+  note: "Foliar (aerial) contamination in the deposition year, total activity of radionuclides; not root uptake."
+- id: "panchenko2000_kp_cs_137_bilberry_1986_dry_deposition_dry"
+  source: "PANCHENKO2000"
+  loc: "PDF p.24"
+  quantity: "KP"
+  nuclide: "Cs-137"
+  item: "bilberry edible part, dry deposition 1986, air-dry weight"
+  item_ru: "Черника, сухие выпадения 1986, сухо-воздушный вес"
+  food_group: "berries"
+  soil_type: null
+  mass_basis: "dry"
+  unit: "(Bq/kg)/(kBq/m2)"
+  n: null
+  gm: null
+  gsd: null
+  am: null
+  sd: null
+  min: 200.0
+  max: 400.0
+  quote: "200÷400 Бк⋅кг-1/(кБк⋅м-2) для сухо-воздушного веса"
+  checked_against: "PDF p.24 text layer"
+  level: "✅"
+  note: "Air-dry weight (сухо-воздушный вес), same measurement as the fresh-weight record; ratio 5.7."
+- id: "panchenko2000_kp_cs_137_polish_bolete_5km_zone_dry"
+  source: "PANCHENKO2000"
+  loc: "PDF p.33 (данные Щеглов 1999)"
+  quantity: "KP"
+  nuclide: "Cs-137"
+  item: "bay bolete (Imleria badia), 5 km zone of ChNPP, dry weight"
+  item_ru: "Польский гриб, 5-километровая зона ЧАЭС, сухой вес"
+  food_group: "mushrooms"
+  soil_type: null
+  mass_basis: "dry"
+  unit: "(Bq/kg)/(kBq/m2)"
+  n: null
+  gm: null
+  gsd: null
+  am: 3000.0
+  sd: null
+  min: 900.0
+  max: 6000.0
+  quote: "КП изменяется от 900 до 6000 (Бк/кг сух.веса)/(кБк/м2) при среднем значении 3000"
+  checked_against: "PDF p.33 text layer"
+  level: "✅"
+  note: "Deposition 400-10000 kBq/m2, very variable; accumulator species."
+- id: "radiobiology_textbook_kp_cs_137_hay_sod_podzol_sandy_loam"
+  source: "RADIOBIOL_TEXTBOOK"
+  loc: "Учебник по радиобиологии, PDF p.200-201"
+  quantity: "KP"
+  nuclide: "Cs-137"
+  item: "hay of perennial grasses, sod-podzol sandy loam, exchangeable K 150 mg/kg"
+  item_ru: "Сено многолетних злаковых трав, дерново-подзолистая супесчаная, обменный K 150 мг/кг"
+  food_group: "hay"
+  soil_type: "sod-podzol sandy loam"
+  mass_basis: "fresh"
+  mass_basis_status: "assumed"
+  mass_basis_note: "Масса сена не названа; принято на исходный продукт по указанию оператора 2026-10-01 (gaps-fr32 §2.5)."
+  unit: "(Bq/kg)/(kBq/m2)"
+  n: null
+  gm: null
+  gsd: null
+  am: 0.8
+  sd: null
+  min: null
+  max: null
+  quote: "коэффициента пропорциональности (удельная радиоактивность 1 кг продукции при плотности загрязнения почв 1 Ки/км2 или 37 кБк/м2), который равен 0,80 нКи/кг"
+  checked_against: "PDF p.200-201 text layer; example 0.8*10*37 = 296 Bq/kg"
+  level: "✅"
+  note: "Source unit nCi/kg per Ci/km2 (1 nCi = 37 Bq, 1 Ci/km2 = 37 kBq/m2), numerically identical to (Bq/kg)/(kBq/m2). Mass basis not stated (hay)."
+- id: "bgtu2018_kp_cs_137_mushrooms_screening"
+  source: "BGTU2018"
+  loc: "Труды БГТУ 2018 сер.1 №2, PDF p.5"
+  quantity: "KP"
+  nuclide: "Cs-137"
+  item: "coefficient Q soil to mushrooms adopted for the dose formula H = k*m*As*Q"
+  item_ru: "Коэффициент перехода Cs-137 из почвы в грибы, принят для формулы дозы"
+  food_group: "mushrooms"
+  soil_type: null
+  mass_basis: "fresh"
+  mass_basis_status: "assumed"
+  mass_basis_note: "Скрининговое значение формулы дозы, масса не названа; принято на исходный продукт по указанию оператора 2026-10-01 (gaps-fr32 §2.5)."
+  unit: "(Bq/kg)/(kBq/m2)"
+  n: null
+  gm: null
+  gsd: null
+  am: 10.0
+  sd: null
+  min: null
+  max: null
+  quote: "Q – коэффициент перехода цезия из почвы в грибы, принят равным 0,01 м2/кг."
+  checked_against: "PDF p.5 text layer"
+  level: "✅"
+  note: "Source value 0.01 m2/kg, times 1000 = 10 (Bq/kg)/(kBq/m2). Screening value adopted in a Belarusian dose estimate, not a measurement; A_s in Bq/m2. Mass basis not stated (fresh-mushroom limits 370 Bq/kg used in the same paper)."
+- id: "radiobiology_textbook_fm_sr_90_cow_milk_chronic"
+  source: "RADIOBIOL_TEXTBOOK"
+  loc: "Учебник по радиобиологии, PDF p.143"
+  quantity: "Fm"
+  nuclide: "Sr-90"
+  item: "cow milk, chronic dietary intake, share per 1 litre"
+  item_ru: "Молоко коровье, хроническое поступление, доля в 1 л"
+  food_group: "milk"
+  soil_type: null
+  mass_basis: null
+  unit: "% of daily ration intake per 1 kg (L) of product"
+  n: null
+  gm: null
+  gsd: null
+  am: null
+  sd: null
+  min: 0.05
+  max: 0.2
+  quote: "При хроническом поступлении с кормом 90Sr в 1 литр молока его переходит 0,05...0,2% по отношению к поступлению с рационом."
+  checked_against: "PDF p.143 text layer"
+  level: "✅"
+  note: "Textbook range, no primary source cited on the page. Comparison value for the VURS Sr-90 milk coefficient (see end-of-report line)."
+- id: "radiobiology_textbook_fm_cs_137_cow_milk_chronic"
+  source: "RADIOBIOL_TEXTBOOK"
+  loc: "Учебник по радиобиологии, PDF p.143"
+  quantity: "Fm"
+  nuclide: "Cs-137"
+  item: "cow milk, chronic dietary intake, share per 1 litre"
+  item_ru: "Молоко коровье, хроническое поступление, доля в 1 л"
+  food_group: "milk"
+  soil_type: null
+  mass_basis: null
+  unit: "% of daily ration intake per 1 kg (L) of product"
+  n: null
+  gm: null
+  gsd: null
+  am: null
+  sd: null
+  min: 0.25
+  max: 1.0
+  quote: "При этих условиях в молоко коров переходит 0,25...1% 137Cs."
+  checked_against: "PDF p.143 text layer"
+  level: "✅"
+  note: "Same page as the Sr-90 record; MCHS 2009 gives 1.0 percent (existing record mchs2009_fm_cs_137_cow_s_milk)."
+- id: "tecdoc1616_cr_u_234_forest_mushrooms_baeza2006"
+  source: "TECDOC1616"
+  loc: "табл. 10, PDF p.356 (печ. 350); первичный источник Baeza and Guillen 2006, ссылка [54]"
+  quantity: "CR"
+  nuclide: "U-234"
+  item: "forest mushrooms, 8 mycorrhizal species, Spain (soil to fruit body)"
+  item_ru: "Грибы, 8 микоризных видов, Испания (почва - плодовое тело)"
+  food_group: "mushrooms"
+  soil_type: "forest soil"
+  mass_basis: "dry"
+  unit: "(Bq/kg)/(Bq/kg)"
+  n: 8
+  gm: 0.181
+  gsd: null
+  am: 0.239
+  sd: null
+  min: 0.04
+  max: 0.49
+  quote: "TABLE 10. TRANSFER FACTORS FROM FOREST SOIL TO MUSHROOMS FOR NATURALLY OCCURING RADIONUCLIDES (Bq kg-1)/ (Bq kg-1), DW [54]"
+  checked_against: "PDF p.356 page image (U-234, U-238, Th-228 columns all species); abstract of Baeza and Guillen 2006 (U TF 0.043-0.49, OSTI 20852428)"
+  level: "✅"
+  note: "Dry weight of mushroom to dry weight of soil. AM, GM, min, max are statistics derived by me over per-species values; the table prints only per-species values, no aggregates. Derived over 8 species (Amanita muscaria, Hebeloma cylindrosporum, Tricholoma equestre, T. pessandatum, T. terreum, Lactarius deliciosus, Rhizopogon roseolus, Russula cessans). Max Hebeloma cylindrosporum 0.49 (not edible); edible species 0.04-0.24. Primary paper not in library (abstract only)."
+- id: "tecdoc1616_cr_u_238_forest_mushrooms_baeza2006"
+  source: "TECDOC1616"
+  loc: "табл. 10, PDF p.356 (печ. 350); Baeza and Guillen 2006 [54]"
+  quantity: "CR"
+  nuclide: "U-238"
+  item: "forest mushrooms, 8 mycorrhizal species, Spain"
+  item_ru: "Грибы, 8 микоризных видов, Испания"
+  food_group: "mushrooms"
+  soil_type: "forest soil"
+  mass_basis: "dry"
+  unit: "(Bq/kg)/(Bq/kg)"
+  n: 8
+  gm: 0.176
+  gsd: null
+  am: 0.229
+  sd: null
+  min: 0.04
+  max: 0.46
+  quote: "Amanita muscaria (M, NE) 3.6 × 10-1 ... 3.3 × 10-1"
+  checked_against: "PDF p.356 page image"
+  level: "✅"
+  note: "Dry to dry. AM, GM, min, max are statistics derived by me over per-species values; the table prints only per-species values, no aggregates. Derived over 8 species (Amanita muscaria, Hebeloma cylindrosporum, Tricholoma equestre, T. pessandatum, T. terreum, Lactarius deliciosus, Rhizopogon roseolus, Russula cessans). Edible species: Tricholoma equestre 0.13, T. terreum 0.27, Lactarius deliciosus 0.06, Rhizopogon roseolus 0.04."
+- id: "tecdoc1616_cr_th_228_forest_mushrooms_baeza2006"
+  source: "TECDOC1616"
+  loc: "табл. 10, PDF p.356 (печ. 350); Baeza and Guillen 2006 [54]"
+  quantity: "CR"
+  nuclide: "Th-228"
+  item: "forest mushrooms, 8 mycorrhizal species, Spain"
+  item_ru: "Грибы, 8 микоризных видов, Испания"
+  food_group: "mushrooms"
+  soil_type: "forest soil"
+  mass_basis: "dry"
+  unit: "(Bq/kg)/(Bq/kg)"
+  n: 8
+  gm: 0.136
+  gsd: null
+  am: 0.191
+  sd: null
+  min: 0.03
+  max: 0.39
+  quote: "TABLE 10 ... 228Th AM SD"
+  checked_against: "PDF p.356 page image"
+  level: "✅"
+  note: "Dry to dry. AM, GM, min, max are statistics derived by me over per-species values; the table prints only per-species values, no aggregates. Derived over 8 species (Amanita muscaria, Hebeloma cylindrosporum, Tricholoma equestre, T. pessandatum, T. terreum, Lactarius deliciosus, Rhizopogon roseolus, Russula cessans). Edible species: T. equestre 0.14, T. terreum 0.39, L. deliciosus 0.03, R. roseolus 0.03."
+- id: "tecdoc1616_cr_th_230_forest_mushrooms_baeza2006"
+  source: "TECDOC1616"
+  loc: "табл. 10, PDF p.356 (печ. 350); Baeza and Guillen 2006 [54]"
+  quantity: "CR"
+  nuclide: "Th-230"
+  item: "forest mushrooms, 8 mycorrhizal species, Spain"
+  item_ru: "Грибы, 8 микоризных видов, Испания"
+  food_group: "mushrooms"
+  soil_type: "forest soil"
+  mass_basis: "dry"
+  unit: "(Bq/kg)/(Bq/kg)"
+  n: 8
+  gm: 0.089
+  gsd: null
+  am: 0.116
+  sd: null
+  min: 0.03
+  max: 0.22
+  quote: "TABLE 10 ... 230Th AM SD"
+  checked_against: "PDF p.356 page image"
+  level: "✅"
+  note: "Dry to dry. AM, GM, min, max are statistics derived by me over per-species values; the table prints only per-species values, no aggregates. Derived over 8 species (Amanita muscaria, Hebeloma cylindrosporum, Tricholoma equestre, T. pessandatum, T. terreum, Lactarius deliciosus, Rhizopogon roseolus, Russula cessans). Edible species: T. equestre 0.05, T. terreum 0.19, L. deliciosus 0.03, R. roseolus 0.03."
+- id: "tecdoc1616_cr_th_232_forest_mushrooms_baeza2006"
+  source: "TECDOC1616"
+  loc: "табл. 10, PDF p.356 (печ. 350); Baeza and Guillen 2006 [54]"
+  quantity: "CR"
+  nuclide: "Th-232"
+  item: "forest mushrooms, 8 mycorrhizal species, Spain"
+  item_ru: "Грибы, 8 микоризных видов, Испания"
+  food_group: "mushrooms"
+  soil_type: "forest soil"
+  mass_basis: "dry"
+  unit: "(Bq/kg)/(Bq/kg)"
+  n: 8
+  gm: 0.159
+  gsd: null
+  am: 0.249
+  sd: null
+  min: 0.03
+  max: 0.62
+  quote: "Hebeloma cylindrosporum (M, NE) ... 6.2 × 10-1"
+  checked_against: "PDF p.356 page image (232Th column, values match .md); abstract Th TF 0.030-0.62"
+  level: "✅"
+  note: "Dry to dry. AM, GM, min, max are statistics derived by me over per-species values; the table prints only per-species values, no aggregates. Derived over 8 species (Amanita muscaria, Hebeloma cylindrosporum, Tricholoma equestre, T. pessandatum, T. terreum, Lactarius deliciosus, Rhizopogon roseolus, Russula cessans). Edible species: T. equestre 0.13, T. terreum 0.47, L. deliciosus 0.03, R. roseolus 0.03."
+- id: "tecdoc1616_cr_ra_226_forest_mushrooms_baeza2006"
+  source: "TECDOC1616"
+  loc: "табл. 10, PDF p.356 (печ. 350); Baeza and Guillen 2006 [54]"
+  quantity: "CR"
+  nuclide: "Ra-226"
+  item: "forest mushrooms, 5 mycorrhizal species with data, Spain"
+  item_ru: "Грибы, 5 видов с данными, Испания"
+  food_group: "mushrooms"
+  soil_type: "forest soil"
+  mass_basis: "dry"
+  unit: "(Bq/kg)/(Bq/kg)"
+  n: 5
+  gm: 0.359
+  gsd: null
+  am: 0.689
+  sd: null
+  min: 0.025
+  max: 1.4
+  quote: "Russula cessans (M, NE) ... 1.4 9 × 10-1"
+  checked_against: "PDF p.356 page image (Ra column: A. curtipes 0.7, A. muscaria 1.1, H. cylindrosporum 0.22, T. equestre 0.025, R. cessans 1.4)"
+  level: "✅"
+  note: "Dry to dry. AM, GM, min, max are statistics derived by me over per-species values; the table prints only per-species values, no aggregates. Derived over 5 species (Amanita curtipes, A. muscaria, Hebeloma cylindrosporum, Tricholoma equestre, Russula cessans); the other 4 of 9 listed species have no Ra-226 value. Only T. equestre (0.025) is edible."
+- id: "shevchenko2020_cr_th_232_berries_semipalatinsk_upper_bound"
+  source: "SHEVCHENKO2020"
+  loc: "Мед. радиол. и радиац. безопасность 2020 т.29 №3, табл. 1, PDF p.3-4"
+  quantity: "CR"
+  nuclide: "Th-232"
+  item: "rosehip, guelder rose, currant, hawthorn berries; berry activity below detection limit"
+  item_ru: "Шиповник, калина, смородина, боярышник; ниже предела обнаружения"
+  food_group: "berries"
+  soil_type: "chestnut soils, Semipalatinsk test site area"
+  mass_basis: "dry"
+  unit: "(Bq/kg)/(Bq/kg)"
+  n: 9
+  gm: null
+  gsd: null
+  am: null
+  sd: null
+  min: null
+  max: 0.5
+  quote: "232Th и 226Ra оказалось ниже предела обнаружения ... КН 232Th и 226Ra рассчитаны оценочно"
+  checked_against: ".md table 1 (MinerU OCR); detection limits in berries 0.5-1.6 Bq/kg"
+  level: "✅"
+  note: "upper bound, below detection limit. Nine samples, per-sample upper bounds <0.014 ... <0.5, mean of upper bounds <0.142. Dry matter (ash recalculated to dry matter), soil air-dry. Not an estimate of the true value."
+- id: "shevchenko2020_cr_ra_226_berries_semipalatinsk_upper_bound"
+  source: "SHEVCHENKO2020"
+  loc: "Мед. радиол. и радиац. безопасность 2020 т.29 №3, табл. 1, PDF p.3-4"
+  quantity: "CR"
+  nuclide: "Ra-226"
+  item: "same berries; berry activity below detection limit"
+  item_ru: "Те же ягоды; ниже предела обнаружения"
+  food_group: "berries"
+  soil_type: "chestnut soils, Semipalatinsk test site area"
+  mass_basis: "dry"
+  unit: "(Bq/kg)/(Bq/kg)"
+  n: 9
+  gm: null
+  gsd: null
+  am: null
+  sd: null
+  min: null
+  max: 0.48
+  quote: "Среднее арифметическое ... <0,31"
+  checked_against: ".md table 1 (MinerU OCR); detection limits in berries 0.9-8.2 Bq/kg"
+  level: "✅"
+  note: "upper bound, below detection limit. Nine samples, per-sample upper bounds <0.08 ... <0.48, mean of upper bounds <0.31. Dry matter basis."
+- id: "dyakova2022_cr_th_232_medicinal_plants_voronezh"
+  source: "DYAKOVA2022"
+  loc: "Вестник Смоленской ГМА 2022 т.21 №3, табл. 1, PDF p.4"
+  quantity: "CR"
+  nuclide: "Th-232"
+  item: "10 medicinal plant raw materials (herbs, leaves, flowers, roots), Voronezh region; not berries"
+  item_ru: "10 видов лекарственного растительного сырья, Воронежская обл. (не ягоды)"
+  food_group: "medicinal_plants"
+  soil_type: "chernozem"
+  mass_basis: "dry"
+  unit: "(Bq/kg)/(Bq/kg)"
+  n: 10
+  gm: null
+  gsd: null
+  am: 0.28
+  sd: null
+  min: 0.13
+  max: 0.49
+  quote: "торий-232 (его коэффициент накопления варьирует от 0,15 в цветках липы сердцевидной до 0,49 в корнях лопуха обыкновенного и в среднем составляет 0,28)"
+  checked_against: ".md table 1; text says min 0.15 (lime flowers) but the table has 0.13 for yarrow herb: min taken from the table"
+  level: "✅"
+  note: "Air-dry raw material (воздушно-сухая проба) to soil; proxy for plant uptake only. Shade-dried at 40-45 C."
+- id: "dyakova2022_cr_ra_226_medicinal_plants_voronezh"
+  source: "DYAKOVA2022"
+  loc: "Вестник Смоленской ГМА 2022 т.21 №3, табл. 1, PDF p.4"
+  quantity: "CR"
+  nuclide: "Ra-226"
+  item: "10 medicinal plant raw materials, Voronezh region; not berries"
+  item_ru: "10 видов лекарственного растительного сырья, Воронежская обл. (не ягоды)"
+  food_group: "medicinal_plants"
+  soil_type: "chernozem"
+  mass_basis: "dry"
+  unit: "(Bq/kg)/(Bq/kg)"
+  n: 10
+  gm: null
+  gsd: null
+  am: 0.85
+  sd: null
+  min: 0.46
+  max: 1.93
+  quote: "коэффициент накопления радия-226 - от 0,46 в цветках пижмы обыкновенной до 1,93 в корнях лопуха обыкновенного"
+  checked_against: ".md table 1 (mean 0.85 in the last row)"
+  level: "✅"
+  note: "Air-dry raw material to soil; proxy for plant uptake only."
+- id: "ppsr2025_cr_ra_226_honey_fungus_contaminated_site"
+  source: "PPSR2025"
+  loc: "Сборник тезисов ППСР-2025, PDF p.110"
+  quantity: "CR"
+  nuclide: "Ra-226"
+  item: "honey fungus (Armillaria) at a Ra-contaminated forest plot, Novosibirsk"
+  item_ru: "Опята, радиевый загрязнённый лесной участок, Новосибирск"
+  food_group: "mushrooms"
+  soil_type: "contaminated forest soil"
+  mass_basis: null
+  unit: "(Bq/kg)/(Bq/kg)"
+  n: null
+  gm: null
+  gsd: null
+  am: 0.65
+  sd: null
+  min: null
+  max: null
+  quote: "опята (3100 Бк/кг, Кн=0,65) и ложные опята (790 Бк/кг, Кн=0,49)"
+  checked_against: "conference abstract text"
+  level: "⚠️"
+  note: "Conference abstract from an artificially Ra-contaminated site (soil mean 2940 Bq/kg); mass basis not stated. Do not use as background. False honey fungus 0.49, tinder fungi 0.33."

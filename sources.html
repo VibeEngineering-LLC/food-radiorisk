@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Источники данных — оценка дозы и риска от пищевых продуктов</title>
+<link rel="stylesheet" href="src/ui/styles.css">
+<style>
+main{max-width:1100px;margin:0 auto;padding:16px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;vertical-align:top;padding:.4rem .5rem;border-bottom:1px solid var(--line)}
+td.code{font-family:monospace;font-size:.8rem;color:var(--muted);white-space:nowrap}
+p,li{max-width:78ch}
+a{word-break:break-all}
+</style>
+</head>
+<body>
+<main>
+<p><a href="index.html">← к расчёту</a></p>
+<h1>Источники данных</h1>
+<p>Каждое число в расчёте берётся из записи данных с указанием документа и места в нём (таблица, страница). Ниже — все документы: полное название, авторы, год, выходные данные и ссылка, если она есть. Код в правом столбце — как документ обозначен в таблице «Откуда каждое число». Реквизит, которого нет в исходных материалах, помечен «не установлено».</p>
+
+<h2>Справочники, публикации, статьи</h2>
+<div id="refs">Загрузка…</div>
+
+<h2>Нормативные документы</h2>
+<div id="norms">Загрузка…</div>
+</main>
+
+<script type="module">
+const [src, short, lru, lfor] = await Promise.all([
+  fetch('public/data/sources.json').then(r => r.json()),
+  fetch('src/ui/source_short.json').then(r => r.json()),
+  fetch('public/data/limits_ru.json').then(r => r.json()),
+  fetch('public/data/limits_foreign.json').then(r => r.json())]);
+
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+const NA = '<span class="muted">не установлено</span>';
+
+function link(v) {
+  if (!v) return null;
+  const s = String(v).trim();
+  if (!s) return null;
+  let href = s;
+  let text = s;
+  if (s.startsWith('doi:')) {
+    href = 'https://doi.org/' + s.slice(4);
+    text = s;
+  } else if (s.startsWith('https://doi.org/')) {
+    href = s;
+    text = s;
+  } else {
+    href = s;
+    text = s;
+  }
+  return `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(text)}</a>`;
+}
+
+// REFS
+const entries = Object.entries(src.sources);
+const dupes = {};
+const unique = [];
+for (const [code, rec] of entries) {
+  if (rec.same_as != null) {
+    if (!dupes[rec.same_as]) dupes[rec.same_as] = [];
+    dupes[rec.same_as].push(code);
+  } else {
+    unique.push([code, rec]);
+  }
+}
+
+unique.sort((a, b) => {
+  const ka = short[a[0]] || a[0];
+  const kb = short[b[0]] || b[0];
+  return ka.localeCompare(kb, 'ru');
+});
+
+let refsHtml = '<table><thead><tr><th>Документ</th><th>Авторы</th><th>Год</th><th>Выходные данные</th><th>Ссылка</th><th>Код</th></tr></thead><tbody>';
+
+for (const [code, rec] of unique) {
+  const sTitle = short[code] || code;
+  let docCell = `<strong>${esc(sTitle)}</strong>`;
+  if (rec.title_ru) docCell += `<br>${esc(rec.title_ru)}`;
+  if (rec.title && rec.title !== rec.title_ru) docCell += `<br><i>Оригинал: </i>${esc(rec.title)}`;
+
+  const authors = rec.authors || NA;
+  const year = rec.year != null ? esc(String(rec.year)) : NA;
+  const pub = rec.publisher || NA;
+
+  let links = [];
+  if (rec.doi) links.push(link(rec.doi));
+  if (rec.url) links.push(link(rec.url));
+  const linkCell = links.length ? links.join('<br>') : NA;
+
+  let codeCell = esc(code);
+  if (dupes[code]) {
+    codeCell += '<br>' + dupes[code].map(c => esc(c)).join(', ');
+  }
+
+  refsHtml += `<tr><td>${docCell}</td><td>${authors}</td><td>${year}</td><td>${pub}</td><td>${linkCell}</td><td class="code">${codeCell}</td></tr>`;
+}
+refsHtml += '</tbody></table>';
+document.getElementById('refs').innerHTML = `<div class="tablewrap">${refsHtml}</div>`;
+
+// NORMS
+const JUR = {EAEU:'ЕАЭС', RU:'Россия', BY:'Беларусь', Codex:'Кодекс Алиментариус (ФАО/ВОЗ)', EU:'Европейский союз', Japan:'Япония', USA:'США', IAEA:'МАГАТЭ'};
+const jurOrder = ['EAEU','RU','BY','Codex','EU','Japan','USA','IAEA'];
+
+const allRecs = [...(lru.records || []), ...(lfor.records || [])];
+const docMap = new Map();
+
+for (const r of allRecs) {
+  if (!r.document) continue;
+  const d = String(r.document);
+  if (!docMap.has(d)) {
+    docMap.set(d, { count: 0, jur: r.jurisdiction || null, url: null });
+  }
+  const entry = docMap.get(d);
+  entry.count++;
+  if (entry.url == null && r.url) entry.url = r.url;
+}
+
+const normsArr = Array.from(docMap.entries()).map(([doc, info]) => ({ doc, ...info }));
+
+normsArr.sort((a, b) => {
+  const ja = jurOrder.includes(a.jur) ? jurOrder.indexOf(a.jur) : 999;
+  const jb = jurOrder.includes(b.jur) ? jurOrder.indexOf(b.jur) : 999;
+  if (ja !== jb) return ja - jb;
+  return a.doc.localeCompare(b.doc, 'ru');
+});
+
+let normsHtml = '<table><thead><tr><th>Документ</th><th>Юрисдикция</th><th>Ссылка</th><th>Записей</th></tr></thead><tbody>';
+for (const item of normsArr) {
+  const jurLabel = JUR[item.jur] || (item.jur ? esc(item.jur) : NA);
+  const linkCell = item.url ? link(item.url) : NA;
+  normsHtml += `<tr><td>${esc(item.doc)}</td><td>${jurLabel}</td><td>${linkCell}</td><td>${item.count}</td></tr>`;
+}
+normsHtml += '</tbody></table>';
+document.getElementById('norms').innerHTML = `<div class="tablewrap">${normsHtml}</div>`;
+
+</script>
+</body>
+</html>

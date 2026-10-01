@@ -1,0 +1,5 @@
+[
+ {"name": "no_drying_multiply", "from": "      rawBqPerKg *= input.dryingFactor;\n", "to": "\n"},
+ {"name": "drying_divide", "from": "      rawBqPerKg *= input.dryingFactor;", "to": "      rawBqPerKg /= input.dryingFactor;"},
+ {"name": "no_factor_check", "from": "if (!(Number.isFinite(input.dryingFactor) && input.dryingFactor >= 1)) throw", "to": "if (false) throw"}
+]

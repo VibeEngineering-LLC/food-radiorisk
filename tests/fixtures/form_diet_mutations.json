@@ -1,0 +1,4 @@
+[
+ {"name": "weeks_ignored", "from": "v[0] * v[1] * v[2];", "to": "v[0] * v[1];"},
+ {"name": "empty_as_zero", "from": "return v.some(x => x === null) ? null :", "to": "return false ? null :"}
+]

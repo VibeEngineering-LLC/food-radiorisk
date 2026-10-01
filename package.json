@@ -1,0 +1,11 @@
+{
+  "name": "food-radiorisk",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Калькулятор дозы и риска от радионуклидов в пище: удельная активность → обработка → рацион → e(g) → ЛБМ-риск → нормативы",
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.js\""
+  },
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,7 @@
+[
+ {"name": "dried_not_preferred", "from": "isDried ? /сух/i.test(r.food_group_ru) : !/сух/i.test(r.food_group_ru)", "to": "!/сух/i.test(r.food_group_ru)"},
+ {"name": "stop_ignored",        "from": "!STOP_WORDS.has(w)", "to": "true"},
+ {"name": "dried_group_ignored", "from": "state === 'dried' ? (category.limitDried ?? category.limitFresh) : category.limitFresh", "to": "category.limitFresh"},
+ {"name": "mushroom_default",    "from": "r.item_ru.includes('грибы съедобные')", "to": "r.item_ru.includes('zzz')"},
+ {"name": "null_limit_used",     "from": "isFinite(r.value) && r.value > 0", "to": "true"}
+]

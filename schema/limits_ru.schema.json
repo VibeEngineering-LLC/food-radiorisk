@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "food-radiorisk/limits_ru.schema.json",
+  "title": "Запись норматива РФ/ЕАЭС (ТР ТС, СанПиН, МУК, НРБ)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "jurisdiction", "document", "edition", "status", "food_group_ru", "food_group_code", "nuclide", "value", "unit", "basis", "note", "loc", "checked_against", "level", "unit_norm", "unit_factor", "unit_inferred"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9_.\\-]+$"},
+    "jurisdiction": {"type": "string", "minLength": 1},
+    "document": {"type": "string", "minLength": 1},
+    "edition": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "minLength": 1},
+    "food_group_ru": {"type": "string", "minLength": 1},
+    "food_group_code": {"type": "string", "minLength": 1},
+    "also_codes": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "nuclide": {"type": "string", "minLength": 1},
+    "value": {"type": ["number", "null"]},
+    "unit": {"type": "string"},
+    "basis": {"type": "string"},
+    "note": {"type": "string"},
+    "loc": {"type": "string", "minLength": 1},
+    "checked_against": {"type": "string", "minLength": 1},
+    "level": {"enum": ["✅", "📗", "⚠️"]},
+    "source_anomaly": {"type": "string", "minLength": 1},
+    "unit_norm": {"type": ["string", "null"]},
+    "unit_factor": {"type": ["number", "null"]},
+    "unit_inferred": {"type": "boolean"}
+  }
+}

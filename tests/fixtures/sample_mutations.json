@@ -1,0 +1,12 @@
+[
+ {"name": "k_multiplied",        "from": "return measuredBqPerKg / concentrationFactor;", "to": "return measuredBqPerKg * concentrationFactor;"},
+ {"name": "basis_vocab",         "from": "transferBasis !== productBasis;", "to": "transferBasis !== productState;"},
+ {"name": "fresh_to_dry_inv",    "from": "return activityBqPerKg * 100 / dryMatterPercent;", "to": "return activityBqPerKg * dryMatterPercent / 100;"},
+ {"name": "dried_to_fresh_inv",  "from": "return activityBqPerKg * dryMatterPercent / 100;\n    }\n  }", "to": "return activityBqPerKg * 100 / dryMatterPercent;\n    }\n  }"},
+ {"name": "no_kilo",             "from": "return activityBqPerKg / (1000 * coeffM2PerKg);", "to": "return activityBqPerKg / coeffM2PerKg;"},
+ {"name": "range_swapped",       "from": "const min = calc(coeffs.max);", "to": "const min = calc(coeffs.min);"},
+ {"name": "unbounded_lost",      "from": "coeffs.min === 0;", "to": "coeffs.min === -1;"},
+ {"name": "ci_factor",           "from": "return kBqPerM2 / KBQ_PER_M2_PER_CI_PER_KM2;", "to": "return kBqPerM2 * KBQ_PER_M2_PER_CI_PER_KM2;"},
+ {"name": "gm_ignored",          "from": "(typeof rec.gm === \"number\" && Number.isFinite(rec.gm) ? rec.gm : null)", "to": "null"},
+ {"name": "unit_factor_ignored", "from": "? v * rec.unit_factor : null", "to": "? v : null"}
+]

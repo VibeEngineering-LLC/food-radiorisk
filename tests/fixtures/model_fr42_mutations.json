@@ -1,0 +1,4 @@
+[
+ {"name": "level_on_period_risk", "from": "level: riskY <= neg.value ? 'negligible' : riskY <= lim.value ? 'within' : 'exceeds',", "to": "level: riskT <= neg.value ? 'negligible' : riskT <= lim.value ? 'within' : 'exceeds',"},
+ {"name": "one_in_period", "from": "oneIn: riskY > 0 ? 1 / riskY : null,", "to": "oneIn: riskT > 0 ? 1 / riskT : null,"}
+]

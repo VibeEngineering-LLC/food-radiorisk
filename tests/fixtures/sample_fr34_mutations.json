@@ -1,0 +1,7 @@
+[
+ {"name": "dried_as_dry_basis", "from": "    fresh = activityBqPerKg / dryingFactor;", "to": "    fresh = activityBqPerKg;"},
+ {"name": "drying_multiplied", "from": "    fresh = activityBqPerKg / dryingFactor;", "to": "    fresh = activityBqPerKg * dryingFactor;"},
+ {"name": "dry_basis_skipped", "from": "  return fresh * 100 / dryMatterPercent;", "to": "  return fresh;"},
+ {"name": "null_basis_allowed", "from": "  if (transferBasis !== \"fresh\" && transferBasis !== \"dry\") {", "to": "  if (false) {"},
+ {"name": "drying_factor_unchecked", "from": "    need(\"toTransferBasis\", \"dryingFactor\", dryingFactor, v => v >= 1, \"must be finite >= 1\");\n", "to": ""}
+]

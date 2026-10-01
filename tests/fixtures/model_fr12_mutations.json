@@ -1,0 +1,6 @@
+[
+ {"name": "risk_levels_swapped", "from": "level: riskT <= neg.value ? 'negligible' : riskT <= lim.value ? 'within' : 'exceeds',", "to": "level: riskT <= lim.value ? 'negligible' : riskT <= neg.value ? 'within' : 'exceeds',"},
+ {"name": "risk_inverse_wrong",  "from": "oneIn: riskT > 0 ? 1 / riskT : null", "to": "oneIn: riskT > 0 ? riskT : null"},
+ {"name": "limit_state_ignored", "from": "limitRecordFor(data.limits_ru, input.foodGroupCode, r.nuclide, input.product?.state || 'fresh')", "to": "limitRecordFor(data.limits_ru, input.foodGroupCode, r.nuclide, 'fresh')"},
+ {"name": "best_null_no_fallback", "from": "if (key === 'value_best' && pRec.value_best == null && pRec.value_max != null) {", "to": "if (false) {"}
+]

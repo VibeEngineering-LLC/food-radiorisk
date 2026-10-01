@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "food-radiorisk/risk.schema.json",
+  "title": "Запись коэффициента риска или порога (ICRP 103, НРБ-99/2009, ОСПОРБ-99/2010)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "source", "quantity", "population", "value", "unit", "loc", "quote", "level", "status_2026", "unit_norm", "unit_factor", "unit_inferred"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9_.\\-]+$"},
+    "source": {"type": "string", "minLength": 1},
+    "quantity": {"type": "string", "minLength": 1},
+    "population": {"type": ["string", "null"]},
+    "value": {"type": ["number", "null"]},
+    "unit": {"type": ["string", "null"]},
+    "loc": {"type": "string", "minLength": 1},
+    "quote": {"type": ["string", "null"]},
+    "level": {"enum": ["✅", "📗", "⚠️"]},
+    "status_2026": {"type": "string", "minLength": 1},
+    "source_anomaly": {"type": "string", "minLength": 1},
+    "unit_norm": {"type": ["string", "null"]},
+    "unit_factor": {"type": ["number", "null"]},
+    "unit_inferred": {"type": "boolean"}
+  }
+}

@@ -1,0 +1,5 @@
+[
+ {"name": "no_rank_sort", "from": "a.force.rank - b.force.rank || a.value - b.value", "to": "a.value - b.value"},
+ {"name": "replaced_not_lost", "from": "if (/^заменён|утратил|истёк/i.test(st))", "to": "if (false)"},
+ {"name": "codex_as_state", "from": "if (f.jurisdiction === 'Codex' || f.jurisdiction === 'IAEA') return", "to": "if (f.jurisdiction === 'IAEA') return"}
+]

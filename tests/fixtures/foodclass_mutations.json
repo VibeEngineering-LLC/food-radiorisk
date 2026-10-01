@@ -1,0 +1,8 @@
+[
+ {"name": "infant_no_except",  "from": "/кроме детск|без категории для младенц/", "to": "null"},
+ {"name": "minor_no_except",   "from": "/кроме малозначим/]", "to": "null]"},
+ {"name": "water_as_liquid",   "from": "if (foodGroupCode === 'water') return ['water', 'liquid'];", "to": "if (foodGroupCode === 'water') return ['general'];"},
+ {"name": "baby_general",      "from": "if (foodGroupCode === 'baby_food') return ['infant'];", "to": "if (foodGroupCode === 'baby_food') return ['general'];"},
+ {"name": "applies_always",    "from": "return p.some(c => f.includes(c));", "to": "return true;"},
+ {"name": "empty_general",     "from": "if (!t.trim()) return [];", "to": "if (!t.trim()) return ['general'];"}
+]

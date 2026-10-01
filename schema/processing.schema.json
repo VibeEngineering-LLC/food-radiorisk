@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "food-radiorisk/processing.schema.json",
+  "title": "Запись влияния кулинарной/технологической обработки (Fr, Pe, Pf, кратность снижения)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "source", "loc", "nuclide", "food_group", "food", "process", "process_ru", "quantity", "value_best", "value_min", "value_max", "cumulative", "quote", "checked_against", "level", "note", "unit_norm", "unit_factor", "unit_inferred"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9_.\\-]+$"},
+    "source": {"type": "string", "minLength": 1},
+    "loc": {"type": "string", "minLength": 1},
+    "also_in": {"type": "string"},
+    "nuclide": {"oneOf": [
+      {"type": "string", "minLength": 1},
+      {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+    ]},
+    "food_group": {"type": "string", "minLength": 1},
+    "food": {"type": "string", "minLength": 1},
+    "process": {"type": "string", "minLength": 1},
+    "process_ru": {"type": "string", "minLength": 1},
+    "quantity": {"enum": ["Fr", "Pe", "Pf", "reduction_factor"]},
+    "value_best": {"type": ["number", "null"]},
+    "value_min": {"type": ["number", "null"]},
+    "value_max": {"type": ["number", "null"]},
+    "cumulative": {"type": ["boolean", "null"]},
+    "cumulative_basis": {"type": ["string", "null"]},
+    "pe_best": {"type": ["number", "null"]},
+    "pe_min": {"type": ["number", "null"]},
+    "pe_max": {"type": ["number", "null"]},
+    "quote": {"type": "string"},
+    "checked_against": {"type": "string", "minLength": 1},
+    "level": {"enum": ["✅", "📗", "⚠️"]},
+    "note": {"type": ["string", "null"]},
+    "source_anomaly": {"type": "string", "minLength": 1},
+    "unit_norm": {"type": ["string", "null"]},
+    "unit_factor": {"type": ["number", "null"]},
+    "unit_inferred": {"type": "boolean"}
+  }
+}

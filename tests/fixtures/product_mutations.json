@@ -1,0 +1,11 @@
+[
+ {"name": "no_yo_norm",        "from": ".replace(/ё/g, 'е')", "to": ""},
+ {"name": "no_dedup",          "from": "if (!seen.has(key)) {", "to": "if (true) {"},
+ {"name": "range_hidden",      "from": "if (!fC && fLo && fHi) return `${fLo}–${fHi} м²/кг`;", "to": "if (!fC && fLo && fHi) return 'нет среднего';"},
+ {"name": "no_fallback",       "from": "if (normRu(query) && matched === 0) {", "to": "if (false) {"},
+ {"name": "filter_ignored",    "from": "let selected = candidates.filter(r => matchesProduct(r.item_ru, query));", "to": "let selected = candidates;"},
+ {"name": "k_dried_inverse",   "from": "return { k: 100 / dryMatterPercent, auto: true, note: '' };", "to": "return { k: dryMatterPercent / 100, auto: true, note: '' };"},
+ {"name": "html_not_escaped",  "from": "<code>${esc(d.transferId)}</code>", "to": "<code>${d.transferId}</code>"},
+ {"name": "no_stem_pass",      "from": "if (stem) selected = candidates.filter(", "to": "if (false) selected = candidates.filter("},
+ {"name": "unbounded_shown",   "from": "const maxD = kD.unbounded ? '∞' :", "to": "const maxD = false ? '∞' :"}
+]
