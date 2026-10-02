@@ -16,10 +16,16 @@ test('ранги не убывают; первая — обязательный 
   assert.deepEqual(ranks, [...ranks].sort((a, b) => a - b));
   assert.equal(r.limits.foreign[0].force.rank, 0);
 });
-// #FR-52: утратившие силу и аварийные уровни не показываются
-test('нет утративших силу и аварийных норм', () => {
+// #FR-52 / #FR-60: утратившие силу не показываются; аварийные уровни показываются с пометкой силы документа
+test('нет утративших силу; аварийные нормы есть и помечены', () => {
   assert.ok(r.limits.foreign.length > 0);
   const doc = (f) => data.limits_foreign.find(x => x.id === f.id);
   assert.ok(r.limits.foreign.every(f => !/^заменён|утратил|истёк/.test(doc(f).status)));
-  assert.ok(r.limits.foreign.every(f => !/2016\/52|CXS 193|555\.880|560\.750/.test(f.document)));
+  assert.ok(r.limits.foreign.every(f => !/560\.750/.test(f.document)));
+  const dil = r.limits.foreign.find(f => /555\.880/.test(f.document));
+  assert.ok(dil, 'FDA DIL показан');
+  assert.equal(dil.force.rank, 1);
+  assert.match(dil.force.label, /не предел/);
+  assert.equal(dil.emergency, true);
+  assert.ok(r.limits.foreign.some(f => f.emergency === false), 'нормы действующей ситуации остались');
 });

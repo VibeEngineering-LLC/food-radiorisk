@@ -6,6 +6,7 @@ import { productFromSample, depositionEstimate, depositionBounds, KBQ_PER_M2_PER
 import { appliesTo, productClasses } from './foodclass.js';
 import { limitRecordFor } from './catalog.js';
 import { resolveProcessing } from './processing.js';
+import { AGE_BANDS, lifetimeDose } from './lifetime.js';
 
 /** @param {object} data */
 export function listChoices(data) {
@@ -31,6 +32,8 @@ export function listChoices(data) {
 /** @param {object} data @param {object} input */
 export function computeScenario(data, input) {
   const errors = [], warnings = [], rows = [];
+  // #FR-65: питание «всю жизнь» — рацион одинаков во все годы, e(g) по возрасту в момент поступления
+  if (input.lifetime) warnings.push(`режим «${input.lifetime.fromAge}–${input.lifetime.toAge} лет»: рацион принят одинаковым во все годы, коэффициент e(g) берётся по возрастной группе в момент поступления (ICRP 119)`);
   for (const n of input.nuclides) {
     try { rows.push(rowFor(data, input, n, warnings)); } catch (e) { errors.push(`${n.nuclide}: ${e.message}`); }
   }
@@ -191,7 +194,11 @@ function rowFor(data, input, n, warnings) {
         prov.push({ step: 'оценка загрязнения', what: tRec.item_ru, id: tRec.id, source: tRec.source, loc: tRec.loc, level: tRec.level, value: depEst.coeffM2PerKg.central ?? depEst.coeffM2PerKg.min ?? depEst.coeffM2PerKg.max, unit: 'm2/kg' });
         basisNote(tRec, 'оценка загрязнения');
         if (tRec.level !== '✅' || tRec.source_anomaly) warn(`оценка загрязнения: КП ${tRec.id}, уровень проверки ${tRec.level}`);
-      } catch (e) { warn(`оценка загрязнения не выполнена: ${e.message}`); }
+      } catch (e) {
+        // сообщения ядра — на английском; пользователю — причина по-русски
+        const dried = (input.product?.state || 'fresh') === 'dried' && !Number.isFinite(input.dryingFactor);
+        warn(`оценка загрязнения не выполнена: ${dried ? 'для сушёного продукта не задан коэффициент усушки (вкладка «1 · Продукт и проба», поле «Коэффициент усушки»)' : e.message}`);
+      }
     }
   }
 
@@ -204,14 +211,26 @@ function rowFor(data, input, n, warnings) {
   const intakeBqPerYear = intakeBq(rawBqPerKg, input.portionKg * input.portionsPerYear, frUsed);
   const intakeBqTotal = intakeBqPerYear * input.years;
   const doseSvPerYear = committedDoseSv(intakeBqPerYear, dcRec.value);
-  const doseSvTotal = doseSvPerYear * input.years;
+  // #FR-65: при питании в интервале возрастов суммируем по возрастным группам
+  let lifetimeBands = null, doseSvTotal = doseSvPerYear * input.years;
+  if (input.lifetime) {
+    const eByAge = {};
+    for (const b of AGE_BANDS) {
+      const rec = pickDose(data.dose_coeff, n.nuclide, b.age, input.doseSource);
+      if (rec) eByAge[b.age] = rec.value;
+    }
+    try {
+      const lt = lifetimeDose(intakeBqPerYear, input.lifetime.fromAge, input.lifetime.toAge, eByAge);
+      doseSvTotal = lt.doseSv; lifetimeBands = lt.bands;
+    } catch (e) { throw new Error(`нет e(g) для расчёта по возрастным группам (${input.doseSource}): ${e.message}`); }
+  }
   const riskTotal = riskFromDose(doseSvTotal, input.riskCoeffPerSv);
   const pgpBqPerYear = pgpFromDose(1e-3, dcRec.value);
   const pgpShare = intakeBqPerYear / pgpBqPerYear;
 
   return {
     nuclide: n.nuclide, mode: n.source, rawBqPerKg, eatenBqPerKg, frUsed,
-    intakeBqPerYear, intakeBqTotal, eSvPerBq: dcRec.value, doseSvPerYear, doseSvTotal, riskTotal, pgpBqPerYear, pgpShare, depositionEstimate: depEst, provenance: prov
+    intakeBqPerYear, intakeBqTotal, eSvPerBq: dcRec.value, doseSvPerYear, doseSvTotal, lifetimeBands, riskTotal, pgpBqPerYear, pgpShare, depositionEstimate: depEst, provenance: prov
   };
 }
 
@@ -263,7 +282,10 @@ function calcLimits(data, input, rows, warnings) {
   const legalForce = (f) => {
     const st = String(f.status || '');
     if (/^заменён|утратил|истёк/i.test(st)) return { rank: 3, label: 'утратил силу' };
+    // #FR-60: FDA DIL — ориентир для решения после аварии, не допустимый уровень и не предел для рынка
+    if (/555\.880/.test(f.document)) return { rank: 1, label: 'рекомендательный ориентир после аварии (не предел)' };
     if (/руководств|guidance|not establish legally/i.test(st) || f.jurisdiction === 'USA') return { rank: 1, label: 'руководство ведомства (не обязательно)' };
+    if (/CXS 193/.test(f.document)) return { rank: 2, label: 'международная рекомендация, аварийные уровни для торговли' };
     if (f.jurisdiction === 'Codex' || f.jurisdiction === 'IAEA') return { rank: 2, label: 'международная рекомендация' };
     // Euratom 2016/52: потолки вводятся имплементирующим регламентом только при аварии (ст. 3(1))
     if (/2016\/52/.test(f.document)) return { rank: 0, label: 'обязательный акт — только при радиационной аварии' };
@@ -278,10 +300,10 @@ function calcLimits(data, input, rows, warnings) {
         if (!appliesTo(f.food_category_ru, input.foodGroupCode)) continue; // только категория исследуемого продукта
         // нуклид записан либо именем («Cs-137»), либо группой ЕС («group: … notably Cs-134 and Cs-137»)
         // сравнивать по нуклиду, не по элементу: у Codex Sr-89 и Sr-90 в разных группах (1000 и 100 Бк/кг)
-        // #FR-52: не показывать утратившие силу и аварийные уровни (Euratom 2016/52, Codex CXS 193 табл. 1 и FDA DIL — после аварии)
-        if (legalForce(f).rank === 3 || EMERGENCY_DOC.test(f.document)) continue;
+        // #FR-52: утратившие силу не показываются. #FR-60 (оператор «да»): аварийные уровни (Euratom 2016/52, Codex CXS 193, FDA DIL) показываются с пометкой силы документа
+        if (legalForce(f).rank === 3) continue;
         if (f.nuclides.some(n => n === elem || n.includes(r.nuclide))) {
-          foreign.push({ id: f.id, jurisdiction: f.jurisdiction, document: f.document, food_category_ru: f.food_category_ru, value: f.value, ratio: r.rawBqPerKg / f.value, sum_rule: f.sum_rule, loc: f.loc, force: legalForce(f) });
+          foreign.push({ id: f.id, jurisdiction: f.jurisdiction, document: f.document, food_category_ru: f.food_category_ru, value: f.value, ratio: r.rawBqPerKg / f.value, sum_rule: f.sum_rule, loc: f.loc, force: legalForce(f), emergency: EMERGENCY_DOC.test(f.document) });
         }
       }
     }

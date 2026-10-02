@@ -51,7 +51,7 @@ label.opt { display: inline-flex; flex-direction: row; align-items: center; gap:
 .optrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .optrow > label.opt { width: 150px; }
 .indent { margin-left: 18px; display: flex; flex-direction: column; gap: 6px; }
-.checklist { height: 96px; max-height: none; margin: 0; overflow-y: auto; border: 1px solid var(--line); border-radius: 0; background: var(--card); padding: 2px 0; }
+.checklist { height: clamp(150px, 30vh, 280px); max-height: none; margin: 0; overflow-y: auto; border: 1px solid var(--line); border-radius: 0; background: var(--card); padding: 2px 0; }
 .checklist label.check { display: flex; flex-direction: row; align-items: flex-start; gap: 5px; min-height: 19px; padding: 2px 4px; font-size: 12px; color: var(--ink); }
 .indent select { max-width: 200px; }
 .tabbody .hint { margin: 8px 0 0; font-size: 12px; color: var(--muted); max-width: 78ch; }
@@ -87,10 +87,9 @@ details.prep .grid2 { padding: 6px 0 4px; }
 #result .msg { flex: none; margin: 0; padding: 3px 8px; border-radius: 0; border: 1px solid currentColor; font-size: inherit; max-width: none; }
 .resblock { flex: none; background: var(--card); border: 1px solid var(--line); padding: 8px; display: flex; flex-direction: column; gap: 8px; }
 .resblock .kpis { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 6px; }
-.rgrid { flex: 1 0 auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
-.rcol { display: flex; flex-direction: column; gap: 8px; min-width: 0; min-height: 0; flex: 1 1 420px; }
-fieldset.rgroup { border: 1px solid var(--line); border-radius: 0; margin: 0; padding: 4px 8px 8px; min-width: 0; background: var(--card); }
-fieldset.rgroup.grow { flex: 1 1 auto; min-height: 0; overflow: auto; }
+fieldset.rgroup { flex: none; border: 1px solid var(--line); border-radius: 0; margin: 0; padding: 4px 8px 8px; min-width: 0; background: var(--card); }
+fieldset.rgroup.grow { flex: 1 0 auto; }
+.subhead { margin: 10px 0 4px; font: inherit; font-weight: 600; color: var(--head); }
 fieldset.rgroup p { margin: 4px 0; }
 details.more { margin-top: 6px; }
 details.more > summary { cursor: pointer; color: var(--head); height: 18px; line-height: 18px; }
@@ -104,6 +103,7 @@ details.more > summary { cursor: pointer; color: var(--head); height: 18px; line
 .statusbar .lvl.warn { background: var(--warn); }
 .statusbar .lvl.bad { background: var(--bad); }
 .statusbar .cmds { display: flex; gap: 6px; }
+.statusbar select { font: inherit; height: 23px; border: 1px solid var(--line); border-radius: 0; background: var(--card); color: var(--ink); }
 
 /* Выпадающий список */
 ul.suggest { border-radius: 0; background: var(--card); box-shadow: 0 2px 6px rgba(0,0,0,.18); }

@@ -50,7 +50,7 @@ function TransferPick({ n, view, onField }) {
 const TABS = ['1 · Продукт и проба', '2 · Обработка и рацион', '3 · Потребитель и нормы'];
 
 // Основной компонент формы
-export default function Form({ choices, raw, setRaw, onPreset, onExport }) {
+export default function Form({ choices, raw, setRaw, tab, setTab, onPreset, onExport }) {
   // Инициализация списка продуктов (ленивая)
   const namesRef = useRef(null);
   if (!namesRef.current) {
@@ -59,6 +59,8 @@ export default function Form({ choices, raw, setRaw, onPreset, onExport }) {
   const names = namesRef.current;
 
   // Хелперы для установки полей
+  // режим «до 70 лет» возможен, если у источника e(g) есть все возрастные группы
+  const lifeOk = raw.doseSource === 'ICRP119_F1';
   const set = (name) => (e) => setRaw(r => S.setField(r, choices, name, e.target.value));
   const setN = (i, name) => (e) => setRaw(r => S.setNuclideField(r, i, name, e.target.value));
 
@@ -67,7 +69,6 @@ export default function Form({ choices, raw, setRaw, onPreset, onExport }) {
   const pv = S.procView(raw, choices);
   const h = S.hints(raw, choices);
   // D-019: шаги — вкладки окна, переход в любом порядке (не мастер с «Далее/Назад»)
-  const [tab, setTab] = useState(0);
   // выделенная строка таблицы нуклидов (её удаляет «удалить», для неё — оценка места сбора)
   const [sel, setSel] = useState(0);
   const cur = Math.min(sel, raw.nuclides.length - 1);
@@ -142,8 +143,13 @@ export default function Form({ choices, raw, setRaw, onPreset, onExport }) {
           <label className="r3">Дней в неделю <input id="daysPerWeek" type="number" min="0" max="7" step="any" value={raw.daysPerWeek} onChange={set('daysPerWeek')} /></label>
           <label className="r3">Недель в месяц <input id="weeksPerMonth" type="number" min="0" max="4.35" step="any" value={raw.weeksPerMonth} onChange={set('weeksPerMonth')} /></label>
           <label className="r3">Месяцев в году <input id="monthsPerYear" type="number" min="0" max="12" step="any" value={raw.monthsPerYear} onChange={set('monthsPerYear')} /></label>
-          <label className="r3">Сколько лет <input id="years" type="number" min="1" step="1" value={raw.years} onChange={set('years')} /></label>
+          <label className={'r3' + (raw.lifeMode ? ' dis' : '')}>Сколько лет <input id="years" type="number" min="1" step="1" disabled={raw.lifeMode} value={raw.lifeMode ? String(Math.max(0, 70 - (Number(String(raw.startAge).replace(',', '.')) || 0))) : raw.years} onChange={set('years')} /></label>
         </div>
+        {/* #FR-65: питание с начального возраста до 70 лет, коэффициент e(g) меняется с возрастом (нужны все шесть групп ICRP 119) */}
+        <label className={'check' + (lifeOk ? '' : ' dis')} title={lifeOk ? undefined : 'Нужен источник коэффициентов с шестью возрастными группами: ICRP 119 (Publ. 72)'}>
+          <input type="checkbox" id="lifeMode" disabled={!lifeOk} checked={!!raw.lifeMode && lifeOk} onChange={(e) => setRaw(r => S.setField(r, choices, 'lifeMode', e.target.checked))} /> Питание с возраста … до 70 лет (по возрастным группам)
+        </label>
+        <label className={'r3' + (raw.lifeMode && lifeOk ? '' : ' dis')}>Начальный возраст <input id="startAge" type="number" min="0" max="69" step="any" disabled={!(raw.lifeMode && lifeOk)} value={raw.startAge} onChange={set('startAge')} /> <span>лет</span></label>
         <p className="ration" id="dietHint">{h.diet}</p>
       </fieldset>
       </div>

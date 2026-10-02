@@ -6,6 +6,7 @@ import { categoryOf, limitGroupFor, dryMatterFor, processingMatches, dryingFacto
 import FOOD_RU from './food_ru.json' with { type: 'json' };
 import SOURCE_SHORT from './source_short.json' with { type: 'json' };
 import { attachSuggest, cleanProductNames } from './suggest.js';
+import { AGE_BANDS, LIFETIME_END_AGE } from '../calc/lifetime.js';
 export const COMMON_PRODUCTS = ['Молоко', 'Молоко сухое', 'Творог', 'Сыр', 'Говядина', 'Свинина', 'Картофель', 'Морковь', 'Капуста', 'Свёкла',
   'Хлеб', 'Мука пшеничная', 'Крупа гречневая', 'Рыба речная', 'Вода питьевая', 'Чай травяной'];
 export { SOURCE_SHORT };
@@ -107,9 +108,19 @@ export function numOrNull(v) {
   return isFinite(n) ? n : null;
 }
 
+// #FR-65: питание с начального возраста до 70 лет; возрастная группа в начале — для показателей «за год»
+export function lifetimeOf(raw) {
+  const start = numOrNull(raw.startAge);
+  if (!raw.lifeMode || raw.doseSource !== 'ICRP119_F1' || start === null || start < 0 || start >= LIFETIME_END_AGE) return null;
+  const band = AGE_BANDS.find(b => start >= b.from && start < b.to);
+  return { fromAge: start, toAge: LIFETIME_END_AGE, startBand: band.age };
+}
+
 export function buildInput(raw) {
+  const life = lifetimeOf(raw);
   return {
-    age: raw.age,
+    age: life ? life.startBand : raw.age,
+    lifetime: life ? { fromAge: life.fromAge, toAge: life.toAge } : null,
     doseSource: raw.doseSource,
     riskCoeffPerSv: numOrNull(raw.riskCoeff),
     // рацион вводится в граммах и порциях в месяц × месяцев в году (#FR-12, #FR-16); модель получает кг и порций в год
@@ -117,7 +128,7 @@ export function buildInput(raw) {
     portionsPerYear: perMonth(raw) === null || numOrNull(raw.monthsPerYear) === null ? null : perMonth(raw) * numOrNull(raw.monthsPerYear),
     portionsPerMonth: perMonth(raw), monthsPerYear: numOrNull(raw.monthsPerYear),
     timesPerDay: numOrNull(raw.timesPerDay), daysPerWeek: numOrNull(raw.daysPerWeek), weeksPerMonth: numOrNull(raw.weeksPerMonth),
-    years: numOrNull(raw.years) ?? 1,
+    years: life ? life.toAge - life.fromAge : (numOrNull(raw.years) ?? 1),
     eatDate: raw.eatDate || null,
     dryMatterPercent: numOrNull(raw.dryMatter),
     // #FR-34: только для сушёного продукта — пересчёт на исходный (свежий) продукт

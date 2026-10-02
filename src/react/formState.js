@@ -41,7 +41,7 @@ export function autoFill(raw, choices) {
 export function initialRaw(choices) {
   const doseSource = doseSourceOptions(choices)[0]?.value ?? '';
   const nuc = choices.nuclides.includes('Cs-137') ? 'Cs-137' : (choices.nuclides[0] ?? '');
-  const base = { age: '', doseSource, riskCoeff: '0.055', portionG: '100', timesPerDay: '1', daysPerWeek: '1', weeksPerMonth: '4', monthsPerYear: '3', years: '1', eatDate: '', dryMatter: '', dryingFactor: '', procMode: 'none', procFr: '1', procRecs: [], procVar: 'best', foodGroup: '', product: '', productState: 'fresh', prepMode: 'as_is', concK: '1', rawMass: '', probeMass: '', sampleMass: '', dmUser: false, dfUser: false, nuclides: [newNuclide(nuc)] };
+  const base = { age: '', doseSource, riskCoeff: '0.055', portionG: '100', timesPerDay: '1', daysPerWeek: '1', weeksPerMonth: '4', monthsPerYear: '3', years: '1', lifeMode: false, startAge: '0', eatDate: '', dryMatter: '', dryingFactor: '', procMode: 'none', procFr: '1', procRecs: [], procVar: 'best', foodGroup: '', product: '', productState: 'fresh', prepMode: 'as_is', concK: '1', rawMass: '', probeMass: '', sampleMass: '', dmUser: false, dfUser: false, nuclides: [newNuclide(nuc)] };
   return autoFill(fixAge(base, choices), choices);
 }
 
@@ -160,7 +160,7 @@ export function rawFromInput(input, choices) {
     timesPerDay: hasFreq ? str(input.timesPerDay) : str(input.portionsPerMonth ?? input.portionsPerYear),
     daysPerWeek: hasFreq ? str(input.daysPerWeek) : '1',
     weeksPerMonth: hasFreq ? str(input.weeksPerMonth) : '1',
-    monthsPerYear: str(input.monthsPerYear ?? 1), years: str(input.years), eatDate: input.eatDate || '',
+    monthsPerYear: str(input.monthsPerYear ?? 1), years: str(input.years), lifeMode: !!input.lifetime, startAge: input.lifetime ? str(input.lifetime.fromAge) : '0', eatDate: input.eatDate || '',
     dryMatter: str(input.dryMatterPercent), dryingFactor: str(input.dryingFactor),
     procMode: input.processing.mode, procFr: str(input.processing.fr), procRecs: recIds, procVar: input.processing.variant || 'best',
     foodGroup: input.foodGroupCode || '', product: input.product?.name || '', productState: input.product?.state || 'fresh',

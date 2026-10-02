@@ -132,10 +132,10 @@ test("проба высушена, K не задан (нет % сухого ве
   assert.ok(r.errors.some(e => e.includes('K не задан')));
 });
 
-// #FR-52: аварийные уровни (Codex, Euratom 2016/52, FDA DIL) больше не показываются — сопоставление по нуклиду проверяется на действующих нормах
+// #FR-60: аварийные уровни показываются с пометкой; здесь — сопоставление по нуклиду проверяется на действующих нормах
 test("зарубежные нормы: по нуклиду, не по элементу (EU 2020/1158 только Cs-137; Япония Cs-134 + Cs-137)", () => {
   const cs134 = computeScenario(data, base({ nuclides: [nuc({ nuclide: 'Cs-134' })] }));
-  assert.ok(!cs134.limits.foreign.some(l => l.jurisdiction === 'EU'), 'EU 2020/1158 (только Cs-137) у Cs-134');
+  assert.ok(!cs134.limits.foreign.some(l => /2020\/1158/.test(l.document)), 'EU 2020/1158 (только Cs-137) у Cs-134');
   assert.ok(cs134.limits.foreign.some(l => l.jurisdiction === 'Japan' && l.value === 100));
   const cs = computeScenario(data, base());
   assert.ok(cs.limits.foreign.some(l => l.jurisdiction === 'EU' && l.value === 600));

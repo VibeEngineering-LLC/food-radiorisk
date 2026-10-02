@@ -1,5 +1,8 @@
 // #FR-48: несколько способов обработки. Поэтапные Fr (каждый — к продукту после предыдущего шага) перемножаются;
 // накопленные (cumulative: true — уже отсчитаны от сырья) друг с другом не перемножаются: берётся наибольшее (консервативно для дозы).
+// Название записи для сообщений: «продукт — способ», а не служебный id
+const procName = (r) => [r.food, r.process_ru].filter(Boolean).join(' — ') || r.id;
+
 export function combineFr(items) {
   const cum = items.filter(i => i.rec.cumulative === true);
   const staged = items.filter(i => i.rec.cumulative !== true);
@@ -35,7 +38,7 @@ export function resolveProcessing(records, processing, prov, warn) {
 
       if (key === 'value_best' && pRec.value_best == null && pRec.value_max != null) {
         key = 'value_max';
-        warn(`обработка ${pRec.id}: рекомендованного значения нет — взят максимум диапазона Fr = ${pRec.value_max}`);
+        warn(`обработка «${procName(pRec)}»: рекомендованного значения нет — взят максимум диапазона Fr = ${pRec.value_max}`);
       }
 
       if (pRec[key] == null) {
@@ -56,7 +59,7 @@ export function resolveProcessing(records, processing, prov, warn) {
       });
 
       if (pRec.level !== '✅' || pRec.source_anomaly) {
-        warn(`обработка ${pRec.id}: уровень проверки ${pRec.level}${pRec.source_anomaly ? ', аномалия источника' : ''}`);
+        warn(`обработка «${procName(pRec)}»: уровень проверки ${pRec.level}${pRec.source_anomaly ? ', аномалия источника' : ''}`);
         prov.push({
           step: 'обработка',
           what: pRec.process_ru,

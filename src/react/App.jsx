@@ -3,6 +3,8 @@ import { loadAll, browserFetch } from '../data/loader.js';
 import { computeScenario, listChoices } from '../calc/model.js';
 import { presetRadGear } from '../ui/form.js';
 import * as S from './formState.js';
+import { loadSaved, save } from './persist.js';
+import { FORMATS, buildReport } from '../ui/report.js';
 import Form from './Form.jsx';
 import Result from './Result.jsx';
 import { fmtDose, fmtCases, verdictText } from '../ui/fmt.js';
@@ -32,6 +34,10 @@ export default function App() {
   const [boot, setBoot] = useState(null);
   // Сырые данные формы
   const [raw, setRaw] = useState(null);
+  // Открытая вкладка формы (хранится вместе с вводом)
+  const [tab, setTab] = useState(0);
+  // Формат файла отчёта
+  const [format, setFormat] = useState('md');
 
   // Инициализация при монтировании
   useEffect(() => {
@@ -45,10 +51,19 @@ export default function App() {
           sha: firstSha
         };
         setBoot({ data, choices, metaInfo });
-        setRaw(S.initialRaw(choices));
+        // #FR-58: после обновления страницы возвращаем сохранённый ввод
+        const base = S.initialRaw(choices);
+        const saved = loadSaved(window.localStorage, base, choices.nuclides);
+        setRaw(saved ? S.fixAge(saved.raw, choices) : base);
+        if (saved) setTab(saved.tab);
       })
       .catch(e => setBoot({ error: e.message }));
   }, []);
+
+  // Сохраняем ввод при каждом изменении (до загрузки данных raw пуст — не затираем сохранённое)
+  useEffect(() => {
+    if (raw) save(window.localStorage, raw, tab);
+  }, [raw, tab]);
 
   // Отложенное значение для оптимизации рендера
   const deferred = useDeferredValue(raw);
@@ -77,15 +92,14 @@ export default function App() {
     }
   }, [boot, calc]);
 
-  // Функция экспорта результатов в JSON
+  // #FR-62: отчёт в выбранном формате (по умолчанию Markdown)
   function onExport() {
     if (!calc?.input) return;
-    const blob = new Blob([JSON.stringify({ generatedAt: new Date().toISOString(), input: calc.input, result: calc.result, data: boot.metaInfo }, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    const rep = buildReport(format, calc, boot.metaInfo, new Date().toISOString());
+    const url = URL.createObjectURL(new Blob([rep.text], { type: rep.mime }));
     const a = document.createElement('a');
-    const d = new Date();
     a.href = url;
-    a.download = `radiorisk-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}.json`;
+    a.download = rep.fileName;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -106,7 +120,7 @@ export default function App() {
         <span className="caption" aria-hidden="true"><span>–</span><span>☐</span><span>✕</span></span>
       </header>
       <main className="split">
-        {boot?.choices && raw && <Form choices={boot.choices} raw={raw} setRaw={setRaw} onPreset={onPreset} onExport={onExport} />}
+        {boot?.choices && raw && <Form choices={boot.choices} raw={raw} setRaw={setRaw} tab={tab} setTab={setTab} onPreset={onPreset} onExport={onExport} />}
         {boot?.error
           ? <section id="result" className="result"><div className="msg err">Не удалось загрузить данные: {boot.error}</div></section>
           : calc
@@ -118,7 +132,8 @@ export default function App() {
         <span className="stat"><i className={'lvl ' + statusLevel(calc)} aria-hidden="true"></i><span className="txt" id="statusText">{statusText(calc)}</span></span>
         <span className="cmds">
           <button type="button" id="preset" onClick={onPreset} disabled={!boot?.choices}>Пример</button>
-          <button type="button" id="exportJson" onClick={onExport} disabled={!calc?.input}>Сохранить расчёт…</button>
+          <select id="reportFormat" aria-label="Формат отчёта" value={format} onChange={e => setFormat(e.target.value)}>{FORMATS.map(f => <option key={f.id} value={f.id}>{f.label}</option>)}</select>
+          <button type="button" id="exportJson" onClick={onExport} disabled={!calc?.input}>Сохранить отчёт…</button>
           <a className="btn" href="sources.html" title="Источники чисел и методика расчёта">Справка</a>
         </span>
       </footer>

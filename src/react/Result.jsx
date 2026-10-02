@@ -104,7 +104,7 @@ export default function Result({ result, input, meta }) {
   rows.forEach(r => r.provenance.forEach(p => provRows.push({ ...p, nuclide: r.nuclide })));
 
   const hasRu = !!(input.foodGroupCode && limits.ru.length), hasForeign = limits.foreign.length > 0;
-  // D-019: группы таблиц в две колонки (слева расчёт и нормы, справа источники); последняя группа колонки тянется до низа
+  // #FR-59: группы таблиц в одну колонку (расчёт с источниками, нормы РФ, зарубежные); последняя группа тянется до низа
   const grp = (key, grow) => ({ className: 'rgroup' + (grow ? ' grow' : '') });
   const massKg = input.portionKg * input.portionsPerYear;
 
@@ -115,7 +115,6 @@ export default function Result({ result, input, meta }) {
     <div className={'riskbox risk risk-' + (totals.riskAssessment?.level || 'none')}><RiskBlock totals={totals} years={input.years} /></div>
     </div>
 
-    <div className="rgrid"><div className="rcol">
     <fieldset {...grp('calc', !hasRu && !hasForeign)}><legend>Расчёт по нуклидам</legend>
     <DataTable rows={rows} cols={[
       { h: 'Нуклид', f: r => r.nuclide },
@@ -135,7 +134,24 @@ export default function Result({ result, input, meta }) {
       ]} />
     </details>
 
+    {rows.some(r => r.lifetimeBands) && <details className="more"><summary>Доза по возрастным группам (питание {input.lifetime.fromAge}–{input.lifetime.toAge} лет)</summary>
+      <DataTable rows={rows.flatMap(r => (r.lifetimeBands || []).map(b => ({ ...b, nuclide: r.nuclide })))} cols={[
+        { h: 'Нуклид', f: b => b.nuclide },
+        { h: 'Возрастная группа', f: b => AGE_LABEL[b.age] || b.age },
+        { h: 'Лет', f: b => fmtNum(b.years), c: 'num' },
+        { h: 'e, Зв/Бк', f: b => fmtSci(b.eSvPerBq), c: 'num' },
+        { h: 'Доза, мкЗв', f: b => fmtNum(b.doseSv * 1e6), c: 'num' }
+      ]} />
+    </details>}
+
     {dep && <div style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: dep }} />}
+
+    <h4 className="subhead">Источники</h4>
+    <DataTable rows={provRows} cols={[
+      { h: 'Величина', f: p => `${p.nuclide} · ${p.step}${p.what ? ': ' + p.what : ''}` },
+      { h: 'Значение', f: p => `${fmtNum(p.value)} ${unitRu(p.unit)}`.trim(), c: 'num' },
+      { h: 'Источник', html: true, f: p => sourceFull(p.source) + (p.loc ? ', ' + esc(locRu(p.loc)) : '') + (p.level ? ` <span class="chip ${levelClass(p.level)}">${esc(p.level)}</span>` : '') + (p.note ? `<br><span style="color:var(--muted)">${esc(p.note)}</span>` : '') }
+    ]} />
     </fieldset>
 
     {hasRu && <fieldset {...grp('ru', !hasForeign)}><legend>Нормы РФ / ЕАЭС</legend>
@@ -157,6 +173,7 @@ export default function Result({ result, input, meta }) {
       const cls = (limits.foreignClasses || []).map(c => FOOD_CLASS_RU[c] || c).join(', ');
       return <fieldset {...grp('foreign', true)}><legend>Зарубежные нормы</legend>
         <p className="hint">Цезий и стронций{cls ? ` — категория: ${cls}` : ''}.</p>
+        {limits.foreign.some(l => l.emergency) && <p className="hint">Аварийные уровни (Codex, Euratom 2016/52, FDA) действуют только после радиационной аварии; уровень FDA — ориентир для решения, не допустимый уровень и не предел для продукта на рынке. Сила каждого документа указана в колонке.</p>}
         {!input.foodGroupCode && <p className="hint">Группа продукта не выбрана — показаны нормы для прочих пищевых продуктов.</p>}
         <DataTable rows={limits.foreign} cols={[
           { h: 'Юрисдикция', f: l => JUR_RU[l.jurisdiction] || l.jurisdiction },
@@ -177,15 +194,6 @@ export default function Result({ result, input, meta }) {
         ]} />
       </fieldset>;
     })()}
-    </div>
-  <div className="rcol"><fieldset className="gbox rgroup grow"><legend>Источники</legend>
-      <DataTable rows={provRows} cols={[
-        { h: 'Величина', f: p => `${p.nuclide} · ${p.step}${p.what ? ': ' + p.what : ''}` },
-        { h: 'Значение', f: p => `${fmtNum(p.value)} ${unitRu(p.unit)}`.trim(), c: 'num' },
-        { h: 'Источник', html: true, f: p => sourceFull(p.source) + (p.loc ? ', ' + esc(locRu(p.loc)) : '') + (p.level ? ` <span class="chip ${levelClass(p.level)}">${esc(p.level)}</span>` : '') + (p.note ? `<br><span style="color:var(--muted)">${esc(p.note)}</span>` : '') }
-      ]} />
-    </fieldset></div>
-    </div>
 
     {meta && <p className="hint">Данные: {meta.datasets} наборов, {meta.records} записей, sha {meta.sha.slice(0, 8)}</p>}
   </div>;
