@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { esc, fmtNum, fmtSci, fmtDose, fmtRiskPerMillion, fmtOneIn, fmtCases, fmtPct, levelClass, verdictText } from '../ui/fmt.js';
 import { depositionHtml } from '../ui/product.js';
 import { AGE_LABEL, SOURCE_LABEL } from '../ui/form.js';
@@ -67,6 +68,8 @@ export function DataTable({ rows, cols }) {
 }
 
 export default function Result({ result, input, meta }) {
+  // #FR-66: нормы РФ, зарубежные нормы и источники — одна вкладочная группа
+  const [rt, setRt] = useState('');
   const messages = [];
   result.errors.forEach(e => messages.push(<div key={e} className="msg err">{e}</div>));
   result.warnings.forEach(w => messages.push(<div key={w} className="msg warn">{w}</div>));
@@ -105,6 +108,8 @@ export default function Result({ result, input, meta }) {
 
   const hasRu = !!(input.foodGroupCode && limits.ru.length), hasForeign = limits.foreign.length > 0;
   // #FR-59: группы таблиц в одну колонку (расчёт с источниками, нормы РФ, зарубежные); последняя группа тянется до низа
+  const tabs = [hasRu && { id: 'ru', label: 'Нормы РФ / ЕАЭС' }, hasForeign && { id: 'foreign', label: 'Зарубежные нормы' }, { id: 'src', label: 'Источники' }].filter(Boolean);
+  const curTab = tabs.some(t => t.id === rt) ? rt : tabs[0].id;
   const grp = (key, grow) => ({ className: 'rgroup' + (grow ? ' grow' : '') });
   const massKg = input.portionKg * input.portionsPerYear;
 
@@ -115,7 +120,7 @@ export default function Result({ result, input, meta }) {
     <div className={'riskbox risk risk-' + (totals.riskAssessment?.level || 'none')}><RiskBlock totals={totals} years={input.years} /></div>
     </div>
 
-    <fieldset {...grp('calc', !hasRu && !hasForeign)}><legend>Расчёт по нуклидам</legend>
+    <fieldset {...grp('calc', false)}><legend>Расчёт по нуклидам</legend>
     <DataTable rows={rows} cols={[
       { h: 'Нуклид', f: r => r.nuclide },
       { h: 'A, Бк/кг', f: r => fmtNum(r.rawBqPerKg), c: 'num' },
@@ -146,15 +151,11 @@ export default function Result({ result, input, meta }) {
 
     {dep && <div style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: dep }} />}
 
-    <h4 className="subhead">Источники</h4>
-    <DataTable rows={provRows} cols={[
-      { h: 'Величина', f: p => `${p.nuclide} · ${p.step}${p.what ? ': ' + p.what : ''}` },
-      { h: 'Значение', f: p => `${fmtNum(p.value)} ${unitRu(p.unit)}`.trim(), c: 'num' },
-      { h: 'Источник', html: true, f: p => sourceFull(p.source) + (p.loc ? ', ' + esc(locRu(p.loc)) : '') + (p.level ? ` <span class="chip ${levelClass(p.level)}">${esc(p.level)}</span>` : '') + (p.note ? `<br><span style="color:var(--muted)">${esc(p.note)}</span>` : '') }
-    ]} />
     </fieldset>
 
-    {hasRu && <fieldset {...grp('ru', !hasForeign)}><legend>Нормы РФ / ЕАЭС</legend>
+    {tabs.length > 0 && <div className="rtabs"><div className="tabs" role="tablist">{tabs.map(t => <button type="button" role="tab" key={t.id} aria-selected={curTab === t.id} className={curTab === t.id ? 'on' : undefined} onClick={() => setRt(t.id)}>{t.label}</button>)}</div>
+    <div className="tabbody" role="tabpanel">
+    {curTab === 'ru' && <>
       <DataTable rows={limits.ru} cols={[
         { h: 'Нуклид', f: l => l.nuclide },
         { h: 'Норматив H', f: l => l.limitId ? `${fmtNum(l.H)} ${unitRu(l.unit)}` : (l.notNormed ? 'не нормируется' : 'нет данных'), c: 'num' },
@@ -167,11 +168,11 @@ export default function Result({ result, input, meta }) {
         const { B, dB, verdict, precisionOk } = limits.compliance;
         return <p>B = {fmtNum(B)}, ΔB = {fmtNum(dB)}, <span className={'verdict ' + verdict}>{verdictText(verdict)}</span>{!precisionOk && ' Точность измерения не удовлетворяет ΔB ≤ 0,3 (МУК 2.6.1.1194-03 п. 6.5)'}</p>;
       })()}
-    </fieldset>}
+    </>}
 
-    {hasForeign && (() => {
+    {curTab === 'foreign' && hasForeign && (() => {
       const cls = (limits.foreignClasses || []).map(c => FOOD_CLASS_RU[c] || c).join(', ');
-      return <fieldset {...grp('foreign', true)}><legend>Зарубежные нормы</legend>
+      return <>
         <p className="hint">Цезий и стронций{cls ? ` — категория: ${cls}` : ''}.</p>
         {limits.foreign.some(l => l.emergency) && <p className="hint">Аварийные уровни (Codex, Euratom 2016/52, FDA) действуют только после радиационной аварии; уровень FDA — ориентир для решения, не допустимый уровень и не предел для продукта на рынке. Сила каждого документа указана в колонке.</p>}
         {!input.foodGroupCode && <p className="hint">Группа продукта не выбрана — показаны нормы для прочих пищевых продуктов.</p>}
@@ -192,8 +193,16 @@ export default function Result({ result, input, meta }) {
             </>;
           }}
         ]} />
-      </fieldset>;
+      </>;
     })()}
+    {curTab === 'src' && <>
+    <DataTable rows={provRows} cols={[
+      { h: 'Величина', f: p => `${p.nuclide} · ${p.step}${p.what ? ': ' + p.what : ''}` },
+      { h: 'Значение', f: p => `${fmtNum(p.value)} ${unitRu(p.unit)}`.trim(), c: 'num' },
+      { h: 'Источник', html: true, f: p => sourceFull(p.source) + (p.loc ? ', ' + esc(locRu(p.loc)) : '') + (p.level ? ` <span class="chip ${levelClass(p.level)}">${esc(p.level)}</span>` : '') + (p.note ? `<br><span style="color:var(--muted)">${esc(p.note)}</span>` : '') }
+    ]} />
+    </>}
+    </div></div>}
 
     {meta && <p className="hint">Данные: {meta.datasets} наборов, {meta.records} записей, sha {meta.sha.slice(0, 8)}</p>}
   </div>;

@@ -91,6 +91,9 @@ fieldset.rgroup { flex: none; border: 1px solid var(--line); border-radius: 0; m
 fieldset.rgroup.grow { flex: 1 0 auto; }
 .subhead { margin: 10px 0 4px; font: inherit; font-weight: 600; color: var(--head); }
 fieldset.rgroup p { margin: 4px 0; }
+.rtabs { flex: 1 0 auto; display: flex; flex-direction: column; min-width: 0; }
+.rtabs .tabbody { flex: 1 0 auto; overflow: visible; }
+.rtabs .tabbody p, fieldset.rgroup p, fieldset.rgroup .hint { max-width: none; }
 details.more { margin-top: 6px; }
 details.more > summary { cursor: pointer; color: var(--head); height: 18px; line-height: 18px; }
 
