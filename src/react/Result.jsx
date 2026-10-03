@@ -23,25 +23,28 @@ function normKpi(share, limitLabel, totals) {
 
 // Карточки итогов: строки — 1 год и весь период, столбцы — доза, риск, доля нормы НРБ
 export function KpiGrid({ totals, input }) {
-  const who = `${AGE_LABEL[input.age] || input.age}; ${SOURCE_LABEL[input.doseSource] || input.doseSource}`;
+  // e(g) — ожидаемая доза: взрослому за 50 лет после поступления, ребёнку до 70 лет возраста (МКРЗ 103)
+  const horizon = input.age === 'adult' ? '50 лет' : 'до 70 лет возраста';
+  const who = `Вся доза, которую даст поступление за 1 год, накопленная за ${horizon} (${(AGE_LABEL[input.age] || input.age).toLowerCase()}); ${SOURCE_LABEL[input.doseSource] || input.doseSource}`;
   const n = input.years, span = input.lifetime ? `${input.lifetime.fromAge}–${input.lifetime.toAge} лет` : `${n} ${yearsWord(n)}`;
   const mln = (p) => Number.isFinite(p) ? fmtNum(p * 1e6) : '—';
   return <div className="kgrid">
-    <div /><div className="kh">Доза</div><div className="kh">Риск рака за всю жизнь</div><div className="kh">Доля нормы НРБ-99/2009</div>
+    <div /><div className="kh">Ожидаемая эффективная доза</div><div className="kh">Риск рака за всю жизнь</div><div className="kh">Доля нормы НРБ-99/2009</div>
     <div className="kr">1 год</div>
     <Kpi value={fmtDose(totals.doseSvPerYear)} label={who} />
     <Kpi value={mln(totals.riskPerYear)} unit="на 1 млн" label="от 1 года потребления; уровни НРБ п. 2.3 — 1 и 50 на 1 млн" level={totals.riskAssessment?.level} />
     {normKpi(totals.budgetShare1mSv, 'от предела 1 мЗв/год (табл. 3.1, п. 5.2.4)', totals)}
     {n > 1 && <>
       <div className="kr">{span}</div>
-      <Kpi value={fmtDose(totals.doseSvTotal)} label={`сумма за ${n} ${yearsWord(n)}`} />
+      <Kpi value={fmtDose(totals.doseSvTotal)} label={input.lifetime ? 'вся доза от питания в этот период, накопленная за жизнь (до 70 лет)' : `вся доза от поступления за ${n} ${yearsWord(n)} (сумма по годам), накопленная за ${horizon} после каждого поступления`} />
       <Kpi value={mln(totals.riskTotal)} unit="на 1 млн" label="сумма за период; уровня риска для суммы в НРБ нет" />
       {normKpi(totals.lifeShare70mSv, 'от 70 мЗв за период жизни 70 лет (п. 3.1.4)', totals)}
     </>}
   </div>;
 }
 
-export function RiskBlock({ totals, years }) {
+export function RiskBlock({ totals, years, age }) {
+  const horizon = age && age !== 'adult' ? 'до 70 лет возраста' : '50 лет';
   const ra = totals.riskAssessment;
   if (!ra) return <><div className="n">{fmtRiskPerMillion(totals.riskTotal)}</div><div className="t">добавочный риск за {years} {yearsWord(years)}</div></>;
 
@@ -51,6 +54,7 @@ export function RiskBlock({ totals, years }) {
   return <>
     <div className="t"><b>Дополнительные случаи рака за всю жизнь{years > 1 ? ` от ${years} ${yearsWord(years)} потребления` : ' от 1 года потребления'}</b></div>
     <div className="n">{fmtCases(main)} на 1 млн человек</div>
+    <div className="t">Риск рассчитан по МКРЗ 103 на оставшуюся жизнь: по ожидаемой дозе, накопленной после поступления — взрослому за 50 лет, ребёнку до 70 лет возраста (здесь: {horizon}).</div>
     <div className="t">Вероятность заболеть раком за жизнь возрастает на {(main * 100).toLocaleString('ru-RU', { maximumSignificantDigits: 3, maximumFractionDigits: 20 })} % (дополнительно {fmtOneIn(main).replace('1 из', '1 человек из')}).</div>
     <div className="t">{years > 1 ? `Риск от одного года потребления — ${fmtCases(totals.riskPerYear)} на 1 млн (точка на шкале). ` : ''}Это <b>{RISK_TXT[ra.level]}</b></div>
     <div className="riskscale">
@@ -119,7 +123,7 @@ export default function Result({ result, input, meta }) {
     {messages}
     <div className="resblock">
     <KpiGrid totals={totals} input={input} />
-    <div className={'riskbox risk risk-' + (totals.riskAssessment?.level || 'none')}><RiskBlock totals={totals} years={input.years} /></div>
+    <div className={'riskbox risk risk-' + (totals.riskAssessment?.level || 'none')}><RiskBlock totals={totals} years={input.years} age={input.age} /></div>
     </div>
 
     <fieldset {...grp('calc', false)}><legend>Расчёт по нуклидам</legend>
