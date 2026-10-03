@@ -5,8 +5,8 @@
  "source_parts": [
   "limits_foreign.yaml"
  ],
- "source_sha256": "b18f9ca154b62048d2ce0f77e6127daafc97ef016977676992be94dc8c1fcd1a",
- "record_count": 52,
+ "source_sha256": "18ad767a471836dfd241b60183116d9c161030bb2b12da5c663bc6c4fd37d4ab",
+ "record_count": 55,
  "records": [
   {
    "id": "codex_cxs193_infant_pu_am",
@@ -1107,6 +1107,77 @@
    "level": "✅",
    "retrieved": "2026-09-30",
    "unit_norm": "Bq/kg",
+   "unit_factor": 1.0,
+   "unit_inferred": false
+  },
+  {
+   "id": "us_epa_mcl_ra226_228",
+   "jurisdiction": "USA",
+   "document": "40 CFR 141.66(b) Maximum contaminant levels for radionuclides (EPA, National Primary Drinking Water Regulations)",
+   "edition": "eCFR на 30.09.2026; текст нормы содержательно изменён 65 FR 76748 (07.12.2000)",
+   "status": "действует; обязателен для общественных систем водоснабжения (public water system, 40 CFR 141.2), не для частных колодцев",
+   "nuclides": [
+    "Ra-226",
+    "Ra-228"
+   ],
+   "sum_rule": "Сумма Ra-226 + Ra-228 («combined»). Значение в источнике 5 пКи/л = 0,185 Бк/л (пересчёт 1 пКи = 0,037 Бк выполнен составителем)",
+   "food_category": "Drinking water (public water systems)",
+   "food_category_ru": "Питьевая вода (общественные системы водоснабжения)",
+   "value": 0.185,
+   "unit": "Bq/L",
+   "loc": "40 CFR 141.66(b)",
+   "url": "https://www.ecfr.gov/current/title-40/section-141.66",
+   "quote": "The maximum contaminant level for combined radium-226 and radium-228 is 5 pCi/L.",
+   "level": "✅",
+   "retrieved": "2026-10-02",
+   "unit_norm": "Bq/L",
+   "unit_factor": 1.0,
+   "unit_inferred": false
+  },
+  {
+   "id": "us_epa_mcl_sr90_tableA",
+   "jurisdiction": "USA",
+   "document": "40 CFR 141.66(d) Maximum contaminant levels for radionuclides, Table A (EPA, National Primary Drinking Water Regulations)",
+   "edition": "eCFR на 30.09.2026; текст нормы содержательно изменён 65 FR 76748 (07.12.2000)",
+   "status": "действует; обязателен для общественных систем водоснабжения (public water system, 40 CFR 141.2), не для частных колодцев",
+   "nuclides": [
+    "Sr-90"
+   ],
+   "sum_rule": "Предел MCL для бета-частиц и фотонов задан дозой 4 мбэр/год (0,04 мЗв); при нескольких нуклидах дозы суммируются. Таблица A даёт среднегодовую концентрацию, дающую эту дозу: Sr-90 8 пКи/л = 0,296 Бк/л (пересчёт 1 пКи = 0,037 Бк выполнен составителем)",
+   "food_category": "Drinking water (public water systems)",
+   "food_category_ru": "Питьевая вода (общественные системы водоснабжения)",
+   "value": 0.296,
+   "unit": "Bq/L",
+   "loc": "40 CFR 141.66(d)(1) и Table A",
+   "url": "https://www.ecfr.gov/current/title-40/section-141.66",
+   "quote": "Strontium-90 | Bone Marrow | 8",
+   "level": "✅",
+   "retrieved": "2026-10-02",
+   "unit_norm": "Bq/L",
+   "unit_factor": 1.0,
+   "unit_inferred": false
+  },
+  {
+   "id": "us_fda_bottled_ra226_228",
+   "jurisdiction": "USA",
+   "document": "21 CFR 165.110(b)(5) Bottled water, radiological quality (FDA, стандарт качества)",
+   "edition": "eCFR на 30.09.2026; параграф введён 60 FR 57124 (13.11.1995)",
+   "status": "действует; ниже стандарта продукт маркируется как «substandard quality» (21 CFR 165.110(c))",
+   "nuclides": [
+    "Ra-226",
+    "Ra-228"
+   ],
+   "sum_rule": "Сумма Ra-226 + Ra-228. Значение в источнике 5 пКи/л = 0,185 Бк/л (пересчёт 1 пКи = 0,037 Бк выполнен составителем). Единственный обязательный числовой предел радионуклидов для пищевого продукта в США из найденных",
+   "food_category": "Bottled water",
+   "food_category_ru": "Питьевая вода (бутилированная)",
+   "value": 0.185,
+   "unit": "Bq/L",
+   "loc": "21 CFR 165.110(b)(5)(i)(A)",
+   "url": "https://www.ecfr.gov/current/title-21/section-165.110",
+   "quote": "shall not contain a combined radium-226 and radium-228 activity in excess of 5 picocuries per liter of water",
+   "level": "✅",
+   "retrieved": "2026-10-02",
+   "unit_norm": "Bq/L",
    "unit_factor": 1.0,
    "unit_inferred": false
   },

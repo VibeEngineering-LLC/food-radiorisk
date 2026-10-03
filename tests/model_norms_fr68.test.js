@@ -36,3 +36,21 @@ test('r = 0,05: годовая доза 1 мЗв даёт ровно урове�
   close(r.totals.riskPerYear, 5e-5, 1e-12);
   assert.equal(r.totals.riskAssessment.level, 'within');
 });
+
+// #FR-70: коэффициент риска для взрослых (4,1·10⁻²) ребёнку не подходит — предупреждение
+test('коэффициент для взрослых и возраст ребёнка: предупреждение; для взрослого и r = 0,055 — нет', () => {
+  const w = (o) => computeScenario(data, base([nuc()], o)).warnings.filter(x => x.includes('коэффициент риска для взрослых'));
+  assert.equal(w({ age: '5y', riskCoeffPerSv: 0.041 }).length, 1);
+  assert.equal(w({ age: 'adult', riskCoeffPerSv: 0.041 }).length, 0);
+  assert.equal(w({ age: '5y', riskCoeffPerSv: 0.055 }).length, 0);
+});
+
+// #FR-71: США, питьевая вода — MCL (40 CFR 141.66) и бутилированная вода (21 CFR 165.110) показываются как обязательные нормы
+test('вода: Sr-90 и Ra-226 сравниваются с нормами США (Бк/л), обязательные — выше ориентиров', () => {
+  const r = computeScenario(data, base([nuc({ nuclide: 'Sr-90', measuredBqPerKg: 0.1 }), nuc({ nuclide: 'Ra-226', measuredBqPerKg: 0.37 })], { foodGroupCode: 'water' }));
+  const us = r.limits.foreign.filter(f => f.jurisdiction === 'USA');
+  const sr = us.find(f => f.id === 'us_epa_mcl_sr90_tableA'), ra = us.filter(f => /ra226_228/.test(f.id));
+  close(sr.ratio, 0.1 / 0.296, 1e-12); assert.equal(sr.force.rank, 0);
+  assert.equal(ra.length, 2); assert.ok(ra.every(f => f.force.rank === 0)); close(ra[0].ratio, 0.37 / 0.185, 1e-12);
+  assert.equal(computeScenario(data, base([nuc({ nuclide: 'Sr-90', measuredBqPerKg: 0.1 })])).limits.foreign.filter(f => /^us_(epa|fda_bottled)/.test(f.id)).length, 0);
+});

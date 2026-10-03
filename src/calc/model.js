@@ -34,6 +34,8 @@ export function listChoices(data) {
 export function computeScenario(data, input) {
   const errors = [], warnings = [], rows = [];
   // #FR-65: питание «всю жизнь» — рацион одинаков во все годы, e(g) по возрасту в момент поступления
+  // МКРЗ 103 табл. 1: 4,1·10⁻² / 4,2·10⁻² — для взрослых; детям и режиму «до 70 лет» подходит коэффициент для всего населения (5,5·10⁻² / 5,7·10⁻²)
+  if ((input.age !== 'adult' || input.lifetime) && [0.041, 0.042].includes(input.riskCoeffPerSv)) warnings.push('коэффициент риска для взрослых (МКРЗ 103, табл. 1) занижает риск для ребёнка и для питания с детства; для них берите коэффициент для всего населения (5,5·10⁻² или 5,7·10⁻²)');
   if (input.lifetime) warnings.push(`режим «${input.lifetime.fromAge}–${input.lifetime.toAge} лет»: рацион принят одинаковым во все годы, коэффициент e(g) берётся по возрастной группе в момент поступления (ICRP 119)`);
   for (const n of input.nuclides) {
     try { rows.push(rowFor(data, input, n, warnings)); } catch (e) { errors.push(`${n.nuclide}: ${e.message}`); }
@@ -297,6 +299,9 @@ function calcLimits(data, input, rows, warnings) {
     const st = String(f.status || '');
     if (/^заменён|утратил|истёк/i.test(st)) return { rank: 3, label: 'утратил силу' };
     // #FR-60: FDA DIL — ориентир для решения после аварии, не допустимый уровень и не предел для рынка
+    // США, вода: MCL (40 CFR 141.66) и стандарт качества бутилированной воды (21 CFR 165.110) — обязательные нормы, не ориентиры
+    if (/141\.66/.test(f.document)) return { rank: 0, label: 'обязательный для общественных систем водоснабжения (не для частных колодцев)' };
+    if (/165\.110/.test(f.document)) return { rank: 0, label: 'обязательный стандарт качества бутилированной воды' };
     if (/555\.880/.test(f.document)) return { rank: 1, label: 'рекомендательный ориентир после аварии (не предел)' };
     if (/руководств|guidance|not establish legally/i.test(st) || f.jurisdiction === 'USA') return { rank: 1, label: 'руководство ведомства (не обязательно)' };
     if (/CXS 193/.test(f.document)) return { rank: 2, label: 'международная рекомендация, аварийные уровни для торговли' };
@@ -307,10 +312,12 @@ function calcLimits(data, input, rows, warnings) {
   };
   const foreign = [];
   for (const r of rows) {
-    if (r.nuclide.startsWith('Cs') || r.nuclide.startsWith('Sr')) {
+    // для воды добавлен Ra (MCL по 40 CFR 141.66(b)); 1 Бк/л принят равным 1 Бк/кг (плотность воды 1 кг/л)
+    const isWater = input.foodGroupCode === 'water';
+    if (r.nuclide.startsWith('Cs') || r.nuclide.startsWith('Sr') || (isWater && r.nuclide.startsWith('Ra'))) {
       const elem = r.nuclide.split('-')[0];
       for (const f of data.limits_foreign) {
-        if (!Number.isFinite(f.value) || f.unit !== 'Bq/kg') continue;
+        if (!Number.isFinite(f.value) || !(f.unit === 'Bq/kg' || (f.unit === 'Bq/L' && isWater))) continue;
         if (!appliesTo(f.food_category_ru, input.foodGroupCode)) continue; // только категория исследуемого продукта
         // нуклид записан либо именем («Cs-137»), либо группой ЕС («group: … notably Cs-134 and Cs-137»)
         // сравнивать по нуклиду, не по элементу: у Codex Sr-89 и Sr-90 в разных группах (1000 и 100 Бк/кг)

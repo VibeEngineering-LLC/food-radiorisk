@@ -44,6 +44,7 @@ function blocks(calc, meta, isoDate) {
     summaryRows.push(['Пожизненный риск (номинальный) на 1 млн за ' + span + ' потребления', fmtNum(totals.riskTotal * 1e6)]);
   }
   // доли норм НРБ-99/2009 — только техногенная часть (п. 3.1.3, 5.3.1)
+  summaryRows.push(['Горизонт ожидаемой дозы (МКРЗ 103, прил. B, п. (f))', input.lifetime ? 'до 70 лет возраста (питание с ' + input.lifetime.fromAge + ' до ' + input.lifetime.toAge + ' лет)' : input.age === 'adult' ? '50 лет после поступления (взрослый)' : 'до 70 лет возраста (ребёнок)']);
   summaryRows.push(['Коэффициент риска, Зв⁻¹', fmtNum(input.riskCoeffPerSv)]);
   summaryRows.push(['Доля предела 1 мЗв/год (НРБ табл. 3.1), техногенные', totals.budgetShare1mSv == null ? 'не нормируется (только природные нуклиды)' : fmtPct(totals.budgetShare1mSv)]);
   if (input.years > 1) summaryRows.push(['Доля 70 мЗв за 70 лет (НРБ п. 3.1.4), техногенные', totals.lifeShare70mSv == null ? 'не нормируется' : fmtPct(totals.lifeShare70mSv)]);

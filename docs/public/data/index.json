@@ -11,9 +11,9 @@
   {
    "dataset": "limits_foreign",
    "file": "limits_foreign.json",
-   "record_count": 52,
-   "source_sha256": "b18f9ca154b62048d2ce0f77e6127daafc97ef016977676992be94dc8c1fcd1a",
-   "json_sha256": "9f08b26c040baa426fe8acc9bbc1bbcf0796aded22953cdadfbc628d639ef689"
+   "record_count": 55,
+   "source_sha256": "18ad767a471836dfd241b60183116d9c161030bb2b12da5c663bc6c4fd37d4ab",
+   "json_sha256": "a2a6b2b5094c3fca84c4e9841aa806645f2c7ca917f7b3be016e10e94e2a0527"
   },
   {
    "dataset": "limits_ru",
