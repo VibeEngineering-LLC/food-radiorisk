@@ -203,6 +203,7 @@ export default function Result({ result, input, meta }) {
       </>;
     })()}
     {curTab === 'src' && <>
+    <p className="hint">Описание каждого документа и методика расчёта — на странице <a href="sources.html">«Справка»</a>.</p>
     <DataTable rows={provRows} cols={[
       { h: 'Величина', f: p => `${p.nuclide} · ${p.step}${p.what ? ': ' + p.what : ''}` },
       { h: 'Значение', f: p => `${fmtNum(p.value)} ${unitRu(p.unit)}`.trim(), c: 'num' },

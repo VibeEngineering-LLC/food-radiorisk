@@ -3,14 +3,14 @@ import { depositionHtml } from './product.js';
 import { AGE_LABEL, SOURCE_LABEL, SOURCE_SHORT } from './form.js';
 import { locRu, unitRu } from './ru.js';
 import SOURCES from '../../public/data/sources.json' with { type: 'json' };
-// полное описание источника из реестра (#FR-24): авторы. Название. Выходные данные, год — ссылкой на страницу документов
+// полное описание источника из реестра (#FR-24): авторы. Название. Выходные данные, год — текстом; одна ссылка на страницу документов стоит над таблицей
 export function sourceFull(code) {
   if (!code) return '';
   let r = SOURCES.sources[code];
   if (r?.same_as) r = SOURCES.sources[r.same_as] || r;
   if (!r || !r.title_ru) return esc(SOURCE_SHORT[code] || code);
   const parts = [r.authors, r.title_ru, r.publisher, r.year].filter(Boolean).map(x => String(x).replace(/\.\s*$/, '')); // без «et al..»
-  return `<a href="sources.html">${esc(parts.join('. '))}</a>`;
+  return esc(parts.join('. '));
 }
 export const JUR_RU = { Codex: 'Кодекс Алиментариус', EU: 'ЕС', Japan: 'Япония', USA: 'США', IAEA: 'МАГАТЭ' };
 import { FOOD_CLASS_RU } from '../calc/foodclass.js';
