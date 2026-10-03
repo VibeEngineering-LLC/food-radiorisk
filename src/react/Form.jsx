@@ -160,7 +160,8 @@ export default function Form({ choices, raw, setRaw, tab, setTab, onPreset, onEx
           <label>Возраст <select id="age" value={raw.age} onChange={set('age')}>{agesFor(choices, raw.doseSource).map(o => <option key={o.value} value={o.value}>{o.label}</option>)}</select></label>
           <label>Коэффициенты дозы e(g) <select id="doseSource" value={raw.doseSource} onChange={set('doseSource')}>{doseSourceOptions(choices).map(o => <option key={o.value} value={o.value}>{o.label}</option>)}</select></label>
           <label>Коэффициент риска, Зв⁻¹ <select id="riskCoeff" value={raw.riskCoeff} onChange={set('riskCoeff')}>
-            <option value="0.055">5,5·10⁻² рак, население (ICRP 103, НРБ-99/2009)</option>
+            <option value="0.05">5·10⁻² усреднённый, из него выведены пределы доз (НРБ-99/2009 п. 2.3)</option>
+            <option value="0.055">5,5·10⁻² рак, население (ICRP 103 табл. 1)</option>
             <option value="0.057">5,7·10⁻² рак и наследств., население</option>
             <option value="0.041">4,1·10⁻² рак, взрослые</option>
             <option value="0.042">4,2·10⁻² рак и наследств., взрослые</option>

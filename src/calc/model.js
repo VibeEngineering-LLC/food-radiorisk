@@ -6,6 +6,7 @@ import { productFromSample, depositionEstimate, depositionBounds, KBQ_PER_M2_PER
 import { appliesTo, productClasses } from './foodclass.js';
 import { limitRecordFor } from './catalog.js';
 import { resolveProcessing } from './processing.js';
+import { isNatural, LIMIT_YEAR_SV, LIMIT_LIFE_SV } from './origin.js';
 import { AGE_BANDS, lifetimeDose } from './lifetime.js';
 
 /** @param {object} data */
@@ -42,6 +43,10 @@ export function computeScenario(data, input) {
   const doseY = rows.reduce((s, r) => s + (r.doseSvPerYear || 0), 0);
   const doseT = rows.reduce((s, r) => s + (r.doseSvTotal || 0), 0);
   const riskT = rows.reduce((s, r) => s + (r.riskTotal || 0), 0);
+  // F3 (audit/risk-fields-review-2026-10-03.md): пределы НРБ — только для техногенной части
+  const tech = rows.filter(r => !r.natural);
+  const techY = tech.reduce((s, r) => s + (r.doseSvPerYear || 0), 0);
+  const techT = tech.reduce((s, r) => s + (r.doseSvTotal || 0), 0);
 
   const limits = calcLimits(data, input, rows, warnings);
 
@@ -64,7 +69,12 @@ export function computeScenario(data, input) {
       doseSvTotal: rows.length ? doseT : null,
       riskTotal: rows.length ? riskT : null,
       riskPerYear: rows.length ? riskY : null,
-      budgetShare1mSv: rows.length ? doseY / 1e-3 : null,
+      techDoseSvPerYear: tech.length ? techY : null,
+      techDoseSvTotal: tech.length ? techT : null,
+      techNuclides: tech.map(r => r.nuclide),
+      naturalNuclides: rows.filter(r => r.natural).map(r => r.nuclide),
+      budgetShare1mSv: tech.length ? techY / LIMIT_YEAR_SV : null,
+      lifeShare70mSv: tech.length ? techT / LIMIT_LIFE_SV : null,
       negligibleShare: rows.length ? doseY / 1e-5 : null,
       riskAssessment
     },
@@ -212,7 +222,7 @@ function rowFor(data, input, n, warnings) {
   const intakeBqTotal = intakeBqPerYear * input.years;
   const doseSvPerYear = committedDoseSv(intakeBqPerYear, dcRec.value);
   // #FR-65: при питании в интервале возрастов суммируем по возрастным группам
-  let lifetimeBands = null, doseSvTotal = doseSvPerYear * input.years;
+  let lifetimeBands = null, doseSvTotal = doseSvPerYear * input.years, eForPgp = dcRec.value;
   if (input.lifetime) {
     const eByAge = {};
     for (const b of AGE_BANDS) {
@@ -222,14 +232,18 @@ function rowFor(data, input, n, warnings) {
     try {
       const lt = lifetimeDose(intakeBqPerYear, input.lifetime.fromAge, input.lifetime.toAge, eByAge);
       doseSvTotal = lt.doseSv; lifetimeBands = lt.bands;
+      // ПГП в режиме «до 70 лет» — по взрослому коэффициенту (взрослым прожито почти всё время питания)
+      if (eByAge.adult > 0) eForPgp = eByAge.adult;
     } catch (e) { throw new Error(`нет e(g) для расчёта по возрастным группам (${input.doseSource}): ${e.message}`); }
   }
   const riskTotal = riskFromDose(doseSvTotal, input.riskCoeffPerSv);
-  const pgpBqPerYear = pgpFromDose(1e-3, dcRec.value);
-  const pgpShare = intakeBqPerYear / pgpBqPerYear;
+  // ПГП НРБ — от предела техногенного облучения; для природных нуклидов не определяется (НРБ п. 3.1.3, 5.3.1)
+  const natural = isNatural(n.nuclide);
+  const pgpBqPerYear = natural ? null : pgpFromDose(LIMIT_YEAR_SV, eForPgp);
+  const pgpShare = natural ? null : intakeBqPerYear / pgpBqPerYear;
 
   return {
-    nuclide: n.nuclide, mode: n.source, rawBqPerKg, eatenBqPerKg, frUsed,
+    nuclide: n.nuclide, natural, mode: n.source, rawBqPerKg, eatenBqPerKg, frUsed,
     intakeBqPerYear, intakeBqTotal, eSvPerBq: dcRec.value, doseSvPerYear, doseSvTotal, lifetimeBands, riskTotal, pgpBqPerYear, pgpShare, depositionEstimate: depEst, provenance: prov
   };
 }

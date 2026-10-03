@@ -135,3 +135,21 @@ test('Тип содержимого: md — text/markdown, html — text/html, j
   assert.match(buildReport('html', calc, meta, ISO).mime, /^text\/html/);
   assert.match(buildReport('json', calc, meta, ISO).mime, /^application\/json/);
 });
+
+test('Склонение лет в итоговой таблице (md и html): 2 года, 5 лет, 11 лет, 21 год', () => {
+  for (const [n, word] of [[2, 'года'], [5, 'лет'], [11, 'лет'], [21, 'год']]) {
+    const c = { input: { ...input, years: n }, result };
+    for (const fmt of ['md', 'html']) {
+      const text = buildReport(fmt, c, meta, ISO).text;
+      assert.ok(text.includes(`Доза за ${n} ${word}`), `${fmt}: «Доза за ${n} ${word}»`);
+      assert.ok(text.includes(`на 1 млн за ${n} ${word}`), `${fmt}: «на 1 млн за ${n} ${word}»`);
+    }
+  }
+});
+
+test('Склонение лет: при years = 1 строк «за N …» нет, «70 лет» нормы не меняется', () => {
+  const one = buildReport('md', { input: { ...input, years: 1 }, result }, meta, ISO).text;
+  assert.ok(!one.includes('Доза за 1 '), 'строка «Доза за N» при years = 1 не выводится');
+  const many = buildReport('md', { input: { ...input, years: 2 }, result }, meta, ISO).text;
+  assert.ok(many.includes('Доля 70 мЗв за 70 лет'), 'строка нормы 70 лет на месте');
+});

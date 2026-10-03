@@ -509,7 +509,6 @@ body[data-view="poster"] .poster {
 td.cond { min-width: 14rem; max-width: 26rem; }
 td.cond details summary { cursor: pointer; color: var(--muted); font-size: .85em; }
 td.cond details p { margin: .3rem 0 0; }
-.riskscale .dot2 { background: var(--ink); width: 18px; height: 18px; margin-left: -9px; top: -3px; border-width: 2px; }
 .risk .n2 { margin-top: .6rem; }
 .riskbox p.risksrc { max-width: none; margin: .5rem 0 0; }
 .scalelbl { position: relative; height: 1.1rem; font-size: .75rem; color: var(--muted); }
@@ -558,3 +557,9 @@ details.prov[open] > summary { margin-bottom: .5rem; }
 
 /* #FR-40: утративший силу норматив — приглушённо */
 td.muted { color: var(--muted); font-style: italic; }
+/* Итоги: строки «1 год / период», столбцы «доза / риск / доля нормы» */
+.kgrid { display: grid; grid-template-columns: max-content repeat(3, minmax(0, 1fr)); gap: 6px; align-items: stretch; }
+.kgrid .kh { font-size: .8rem; color: var(--muted); align-self: end; }
+.kgrid .kr { font-weight: 600; align-self: center; padding-right: 4px; white-space: nowrap; }
+.kpi .v .u { font-size: .75em; font-weight: 400; }
+@media (max-width: 640px) { .kgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .kgrid > div:first-child { display: none; } .kgrid .kr { grid-column: 1 / -1; } }

@@ -4,23 +4,41 @@ import { depositionHtml } from '../ui/product.js';
 import { AGE_LABEL, SOURCE_LABEL } from '../ui/form.js';
 import { locRu, unitRu } from '../ui/ru.js';
 import { FOOD_CLASS_RU } from '../calc/foodclass.js';
-import { sourceFull, JUR_RU, yearsWord, RISK_TXT, logPos, doseLvl } from '../ui/render.js';
+import { sourceFull, JUR_RU, yearsWord, RISK_TXT, logPos } from '../ui/render.js';
 
-// #FR-21: склонение слова «раз» для сравнения долей
-const razWord = (x) => {
-  const n = Number(x.toPrecision(3));
-  if (!Number.isInteger(n)) return 'раза';
-  const k = n % 100, d = n % 10;
-  return (d >= 2 && d <= 4 && !(k >= 12 && k <= 14)) ? 'раза' : 'раз';
-};
+export function Kpi({ value, unit, label, level }) {
+  return <div className={'kpi' + (level ? ' risk-' + level : '')}><div className="v">{value}{unit && <span className="u"> {unit}</span>}</div><div className="l">{label}</div></div>;
+}
 
-// Сравнение долей: «в N раз выше» или «N % от»
-const vs = (share, what) => share >= 1
-  ? [`в ${fmtNum(share)} ${razWord(share)} выше`, what]
-  : [`${fmtPct(share)} от`, what];
+// доля нормы: ≤ 1 % — пренебрежимо (как 10 мкЗв от 1 мЗв, НРБ п. 1.4), ≤ 100 % — в пределах, иначе превышение
+const shareLvl = (s) => !Number.isFinite(s) ? '' : s <= 0.01 ? 'negligible' : s <= 1 ? 'within' : 'exceeds';
 
-export function Kpi({ value, label, level }) {
-  return <div className={'kpi' + (level ? ' risk-' + level : '')}><div className="v">{value}</div><div className="l">{label}</div></div>;
+// карточка нормы: доля техногенной дозы от предела; если нуклиды только природные — «не нормируется»
+function normKpi(share, limitLabel, totals) {
+  const nat = totals.naturalNuclides.join(', ');
+  if (share == null) return <Kpi value="не нормируется" label={`природные нуклиды (${nat}): предел дозы не установлен (НРБ-99/2009 п. 3.1.3, 5.3.1)`} />;
+  const only = nat ? `; учтены только техногенные (${totals.techNuclides.join(', ')}), природные (${nat}) не нормируются` : '';
+  return <Kpi value={fmtPct(share)} label={`${limitLabel}${only}`} level={shareLvl(share)} />;
+}
+
+// Карточки итогов: строки — 1 год и весь период, столбцы — доза, риск, доля нормы НРБ
+export function KpiGrid({ totals, input }) {
+  const who = `${AGE_LABEL[input.age] || input.age}; ${SOURCE_LABEL[input.doseSource] || input.doseSource}`;
+  const n = input.years, span = input.lifetime ? `${input.lifetime.fromAge}–${input.lifetime.toAge} лет` : `${n} ${yearsWord(n)}`;
+  const mln = (p) => Number.isFinite(p) ? fmtNum(p * 1e6) : '—';
+  return <div className="kgrid">
+    <div /><div className="kh">Доза</div><div className="kh">Риск рака за всю жизнь</div><div className="kh">Доля нормы НРБ-99/2009</div>
+    <div className="kr">1 год</div>
+    <Kpi value={fmtDose(totals.doseSvPerYear)} label={who} />
+    <Kpi value={mln(totals.riskPerYear)} unit="на 1 млн" label="от 1 года потребления; уровни НРБ п. 2.3 — 1 и 50 на 1 млн" level={totals.riskAssessment?.level} />
+    {normKpi(totals.budgetShare1mSv, 'от предела 1 мЗв/год (табл. 3.1, п. 5.2.4)', totals)}
+    {n > 1 && <>
+      <div className="kr">{span}</div>
+      <Kpi value={fmtDose(totals.doseSvTotal)} label={`сумма за ${n} ${yearsWord(n)}`} />
+      <Kpi value={mln(totals.riskTotal)} unit="на 1 млн" label="сумма за период; уровня риска для суммы в НРБ нет" />
+      {normKpi(totals.lifeShare70mSv, 'от 70 мЗв за период жизни 70 лет (п. 3.1.4)', totals)}
+    </>}
+  </div>;
 }
 
 export function RiskBlock({ totals, years }) {
@@ -34,12 +52,11 @@ export function RiskBlock({ totals, years }) {
     <div className="t"><b>Дополнительные случаи рака за всю жизнь{years > 1 ? ` от ${years} ${yearsWord(years)} потребления` : ' от 1 года потребления'}</b></div>
     <div className="n">{fmtCases(main)} на 1 млн человек</div>
     <div className="t">Вероятность заболеть раком за жизнь возрастает на {(main * 100).toLocaleString('ru-RU', { maximumSignificantDigits: 3, maximumFractionDigits: 20 })} % (дополнительно {fmtOneIn(main).replace('1 из', '1 человек из')}).</div>
-    <div className="t">{years > 1 ? `От одного года потребления — ${fmtCases(totals.riskPerYear)} на 1 млн (светлая точка; тёмная — ${years} ${yearsWord(years)}). ` : ''}Это <b>{RISK_TXT[ra.level]}</b></div>
+    <div className="t">{years > 1 ? `Риск от одного года потребления — ${fmtCases(totals.riskPerYear)} на 1 млн (точка на шкале). ` : ''}Это <b>{RISK_TXT[ra.level]}</b></div>
     <div className="riskscale">
       {mark(ra.negligible.value, '10⁻⁶ пренебрежимо малый')}
       {mark(ra.limit.value, '5·10⁻⁵ НРБ п. 2.3')}
       {totals.riskPerYear > 0 && <b className="dot" style={{ left: `${logPos(totals.riskPerYear)}%` }}></b>}
-      {years > 1 && totals.riskTotal > 0 && <b className="dot dot2" style={{ left: `${logPos(totals.riskTotal)}%` }}></b>}
     </div>
     <div className="scalelbl">
       <span style={{ left: '0' }}>0,01 на млн</span>
@@ -47,7 +64,9 @@ export function RiskBlock({ totals, years }) {
       <span style={{ left: `${logPos(ra.limit.value)}%` }}>50</span>
       <span style={{ left: '100%' }}>1000 на млн</span>
     </div>
-    <p className="hint risksrc">Уровни риска: НРБ-99/2009, {(ra.limit.loc || 'п. 2.3').replace(/PDF p\./g, 'с. PDF ')}; риск = доза × коэффициент номинального риска (ICRP 103, табл. 1; НРБ-99/2009, п. 2.3), линейная беспороговая модель. Пределы доз населения установлены по пожизненному риску от облучения в течение года (НРБ-99/2009, п. 2.3).</p>
+    {years > 1 && <p className="hint risksrc">Шкала показывает риск от одного года потребления: уровни НРБ заданы для годового облучения. Риск за {years} {yearsWord(years)} — {fmtCases(totals.riskTotal)} на 1 млн, это сумма за все годы, и со шкалой его сравнивать нельзя.</p>}
+    <p className="hint risksrc">Уровни риска: НРБ-99/2009, {(ra.limit.loc || 'п. 2.3').replace(/PDF p\./g, 'с. PDF ')}; риск = доза × коэффициент номинального риска (ICRP 103, табл. 1; НРБ-99/2009, п. 2.3), линейная беспороговая модель. Пределы доз населения установлены по пожизненному риску от облучения в течение года (НРБ-99/2009, п. 2.3): при усреднённом коэффициенте 0,05 Зв⁻¹ уровни 1 и 50 на 1 млн соответствуют 20 мкЗв и 1 мЗв в год.</p>
+    <p className="hint risksrc">Риск номинальный — усреднён по полу и возрасту населения. Это мера для сравнения с нормами, а не прогноз для конкретного человека (МКРЗ, Публ. 103, п. B252).</p>
   </>;
 }
 
@@ -82,24 +101,7 @@ export default function Result({ result, input, meta }) {
   }
 
   const { totals, rows, limits } = result;
-  const dl = doseLvl(totals.doseSvPerYear);
 
-  // D-019: четыре плитки в ряд, как в окне программы; за период — ещё две, если лет больше одного
-  const who = `${AGE_LABEL[input.age] || input.age}; ${SOURCE_LABEL[input.doseSource] || input.doseSource}`;
-  const kpis = [
-    <Kpi key="dose1" value={fmtDose(totals.doseSvPerYear)} label={`Доза за год (${who})`} level={dl} />,
-    <Kpi key="risk1" value={`${fmtCases(totals.riskPerYear)} на 1 млн`} label="Доп. случаи рака за всю жизнь от 1 года потребления (ЛБМ, ICRP 103)" level={totals.riskAssessment?.level} />
-  ];
-
-  const [vs1, vs1Label] = vs(totals.budgetShare1mSv, 'предела 1 мЗв/год на пищевой путь (МУК 2.6.1.1194-03)');
-  kpis.push(<Kpi key="vs1" value={vs1} label={vs1Label} level={dl} />);
-
-  const [vs2, vs2Label] = vs(totals.negligibleShare, 'пренебрежимо малой дозы 10 мкЗв/год (НРБ-99/2009 п. 1.4)');
-  kpis.push(<Kpi key="vs2" value={vs2} label={vs2Label} level={dl} />);
-  if (input.years > 1) {
-    kpis.push(<Kpi key="dose2" value={fmtDose(totals.doseSvTotal)} label={`Доза за ${input.years} ${yearsWord(input.years)}`} level={dl} />);
-    kpis.push(<Kpi key="risk2" value={`${fmtCases(totals.riskTotal)} на 1 млн`} label={`Доп. случаи рака за всю жизнь от ${input.years} ${yearsWord(input.years)} потребления`} />);
-  }
 
   const dep = depositionHtml(rows);
 
@@ -116,7 +118,7 @@ export default function Result({ result, input, meta }) {
   return <div className="science">
     {messages}
     <div className="resblock">
-    <div className="kpis">{kpis}</div>
+    <KpiGrid totals={totals} input={input} />
     <div className={'riskbox risk risk-' + (totals.riskAssessment?.level || 'none')}><RiskBlock totals={totals} years={input.years} /></div>
     </div>
 
@@ -134,8 +136,8 @@ export default function Result({ result, input, meta }) {
         { h: 'Нуклид', f: r => r.nuclide },
         { h: 'Поступление, Бк/год', f: r => fmtNum(r.intakeBqPerYear), c: 'num' },
         { h: 'Пожизненный риск за период', f: r => fmtRiskPerMillion(r.riskTotal), c: 'num' },
-        { h: 'ПГП, Бк/год', f: r => fmtNum(r.pgpBqPerYear), c: 'num' },
-        { h: 'Доля ПГП', f: r => fmtPct(r.pgpShare), c: 'num' }
+        { h: 'ПГП, Бк/год', f: r => r.natural ? 'не нормируется' : fmtNum(r.pgpBqPerYear), c: 'num' },
+        { h: 'Доля ПГП', f: r => r.natural ? '—' : fmtPct(r.pgpShare), c: 'num' }
       ]} />
     </details>
 

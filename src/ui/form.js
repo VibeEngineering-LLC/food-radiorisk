@@ -162,7 +162,7 @@ export function buildInput(raw) {
 
 export function presetRadGear() {
   return {
-    age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.055,
+    age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.05,
     portionKg: 0.1046, portionsPerYear: 1, years: 1, eatDate: null, dryMatterPercent: null,
     processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' },
     foodGroupCode: 'mushrooms_dried',

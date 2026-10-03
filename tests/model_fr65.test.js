@@ -41,3 +41,10 @@ test('форма: lifeMode даёт lifetime/years/age; не-ICRP119 или во
   assert.equal(buildInput({ ...raw, lifeMode: false }).lifetime, null);
   assert.equal(rawFromInput(inp, ch).lifeMode, true);
 });
+
+test('ПГП в режиме до 70 лет — по взрослому e(g), без режима — по e выбранного возраста', () => {
+  const life = computeScenario(data, { ...withLife(0), age: '3m' }).rows[0];
+  assert.ok(Math.abs(life.pgpBqPerYear - 1e-3 / e.adult) <= 1e-9 * life.pgpBqPerYear);
+  const plain = computeScenario(data, { ...presetRadGear(), years: 10 }).rows[0];
+  assert.ok(Math.abs(plain.pgpBqPerYear - 1e-3 / plain.eSvPerBq) <= 1e-9 * plain.pgpBqPerYear);
+});

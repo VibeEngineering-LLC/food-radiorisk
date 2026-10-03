@@ -33,11 +33,12 @@ function riskBlock(totals, years) {
     + `<div class="n">${esc(fmtCases(main))} на 1 млн человек</div>`
     + `<div class="t">Вероятность заболеть раком за жизнь возрастает на ${esc((main * 100).toLocaleString('ru-RU', { maximumSignificantDigits: 3, maximumFractionDigits: 20 }))} % (дополнительно ${esc(fmtOneIn(main).replace('1 из', '1 человек из'))}).</div>`
     // #FR-42: с уровнями НРБ п. 2.3 сравнивается риск от облучения за один год
-    + `<div class="t">${years > 1 ? `От одного года потребления — ${esc(fmtCases(totals.riskPerYear))} на 1 млн (светлая точка; тёмная — ${esc(String(years))} ${yearsWord(years)}). ` : ''}Это <b>${esc(RISK_TXT[ra.level])}</b></div>`
+    + `<div class="t">${years > 1 ? `Риск от одного года потребления — ${esc(fmtCases(totals.riskPerYear))} на 1 млн (точка на шкале). ` : ''}Это <b>${esc(RISK_TXT[ra.level])}</b></div>`
     + `<div class="riskscale">${mark(ra.negligible.value, '10⁻⁶ пренебрежимо малый')}${mark(ra.limit.value, '5·10⁻⁵ НРБ п. 2.3')}`
     + (totals.riskPerYear > 0 ? `<b class="dot" style="left:${logPos(totals.riskPerYear)}%"></b>` : '')
-    + (years > 1 && totals.riskTotal > 0 ? `<b class="dot dot2" style="left:${logPos(totals.riskTotal)}%"></b>` : '') + `</div>`
+    + `</div>`
     + `<div class="scalelbl"><span style="left:0">0,01 на млн</span><span style="left:${logPos(ra.negligible.value)}%">1</span><span style="left:${logPos(ra.limit.value)}%">50</span><span style="left:100%">1000 на млн</span></div>`
+    + (years > 1 ? `<p class="hint risksrc">Шкала показывает риск от одного года потребления: уровни НРБ заданы для годового облучения. Риск за ${esc(String(years))} ${yearsWord(years)} — ${esc(fmtCases(totals.riskTotal))} на 1 млн, это сумма за все годы, и со шкалой его сравнивать нельзя.</p>` : '')
     + `<p class="hint risksrc">Уровни риска: НРБ-99/2009, ${esc((ra.limit.loc || 'п. 2.3').replace(/PDF p\./g, 'с. PDF '))}; риск = доза × коэффициент номинального риска (ICRP 103, табл. 1; НРБ-99/2009, п. 2.3), линейная беспороговая модель. Пределы доз населения установлены по пожизненному риску от облучения в течение года (НРБ-99/2009, п. 2.3).</p>`;
 }
 // lvl: negligible | within | exceeds — подсветка по норме (#FR-29); без нормы карточка серая

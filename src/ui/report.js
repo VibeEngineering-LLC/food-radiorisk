@@ -1,7 +1,7 @@
 import { esc, fmtNum, fmtSci, fmtDose, fmtCases, fmtPct, verdictText } from './fmt.js';
 import { AGE_LABEL, SOURCE_LABEL } from './form.js';
 import { locRu, unitRu } from './ru.js';
-import { sourceFull } from './render.js';
+import { sourceFull, yearsWord } from './render.js';
 
 export const FORMATS = [
   { id: 'md', label: 'Markdown (.md)', ext: 'md', mime: 'text/markdown;charset=utf-8' },
@@ -39,9 +39,15 @@ function blocks(calc, meta, isoDate) {
     ['Возрастная группа и источник коэффициентов', `${AGE_LABEL[input.age] || input.age}; ${SOURCE_LABEL[input.doseSource] || input.doseSource}`]
   ];
   if (input.years > 1) {
-    summaryRows.push(['Доза за ' + input.years + ' лет', fmtDose(totals.doseSvTotal)]);
-    summaryRows.push(['Доп. случаи рака на 1 млн за ' + input.years + ' лет', fmtCases(totals.riskTotal)]);
+    const span = input.years + ' ' + yearsWord(input.years);
+    summaryRows.push(['Доза за ' + span, fmtDose(totals.doseSvTotal)]);
+    summaryRows.push(['Доп. случаи рака на 1 млн за ' + span, fmtCases(totals.riskTotal)]);
   }
+  // доли норм НРБ-99/2009 — только техногенная часть (п. 3.1.3, 5.3.1)
+  summaryRows.push(['Коэффициент риска, Зв⁻¹', fmtNum(input.riskCoeffPerSv)]);
+  summaryRows.push(['Доля предела 1 мЗв/год (НРБ табл. 3.1), техногенные', totals.budgetShare1mSv == null ? 'не нормируется (только природные нуклиды)' : fmtPct(totals.budgetShare1mSv)]);
+  if (input.years > 1) summaryRows.push(['Доля 70 мЗв за 70 лет (НРБ п. 3.1.4), техногенные', totals.lifeShare70mSv == null ? 'не нормируется' : fmtPct(totals.lifeShare70mSv)]);
+  if (totals.naturalNuclides?.length) summaryRows.push(['Природные нуклиды (предел дозы не установлен)', totals.naturalNuclides.join(', ')]);
   b.push({ kind: 'table', head: ['Показатель', 'Значение'], body: summaryRows, num: [false, false] });
 
   // c. Расчет по нуклидам

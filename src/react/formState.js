@@ -41,7 +41,7 @@ export function autoFill(raw, choices) {
 export function initialRaw(choices) {
   const doseSource = doseSourceOptions(choices)[0]?.value ?? '';
   const nuc = choices.nuclides.includes('Cs-137') ? 'Cs-137' : (choices.nuclides[0] ?? '');
-  const base = { age: '', doseSource, riskCoeff: '0.055', portionG: '100', timesPerDay: '1', daysPerWeek: '1', weeksPerMonth: '4', monthsPerYear: '3', years: '1', lifeMode: false, startAge: '0', eatDate: '', dryMatter: '', dryingFactor: '', procMode: 'none', procFr: '1', procRecs: [], procVar: 'best', foodGroup: '', product: '', productState: 'fresh', prepMode: 'as_is', concK: '1', rawMass: '', probeMass: '', sampleMass: '', dmUser: false, dfUser: false, nuclides: [newNuclide(nuc)] };
+  const base = { age: '', doseSource, riskCoeff: '0.05', portionG: '100', timesPerDay: '1', daysPerWeek: '1', weeksPerMonth: '4', monthsPerYear: '3', years: '1', lifeMode: false, startAge: '0', eatDate: '', dryMatter: '', dryingFactor: '', procMode: 'none', procFr: '1', procRecs: [], procVar: 'best', foodGroup: '', product: '', productState: 'fresh', prepMode: 'as_is', concK: '1', rawMass: '', probeMass: '', sampleMass: '', dmUser: false, dfUser: false, nuclides: [newNuclide(nuc)] };
   return autoFill(fixAge(base, choices), choices);
 }
 
