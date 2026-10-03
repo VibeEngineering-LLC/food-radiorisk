@@ -1,4 +1,4 @@
-import { esc, fmtNum, fmtSci, fmtDose, fmtCases, fmtPct, verdictText } from './fmt.js';
+import { esc, fmtNum, fmtSci, fmtDose, fmtPct, verdictText } from './fmt.js';
 import { AGE_LABEL, SOURCE_LABEL } from './form.js';
 import { locRu, unitRu } from './ru.js';
 import { sourceFull, yearsWord } from './render.js';
@@ -35,13 +35,13 @@ function blocks(calc, meta, isoDate) {
   b.push({ kind: 'h2', text: 'Итог' });
   const summaryRows = [
     ['Доза за год', fmtDose(totals.doseSvPerYear)],
-    ['Доп. случаи рака за всю жизнь от 1 года потребления, на 1 млн', fmtCases(totals.riskPerYear)],
+    ['Пожизненный риск (номинальный, с учётом вреда) от 1 года потребления, на 1 млн', fmtNum(totals.riskPerYear * 1e6)],
     ['Возрастная группа и источник коэффициентов', `${AGE_LABEL[input.age] || input.age}; ${SOURCE_LABEL[input.doseSource] || input.doseSource}`]
   ];
   if (input.years > 1) {
     const span = input.years + ' ' + yearsWord(input.years);
     summaryRows.push(['Доза за ' + span, fmtDose(totals.doseSvTotal)]);
-    summaryRows.push(['Доп. случаи рака на 1 млн за ' + span, fmtCases(totals.riskTotal)]);
+    summaryRows.push(['Пожизненный риск (номинальный) на 1 млн за ' + span + ' потребления', fmtNum(totals.riskTotal * 1e6)]);
   }
   // доли норм НРБ-99/2009 — только техногенная часть (п. 3.1.3, 5.3.1)
   summaryRows.push(['Коэффициент риска, Зв⁻¹', fmtNum(input.riskCoeffPerSv)]);

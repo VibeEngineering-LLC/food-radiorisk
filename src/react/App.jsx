@@ -7,7 +7,7 @@ import { loadSaved, save } from './persist.js';
 import { FORMATS, buildReport } from '../ui/report.js';
 import Form from './Form.jsx';
 import Result from './Result.jsx';
-import { fmtDose, fmtCases, verdictText } from '../ui/fmt.js';
+import { fmtDose, fmtNum, verdictText } from '../ui/fmt.js';
 
 // Итог для строки состояния: нуклиды · доза за год · риск · вердикт по ТР ТС
 function statusText(calc) {
@@ -15,7 +15,7 @@ function statusText(calc) {
   if (!r) return 'Загрузка данных…';
   if (!r.ok) return 'Расчёт не выполнен — исправьте ввод';
   const t = r.totals, v = r.limits?.compliance?.verdict;
-  return [r.rows.map(x => x.nuclide).join(', '), `${fmtDose(t.doseSvPerYear)}/год`, `${fmtCases(t.riskPerYear)} на 1 млн`, v ? `ТР ТС: ${verdictText(v)}` : ''].filter(Boolean).join(' · ');
+  return [r.rows.map(x => x.nuclide).join(', '), `${fmtDose(t.doseSvPerYear)}/год`, `риск ${fmtNum(t.riskPerYear * 1e6)} на 1 млн`, v ? `ТР ТС: ${verdictText(v)}` : ''].filter(Boolean).join(' · ');
 }
 
 // Цвет квадрата в строке состояния — худший из уровней: риск (НРБ-99/2009 п. 2.3) и вердикт ТР ТС

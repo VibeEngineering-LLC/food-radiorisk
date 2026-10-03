@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { esc, fmtNum, fmtSci, fmtDose, fmtRiskPerMillion, fmtOneIn, fmtCases, fmtPct, levelClass, verdictText } from '../ui/fmt.js';
+import { esc, fmtNum, fmtSci, fmtDose, fmtRiskPerMillion, fmtOneIn, fmtPct, levelClass, verdictText } from '../ui/fmt.js';
 import { depositionHtml } from '../ui/product.js';
 import { AGE_LABEL, SOURCE_LABEL } from '../ui/form.js';
 import { locRu, unitRu } from '../ui/ru.js';
@@ -29,7 +29,7 @@ export function KpiGrid({ totals, input }) {
   const n = input.years, span = input.lifetime ? `${input.lifetime.fromAge}–${input.lifetime.toAge} лет` : `${n} ${yearsWord(n)}`;
   const mln = (p) => Number.isFinite(p) ? fmtNum(p * 1e6) : '—';
   return <div className="kgrid">
-    <div /><div className="kh">Ожидаемая эффективная доза</div><div className="kh">Риск рака за всю жизнь</div><div className="kh">Доля нормы НРБ-99/2009</div>
+    <div /><div className="kh">Ожидаемая эффективная доза</div><div className="kh">Пожизненный риск (номинальный)</div><div className="kh">Доля нормы НРБ-99/2009</div>
     <div className="kr">1 год</div>
     <Kpi value={fmtDose(totals.doseSvPerYear)} label={who} />
     <Kpi value={mln(totals.riskPerYear)} unit="на 1 млн" label="от 1 года потребления; уровни НРБ п. 2.3 — 1 и 50 на 1 млн" level={totals.riskAssessment?.level} />
@@ -52,11 +52,12 @@ export function RiskBlock({ totals, years, age }) {
   const mark = (v, t) => <i className="tick" style={{ left: `${logPos(v)}%` }} title={t}></i>;
 
   return <>
-    <div className="t"><b>Дополнительные случаи рака за всю жизнь{years > 1 ? ` от ${years} ${yearsWord(years)} потребления` : ' от 1 года потребления'}</b></div>
-    <div className="n">{fmtCases(main)} на 1 млн человек</div>
-    <div className="t">Риск рассчитан по МКРЗ 103 на оставшуюся жизнь: по ожидаемой дозе, накопленной после поступления — взрослому за 50 лет, ребёнку до 70 лет возраста (здесь: {horizon}).</div>
-    <div className="t">Вероятность заболеть раком за жизнь возрастает на {(main * 100).toLocaleString('ru-RU', { maximumSignificantDigits: 3, maximumFractionDigits: 20 })} % (дополнительно {fmtOneIn(main).replace('1 из', '1 человек из')}).</div>
-    <div className="t">{years > 1 ? `Риск от одного года потребления — ${fmtCases(totals.riskPerYear)} на 1 млн (точка на шкале). ` : ''}Это <b>{RISK_TXT[ra.level]}</b></div>
+    <div className="t"><b>Пожизненный радиационный риск{years > 1 ? ` от ${years} ${yearsWord(years)} потребления` : ' от 1 года потребления'}</b></div>
+    <div className="n">{fmtNum(main * 1e6)} на 1 млн</div>
+    <div className="t">Риск рассчитан по МКРЗ 103 на оставшуюся жизнь: по ожидаемой дозе, накопленной после поступления — взрослому за 50 лет, ребёнку до 70 лет возраста (МКРЗ 103, прил. B, п. (f); здесь: {horizon}).</div>
+    <div className="t">В долях: {fmtSci(main)} ({(main * 100).toLocaleString('ru-RU', { maximumSignificantDigits: 3, maximumFractionDigits: 20 })} %, {fmtOneIn(main)}) — в таком виде НРБ-99/2009 задают индивидуальный пожизненный риск.</div>
+    <div className="t">Номинальный риск с учётом вреда (МКРЗ 103, табл. 1; НРБ-99/2009, п. 2.3): коэффициент учитывает тяжесть последствий — летальность и потерянные годы жизни (МКРЗ 103, п. A106). Это не число заболевших: частота заболеваний раком на 1 Зв выше (МКРЗ 103, табл. A.4.1).</div>
+    <div className="t">{years > 1 ? `Риск от одного года потребления — ${fmtNum(totals.riskPerYear * 1e6)} на 1 млн (точка на шкале). ` : ''}Это <b>{RISK_TXT[ra.level]}</b></div>
     <div className="riskscale">
       {mark(ra.negligible.value, '10⁻⁶ пренебрежимо малый')}
       {mark(ra.limit.value, '5·10⁻⁵ НРБ п. 2.3')}
@@ -68,8 +69,8 @@ export function RiskBlock({ totals, years, age }) {
       <span style={{ left: `${logPos(ra.limit.value)}%` }}>50</span>
       <span style={{ left: '100%' }}>1000 на млн</span>
     </div>
-    {years > 1 && <p className="hint risksrc">Шкала показывает риск от одного года потребления: уровни НРБ заданы для годового облучения. Риск за {years} {yearsWord(years)} — {fmtCases(totals.riskTotal)} на 1 млн, это сумма за все годы, и со шкалой его сравнивать нельзя.</p>}
-    <p className="hint risksrc">Уровни риска: НРБ-99/2009, {(ra.limit.loc || 'п. 2.3').replace(/PDF p\./g, 'с. PDF ')}; риск = доза × коэффициент номинального риска (ICRP 103, табл. 1; НРБ-99/2009, п. 2.3), линейная беспороговая модель. Пределы доз населения установлены по пожизненному риску от облучения в течение года (НРБ-99/2009, п. 2.3): при усреднённом коэффициенте 0,05 Зв⁻¹ уровни 1 и 50 на 1 млн соответствуют 20 мкЗв и 1 мЗв в год.</p>
+    {years > 1 && <p className="hint risksrc">Шкала показывает риск от одного года потребления: уровни НРБ заданы для годового облучения. Риск за {years} {yearsWord(years)} — {fmtNum(totals.riskTotal * 1e6)} на 1 млн, это сумма за все годы, и со шкалой его сравнивать нельзя.</p>}
+    <p className="hint risksrc">Уровни риска: НРБ-99/2009, {(ra.limit.loc || 'п. 2.3').replace(/PDF p\./g, 'с. PDF ')}; риск = доза × коэффициент номинального риска (ICRP 103, табл. 1; НРБ-99/2009, п. 2.3), линейная беспороговая модель. Пределы доз населения установлены по пожизненному риску от облучения в течение года (НРБ-99/2009, п. 2.3): при усреднённом коэффициенте 0,05 Зв⁻¹ уровни 1 и 50 на 1 млн соответствуют (расчёт: риск / 0,05) 20 мкЗв и 1 мЗв за год; сам предел для населения — 1 мЗв в год в среднем за любые последовательные 5 лет, но не более 5 мЗв в год (табл. 3.1).</p>
     <p className="hint risksrc">Риск номинальный — усреднён по полу и возрасту населения. Это мера для сравнения с нормами, а не прогноз для конкретного человека (МКРЗ, Публ. 103, п. B252).</p>
   </>;
 }

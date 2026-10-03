@@ -1,4 +1,4 @@
-import { esc, fmtNum, fmtSci, fmtDose, fmtRiskPerMillion, fmtOneIn, fmtCases, fmtPct, levelClass, gaugeClass, verdictText } from './fmt.js';
+import { esc, fmtNum, fmtSci, fmtDose, fmtRiskPerMillion, fmtOneIn, fmtPct, levelClass, gaugeClass, verdictText } from './fmt.js';
 import { depositionHtml } from './product.js';
 import { AGE_LABEL, SOURCE_LABEL, SOURCE_SHORT } from './form.js';
 import { locRu, unitRu } from './ru.js';
@@ -21,24 +21,25 @@ export const yearsWord = (n) => {
   return k >= 11 && k <= 14 ? 'лет' : d === 1 ? 'год' : d >= 2 && d <= 4 ? 'года' : 'лет';
 };
 // #FR-20: добавочный риск — «1 на N», цвет по уровням НРБ-99/2009 п. 2.3, логарифмическая шкала 10⁻⁸…10⁻³ с отметками уровней
-export const RISK_TXT = { negligible: 'пренебрежимо малый риск (не больше 1 случая на 1 млн в год, НРБ-99/2009)', within: 'выше пренебрежимого (1 на млн), но не выше 50 случаев на 1 млн в год — уровня, от которого установлены пределы доз населения', exceeds: 'выше 50 случаев на 1 млн в год — уровня, от которого установлены пределы доз населения' };
+export const RISK_TXT = { negligible: 'пренебрежимо малый риск (не больше 1 на 1 млн — пожизненный риск от облучения за год, НРБ-99/2009 п. 2.3)', within: 'выше пренебрежимого (1 на млн), но не выше 50 на 1 млн — пожизненного риска от облучения за год, исходя из которого установлены пределы доз населения', exceeds: 'выше 50 на 1 млн — пожизненного риска от облучения за год, исходя из которого установлены пределы доз населения' };
 export const logPos = (x) => Math.max(0, Math.min(100, (Math.log10(x) + 8) / 5 * 100));
 function riskBlock(totals, years) {
   const ra = totals.riskAssessment;
   if (!ra) return `<div class="n">${esc(fmtRiskPerMillion(totals.riskTotal))}</div><div class="t">добавочный риск за ${esc(String(years))} ${yearsWord(years)}</div>`;
   const main = years > 1 ? totals.riskTotal : totals.riskPerYear;
   const mark = (v, t) => `<i class="tick" style="left:${logPos(v)}%" title="${esc(t)}"></i>`;
-  // #FR-50: пожизненный риск (ЛБМ, номинальный коэффициент МКРЗ 103) — числом дополнительных случаев рака на 1 млн человек за выбранный период
-  return `<div class="t"><b>Дополнительные случаи рака за всю жизнь${years > 1 ? ` от ${esc(String(years))} ${yearsWord(years)} потребления` : ' от 1 года потребления'}</b></div>`
-    + `<div class="n">${esc(fmtCases(main))} на 1 млн человек</div>`
-    + `<div class="t">Вероятность заболеть раком за жизнь возрастает на ${esc((main * 100).toLocaleString('ru-RU', { maximumSignificantDigits: 3, maximumFractionDigits: 20 }))} % (дополнительно ${esc(fmtOneIn(main).replace('1 из', '1 человек из'))}).</div>`
+  // #FR-50: пожизненный риск (ЛБМ, номинальный коэффициент МКРЗ 103) на 1 млн; коэффициент с учётом вреда, не число заболевших (МКРЗ 103, табл. 1, п. A106)
+  return `<div class="t"><b>Пожизненный радиационный риск${years > 1 ? ` от ${esc(String(years))} ${yearsWord(years)} потребления` : ' от 1 года потребления'}</b></div>`
+    + `<div class="n">${esc(fmtNum(main * 1e6))} на 1 млн</div>`
+    + `<div class="t">В долях: ${esc(fmtSci(main))} (${esc((main * 100).toLocaleString('ru-RU', { maximumSignificantDigits: 3, maximumFractionDigits: 20 }))} %, ${esc(fmtOneIn(main))}) — в таком виде НРБ-99/2009 задают индивидуальный пожизненный риск.</div>`
+    + `<div class="t">Номинальный риск с учётом вреда (МКРЗ 103, табл. 1; НРБ-99/2009, п. 2.3): коэффициент учитывает тяжесть последствий — летальность и потерянные годы жизни (МКРЗ 103, п. A106). Это не число заболевших: частота заболеваний раком на 1 Зв выше (МКРЗ 103, табл. A.4.1).</div>`
     // #FR-42: с уровнями НРБ п. 2.3 сравнивается риск от облучения за один год
-    + `<div class="t">${years > 1 ? `Риск от одного года потребления — ${esc(fmtCases(totals.riskPerYear))} на 1 млн (точка на шкале). ` : ''}Это <b>${esc(RISK_TXT[ra.level])}</b></div>`
+    + `<div class="t">${years > 1 ? `Риск от одного года потребления — ${esc(fmtNum(totals.riskPerYear * 1e6))} на 1 млн (точка на шкале). ` : ''}Это <b>${esc(RISK_TXT[ra.level])}</b></div>`
     + `<div class="riskscale">${mark(ra.negligible.value, '10⁻⁶ пренебрежимо малый')}${mark(ra.limit.value, '5·10⁻⁵ НРБ п. 2.3')}`
     + (totals.riskPerYear > 0 ? `<b class="dot" style="left:${logPos(totals.riskPerYear)}%"></b>` : '')
     + `</div>`
     + `<div class="scalelbl"><span style="left:0">0,01 на млн</span><span style="left:${logPos(ra.negligible.value)}%">1</span><span style="left:${logPos(ra.limit.value)}%">50</span><span style="left:100%">1000 на млн</span></div>`
-    + (years > 1 ? `<p class="hint risksrc">Шкала показывает риск от одного года потребления: уровни НРБ заданы для годового облучения. Риск за ${esc(String(years))} ${yearsWord(years)} — ${esc(fmtCases(totals.riskTotal))} на 1 млн, это сумма за все годы, и со шкалой его сравнивать нельзя.</p>` : '')
+    + (years > 1 ? `<p class="hint risksrc">Шкала показывает риск от одного года потребления: уровни НРБ заданы для годового облучения. Риск за ${esc(String(years))} ${yearsWord(years)} — ${esc(fmtNum(totals.riskTotal * 1e6))} на 1 млн, это сумма за все годы, и со шкалой его сравнивать нельзя.</p>` : '')
     + `<p class="hint risksrc">Уровни риска: НРБ-99/2009, ${esc((ra.limit.loc || 'п. 2.3').replace(/PDF p\./g, 'с. PDF '))}; риск = доза × коэффициент номинального риска (ICRP 103, табл. 1; НРБ-99/2009, п. 2.3), линейная беспороговая модель. Пределы доз населения установлены по пожизненному риску от облучения в течение года (НРБ-99/2009, п. 2.3).</p>`;
 }
 // lvl: negligible | within | exceeds — подсветка по норме (#FR-29); без нормы карточка серая
@@ -69,8 +70,8 @@ function scienceHtml(result, input, meta) {
   const dl = doseLvl(totals.doseSvPerYear);
   h += kpi(fmtDose(totals.doseSvPerYear), 'Доза за год', dl);
   h += kpi(fmtDose(totals.doseSvTotal), `Доза за ${input.years} ${yearsWord(input.years)}`, dl);
-  h += kpi(`${fmtCases(totals.riskPerYear)} на 1 млн`, 'Доп. случаи рака за всю жизнь от 1 года потребления (ЛБМ)', totals.riskAssessment?.level);
-  if (input.years > 1) h += kpi(`${fmtCases(totals.riskTotal)} на 1 млн`, `Доп. случаи рака за всю жизнь от ${input.years} ${yearsWord(input.years)} потребления`);
+  h += kpi(`${fmtNum(totals.riskPerYear * 1e6)} на 1 млн`, 'Пожизненный риск (номинальный) от 1 года потребления (ЛБМ)', totals.riskAssessment?.level);
+  if (input.years > 1) h += kpi(`${fmtNum(totals.riskTotal * 1e6)} на 1 млн`, `Пожизненный риск (номинальный) от ${input.years} ${yearsWord(input.years)} потребления`);
   // #FR-21: доли в % непонятны при больших кратностях («6 000 %») — показываем «в N раз выше» или «N % от»
   // «в 1,33 раза», «в 3 раза», «в 22 раза», «в 60 раз», «в 12 раз» (число — как его покажет fmtNum, 3 значащие цифры)
   const razWord = (x) => { const n = Number(x.toPrecision(3)); if (!Number.isInteger(n)) return 'раза';
