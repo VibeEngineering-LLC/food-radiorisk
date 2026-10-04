@@ -21,10 +21,11 @@ export default function Compare({ comparison, input, radonC, setRadonC }) {
   if (home && radonC !== 40) cmp = withRadon(cmp, home, input.riskCoeffPerSv, `Радон дома, ${radonC} Бк/м³`, 'radon_home');
   const { scenarioSv, multi, rows, equivalents: q, cancer: k, natural } = cmp;
   const span = input.lifetime ? `${input.lifetime.fromAge}–${input.lifetime.toAge} лет` : `${input.years} ${yearsWord(input.years)}`;
-  const label = (r) => r.id === 'product' ? `Эффект за ${H} лет от питания этим продуктом: ${multi ? span : '1 год'}` : r.id === 'product_horizon' ? `Эффект за ${H} лет от питания этим продуктом каждый год, все ${H} лет` : r.label;
-  const exposure = (r) => r.kind === 'single' ? 'разовое' : r.kind === 'horizon' ? `постоянно, ${H} лет` : r.id === 'product_horizon' ? `питание ${H} лет` : `питание ${multi ? span : '1 год'}`;
+  const label = (r) => r.id === 'product' ? `Эффект за ${H} лет от питания этим продуктом: ${multi ? span : '1 год'}` : r.label;
+  const exposure = (r) => r.kind === 'single' ? 'разовое' : r.kind === 'horizon' ? `постоянно, ${H} лет` : `питание ${multi ? span : '1 год'}`;
   const me = (r) => r.kind === 'product' ? 'cmp-me' : '';
   const srcIds = [...new Set([...BASE_SOURCES, ...(home ? ['DARBY2005'] : []), ...rows.filter(r => r.source).map(r => r.source)])];
+
   return <>
     <p className="hint">Все дозы показаны за {H} лет — столько лет МКРЗ принимает для расчёта пожизненной дозы: взрослому 50 лет, ребёнку — до 70 лет возраста (МКРЗ 103, прил. B, п. (f)). Разовые события (снимок, перелёт) и питание этим продуктом учтены так, как указано в колонке «Облучение»; постоянные источники (природный фон, радон) — за все {H} лет. Риск у всех источников считается умножением дозы на один и тот же коэффициент, поэтому во сколько раз отличаются дозы, во столько же отличаются и риски.</p>
     {scenarioSv > 0 && <p className="cmp-eq"><b>{fmtDose(scenarioSv)}</b> ≈ {fmtNum(q.bgDays, 2)} дн. природного фона{q.chestXrays != null && <> ≈ {fmtNum(q.chestXrays, 2)} рентгеновского снимка грудной клетки</>}{q.flightHours != null && <> ≈ {fmtNum(q.flightHours, 2)} ч полёта на самолёте</>}</p>}

@@ -19,11 +19,10 @@ const row = (c, id) => c.rows.find(x => x.id === id);
 test('взрослый, 1 год: горизонт 50 лет, строки по возрастанию дозы, риск и доля фона', () => {
   const c = buildComparison(data.compare, totals(), inp());
   assert.equal(c.horizonYears, 50);
-  assert.deepEqual(c.rows.map(x => x.id), ['flight_3h', 'product', 'med_chest_xray', 'med_mammogram', 'product_horizon', 'med_ct_whole_body', 'bg_natural_world']);
+  assert.deepEqual(c.rows.map(x => x.id), ['flight_3h', 'product', 'med_chest_xray', 'med_mammogram', 'med_ct_whole_body', 'bg_natural_world']);
   close(row(c, 'product').doseSv, E);
   close(row(c, 'product').risk, E * 0.05);
   close(row(c, 'product').shareOfBackground, E / (2.4e-3 * 50));
-  close(row(c, 'product_horizon').doseSv, E * 50);
   close(row(c, 'bg_natural_world').doseSv, 2.4e-3 * 50);
   assert.equal(row(c, 'bg_natural_world').kind, 'horizon');
   close(row(c, 'med_ct_whole_body').doseSv, 12e-3);
@@ -47,22 +46,19 @@ test('добавка к фоновому риску заболеть раком:
   close(k2.addScenario, E * 0.1695);
 });
 
-test('ребёнок 5 лет: горизонт до 70 лет возраста, строки «весь горизонт» для продукта нет', () => {
+test('ребёнок 5 лет: горизонт до 70 лет возраста', () => {
   const c = buildComparison(data.compare, totals(), inp({ age: '5y' }));
   assert.equal(c.horizonYears, 65);
-  assert.equal(row(c, 'product_horizon'), undefined);
   close(row(c, 'bg_natural_world').doseSv, 2.4e-3 * 65);
   assert.equal(horizonYears(inp({ age: '3m' })), 70);
   assert.equal(horizonYears(inp({ lifetime: { fromAge: 10, toAge: 70 } })), 60);
 });
 
-test('несколько лет: сценарий — доза за весь период; при 50 годах строки «весь горизонт» нет', () => {
+test('несколько лет: сценарий — доза за весь период', () => {
   const c = buildComparison(data.compare, totals(10), inp({ years: 10 }));
   close(c.scenarioSv, E * 10);
   close(row(c, 'product').doseSv, E * 10);
-  close(row(c, 'product_horizon').doseSv, E * 50);
   close(c.equivalents.bgDays, E * 10 / 2.4e-3 * 365);
-  assert.equal(row(buildComparison(data.compare, totals(50), inp({ years: 50 })), 'product_horizon'), undefined);
 });
 
 test('нет данных — null; расчёт сценария отдаёт сравнение', () => {
@@ -79,7 +75,6 @@ test('срок меньше года: сценарий — доза за пер�
   assert.equal(c.multi, true);
   close(c.scenarioSv, E * 0.5);
   close(row(c, 'product').doseSv, E * 0.5);
-  assert.notEqual(row(c, 'product_horizon'), undefined);
 });
 
 test('нулевая доза: ни одного NaN или Infinity, добавка к раку нулевая', () => {

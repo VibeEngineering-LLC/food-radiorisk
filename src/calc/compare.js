@@ -38,9 +38,6 @@ export function buildComparison(records, totals, input) {
   const multi = input.years !== 1 || !!input.lifetime;
   const scenarioSv = multi ? totals.doseSvTotal : totals.doseSvPerYear;
   const rows = [{ id: 'product', kind: 'product', label: null, doseSv: scenarioSv, source: null, loc: null }];
-  if (input.age === 'adult' && !input.lifetime && input.years < H) {
-    rows.push({ id: 'product_horizon', kind: 'product', label: null, doseSv: totals.doseSvPerYear * H, source: null, loc: null });
-  }
   for (const x of records) {
     if (!Number.isFinite(x.value)) continue;
     if (x.kind === 'single') rows.push({ id: x.id, kind: 'single', label: x.label_ru, doseSv: x.value * 1e-3, source: x.source, loc: x.loc });
@@ -52,15 +49,8 @@ export function buildComparison(records, totals, input) {
   }
   rows.sort((a, b) => a.doseSv - b.doseSv);
   const xray = rec('med_chest_xray'), flight = rec('flight_3h');
-  const equivalents = {
-    bgDays: scenarioSv / bgSvPerYear * 365,
-    chestXrays: xray ? scenarioSv / (xray.value * 1e-3) : null,
-    flightHours: flight ? scenarioSv / (flight.value * 1e-3) * 3 : null
-  };
+  const equivalents = { bgDays: scenarioSv / bgSvPerYear * 365, chestXrays: xray ? scenarioSv / (xray.value * 1e-3) : null, flightHours: flight ? scenarioSv / (flight.value * 1e-3) * 3 : null };
   const k = rec('cancer_incidence_coeff'), base = rec('cancer_baseline_ru_0_69');
-  const cancer = k && base ? {
-    baseline: base.value, coeffPerSv: k.value, addScenario: scenarioSv * k.value, addBackground: bgHorizonSv * k.value,
-    coeffSource: k.source, coeffLoc: k.loc, baselineSource: base.source, baselineLoc: base.loc
-  } : null;
+  const cancer = k && base ? { baseline: base.value, coeffPerSv: k.value, addScenario: scenarioSv * k.value, addBackground: bgHorizonSv * k.value, coeffSource: k.source, coeffLoc: k.loc, baselineSource: base.source, baselineLoc: base.loc } : null;
   return { horizonYears: H, scenarioSv, multi, bgSvPerYear, bgHorizonSv, rows, equivalents, cancer, natural: Array.isArray(totals.naturalNuclides) ? totals.naturalNuclides : [] };
 }
