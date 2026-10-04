@@ -802,6 +802,81 @@
    "evidence": [
     "audit/sci-gaps-library-2026-09-30.md:731"
    ]
+  },
+  "WHO_CHERNOBYL2006": {
+   "title": "Health effects of the Chernobyl accident: an overview",
+   "title_ru": "Последствия Чернобыльской аварии для здоровья: обзор",
+   "authors": "World Health Organization",
+   "year": 2006,
+   "publisher": "WHO, April 2006",
+   "doi": null,
+   "url": null,
+   "local": null,
+   "kind": "обзор ВОЗ",
+   "same_as": null,
+   "evidence": [
+    "audit/risk-comparison-literature-2026-10-04.md:107"
+   ]
+  },
+  "DOE_RIP": {
+   "title": "Radiation in Perspective",
+   "title_ru": "Радиация в перспективе",
+   "authors": "U.S. Department of Energy, Office of ES&H Reporting and Analysis",
+   "year": 2016,
+   "publisher": "U.S. DOE",
+   "doi": null,
+   "url": "https://www.energy.gov/sites/prod/files/2016/09/f33/Radiation_in_Perspective.pdf",
+   "local": null,
+   "kind": "брошюра регулятора",
+   "same_as": null,
+   "evidence": [
+    "audit/risk-comparison-literature-2026-10-04.md:106"
+   ]
+  },
+  "DARBY2005": {
+   "title": "Radon in homes and risk of lung cancer: collaborative analysis of individual data from 13 European case-control studies",
+   "title_ru": "Радон в жилищах и риск рака лёгкого: совместный анализ данных 13 европейских исследований «случай — контроль»",
+   "authors": "Darby S. et al.",
+   "year": 2005,
+   "publisher": "BMJ 2005;330:223",
+   "doi": "10.1136/bmj.38308.477650.63",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/15613366/",
+   "local": null,
+   "kind": "статья",
+   "same_as": null,
+   "evidence": [
+    "audit/risk-comparison-literature-2026-10-04.md:89"
+   ]
+  },
+  "HPS_PS010": {
+   "title": "Radiation Risk in Perspective, Position Statement PS010-4",
+   "title_ru": "Радиационный риск в перспективе, позиция Общества физики здоровья PS010-4",
+   "authors": "Health Physics Society",
+   "year": 2019,
+   "publisher": "Health Physics Society",
+   "doi": null,
+   "url": null,
+   "local": null,
+   "kind": "позиция профессионального общества",
+   "same_as": null,
+   "evidence": [
+    "audit/risk-comparison-literature-2026-10-04.md:49"
+   ]
+  },
+  "MNIOI2023": {
+   "title": "Злокачественные новообразования в России в 2023 году (заболеваемость и смертность)",
+   "title_ru": "Злокачественные новообразования в России в 2023 году (заболеваемость и смертность)",
+   "authors": "Каприн А.Д., Старинский В.В., Шахзадова А.О. (ред.)",
+   "year": 2024,
+   "publisher": "МНИОИ им. П.А. Герцена — филиал ФГБУ «НМИЦ радиологии» Минздрава России",
+   "doi": null,
+   "url": null,
+   "local": null,
+   "kind": "статистический сборник",
+   "same_as": null,
+   "evidence": [
+    "audit/risk-comparison-literature-2026-10-04.md:182"
+   ]
   }
  }
 }

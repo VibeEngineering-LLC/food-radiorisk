@@ -559,7 +559,15 @@ details.prov[open] > summary { margin-bottom: .5rem; }
 td.muted { color: var(--muted); font-style: italic; }
 /* Итоги: строки «1 год / период», столбцы «доза / риск / доля нормы» */
 .kgrid { display: grid; grid-template-columns: max-content repeat(3, minmax(0, 1fr)); gap: 6px; align-items: stretch; }
+.kgrid.one { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .kgrid .kh { font-size: .8rem; color: var(--muted); align-self: end; }
 .kgrid .kr { font-weight: 600; align-self: center; padding-right: 4px; white-space: nowrap; }
 .kpi .v .u { font-size: .75em; font-weight: 400; }
-@media (max-width: 640px) { .kgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .kgrid > div:first-child { display: none; } .kgrid .kr { grid-column: 1 / -1; } }
+/* #FR-73: вкладка «Сравнение» */
+.cmpbar { display: block; width: 100%; min-width: 120px; height: 10px; border-radius: 5px; background: var(--line); }
+.cmpbar i { display: block; height: 100%; min-width: 3px; border-radius: 5px; background: var(--muted); }
+td.cmp-me { font-weight: 600; background: color-mix(in srgb, var(--warn) 14%, transparent); }
+td.cmp-me .cmpbar i { background: var(--warn); }
+.cmp-eq, .cmp-cancer { margin: 6px 0; max-width: 78ch; }
+.cmp-radon input { width: 6rem; }
+@media (max-width: 640px) { .kgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .kgrid:not(.one) > div:first-child { display: none; } .kgrid .kr { grid-column: 1 / -1; } }

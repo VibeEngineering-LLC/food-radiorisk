@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "food-radiorisk/compare.schema.json",
+  "title": "Опорная величина для сравнения дозы от продукта с другими источниками облучения (#FR-73)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "label_ru", "value", "unit", "source", "loc", "quote", "level", "unit_norm", "unit_factor", "unit_inferred"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9_.\\-]+$" },
+    "kind": { "enum": ["single", "annual", "coeff", "baseline"] },
+    "label_ru": { "type": "string", "minLength": 1 },
+    "value": { "type": "number", "exclusiveMinimum": 0 },
+    "unit": { "type": "string", "minLength": 1 },
+    "source": { "type": "string", "minLength": 1 },
+    "loc": { "type": "string", "minLength": 1 },
+    "quote": { "type": "string", "minLength": 1 },
+    "level": { "enum": ["✅", "📗", "⚠️"] },
+    "unit_norm": { "type": ["string", "null"] },
+    "unit_factor": { "type": ["number", "null"] },
+    "unit_inferred": { "type": "boolean" }
+  }
+}

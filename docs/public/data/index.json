@@ -2,6 +2,13 @@
  "schema_version": 1,
  "datasets": [
   {
+   "dataset": "compare",
+   "file": "compare.json",
+   "record_count": 7,
+   "source_sha256": "0ad171c93405e8a25c086b27557daf3a8bc90fd311331b45b635c039717bd21f",
+   "json_sha256": "dbff7c23e450e838998f1f1e152198516475035ea8df58301ca5aa81d6757709"
+  },
+  {
    "dataset": "dose_coeff",
    "file": "dose_coeff.json",
    "record_count": 95,

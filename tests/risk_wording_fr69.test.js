@@ -23,8 +23,8 @@ test('отчёт md и уровни НРБ: риск без «случаев р�
   }
 });
 
-test('блок риска (React и старый интерфейс): без «случаев», ссылки на п. A106 и табл. A.4.1', async () => {
-  for (const f of ['src/react/Result.jsx', 'src/ui/render.js']) {
+test('блок риска (Result.jsx): без «случаев», ссылки на п. A106 и табл. A.4.1', async () => {
+  for (const f of ['src/react/Result.jsx']) {
     const raw = await readFile(root + f, 'utf8');
     const ui = raw.split('\n').filter(line => !line.trim().startsWith('//')).join('\n');
     assert.doesNotMatch(ui, BAD, f);

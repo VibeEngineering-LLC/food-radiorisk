@@ -5,6 +5,7 @@ import { AGE_LABEL, SOURCE_LABEL } from '../ui/form.js';
 import { locRu, unitRu } from '../ui/ru.js';
 import { FOOD_CLASS_RU } from '../calc/foodclass.js';
 import { sourceFull, JUR_RU, yearsWord, RISK_TXT, logPos } from '../ui/render.js';
+import Compare from './Compare.jsx';
 
 export function Kpi({ value, unit, label, level }) {
   return <div className={'kpi' + (level ? ' risk-' + level : '')}><div className="v">{value}{unit && <span className="u"> {unit}</span>}</div><div className="l">{label}</div></div>;
@@ -28,9 +29,9 @@ export function KpiGrid({ totals, input }) {
   const who = `Вся доза, которую даст поступление за 1 год, накопленная за ${horizon} (${(AGE_LABEL[input.age] || input.age).toLowerCase()}); ${SOURCE_LABEL[input.doseSource] || input.doseSource}`;
   const n = input.years, span = input.lifetime ? `${input.lifetime.fromAge}–${input.lifetime.toAge} лет` : `${n} ${yearsWord(n)}`;
   const mln = (p) => Number.isFinite(p) ? fmtNum(p * 1e6) : '—';
-  return <div className="kgrid">
-    <div /><div className="kh">Ожидаемая эффективная доза</div><div className="kh">Пожизненный риск (номинальный)</div><div className="kh">Доля нормы НРБ-99/2009</div>
-    <div className="kr">1 год</div>
+  return <div className={n > 1 ? 'kgrid' : 'kgrid one'}>
+    {n > 1 && <div />}<div className="kh">Ожидаемая эффективная доза</div><div className="kh">Пожизненный риск (номинальный)</div><div className="kh">Доля нормы НРБ-99/2009</div>
+    {n > 1 && <div className="kr">1 год</div>}
     <Kpi value={fmtDose(totals.doseSvPerYear)} label={who} />
     <Kpi value={mln(totals.riskPerYear)} unit="на 1 млн" label="от 1 года потребления; уровни НРБ п. 2.3 — 1 и 50 на 1 млн" level={totals.riskAssessment?.level} />
     {normKpi(totals.budgetShare1mSv, 'от предела 1 мЗв/год (табл. 3.1, п. 5.2.4)', totals)}
@@ -94,6 +95,7 @@ export function DataTable({ rows, cols }) {
 export default function Result({ result, input, meta }) {
   // #FR-66: нормы РФ, зарубежные нормы и источники — одна вкладочная группа
   const [rt, setRt] = useState('');
+  const [radonC, setRadonC] = useState(100); // #FR-73: концентрация радона дома, Бк/м³ — состояние здесь, чтобы не сбрасывалось при смене вкладки
   const messages = [];
   result.errors.forEach(e => messages.push(<div key={e} className="msg err">{e}</div>));
   result.warnings.forEach(w => messages.push(<div key={w} className="msg warn">{w}</div>));
@@ -115,7 +117,7 @@ export default function Result({ result, input, meta }) {
 
   const hasRu = !!(input.foodGroupCode && limits.ru.length), hasForeign = limits.foreign.length > 0;
   // #FR-59: группы таблиц в одну колонку (расчёт с источниками, нормы РФ, зарубежные); последняя группа тянется до низа
-  const tabs = [hasRu && { id: 'ru', label: 'Нормы РФ / ЕАЭС' }, hasForeign && { id: 'foreign', label: 'Зарубежные нормы' }, { id: 'src', label: 'Источники' }].filter(Boolean);
+  const tabs = [hasRu && { id: 'ru', label: 'Нормы РФ / ЕАЭС' }, hasForeign && { id: 'foreign', label: 'Зарубежные нормы' }, result.comparison && { id: 'cmp', label: 'Сравнение' }, { id: 'src', label: 'Источники' }].filter(Boolean);
   const curTab = tabs.some(t => t.id === rt) ? rt : tabs[0].id;
   const grp = (key, grow) => ({ className: 'rgroup' + (grow ? ' grow' : '') });
   const massKg = input.portionKg * input.portionsPerYear;
@@ -202,6 +204,7 @@ export default function Result({ result, input, meta }) {
         ]} />
       </>;
     })()}
+    {curTab === 'cmp' && <Compare comparison={result.comparison} input={input} radonC={radonC} setRadonC={setRadonC} />}
     {curTab === 'src' && <>
     <p className="hint">Описание каждого документа и методика расчёта — на странице <a href="sources.html">«Справка»</a>.</p>
     <DataTable rows={provRows} cols={[

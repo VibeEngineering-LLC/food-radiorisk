@@ -8,6 +8,7 @@ import { limitRecordFor } from './catalog.js';
 import { resolveProcessing } from './processing.js';
 import { isNatural, LIMIT_YEAR_SV, LIMIT_LIFE_SV } from './origin.js';
 import { AGE_BANDS, lifetimeDose } from './lifetime.js';
+import { buildComparison } from './compare.js';
 
 /** @param {object} data */
 export function listChoices(data) {
@@ -80,7 +81,9 @@ export function computeScenario(data, input) {
       negligibleShare: rows.length ? doseY / 1e-5 : null,
       riskAssessment
     },
-    limits
+    limits,
+    // #FR-73: сравнение с другими источниками облучения
+    comparison: rows.length ? buildComparison(data.compare, { doseSvPerYear: doseY, doseSvTotal: doseT, naturalNuclides: rows.filter(r => r.natural).map(r => r.nuclide) }, input) : null
   };
 }
 
