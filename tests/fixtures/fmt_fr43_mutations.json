@@ -1,5 +1,5 @@
 [
  {"name": "not_inverted", "from": "`1 из ${fmtNum(1 / p)}`", "to": "`1 из ${fmtNum(p)}`"},
- {"name": "no_mln", "from": "(1 / p >= 1e6 ?", "to": "(false ?"},
+ {"name": "no_mln", "file": "src/ui/fmt.js", "from": ": 1 / p >= 1e6 ? `1 из", "to": ": false ? `1 из"},
  {"name": "zero_as_dash", "from": "p === 0 ? '0' :", "to": "p === 0 ? '—' :"}
 ]

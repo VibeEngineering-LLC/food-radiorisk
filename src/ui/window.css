@@ -40,13 +40,17 @@ fieldset.gbox label.r132:not(.opt):not(.check) { grid-template-columns: 132px mi
 .app input, .app select { height: 23px; box-sizing: border-box; padding: 0 4px; border: 1px solid var(--line); border-radius: 0; background: var(--card); color: var(--ink); font: inherit; width: 100%; }
 .app select { padding: 0 2px; }
 .app input[type=number] { width: 72px; justify-self: start; font-family: var(--mono); text-align: right; }
+.app .cmp-inputs input[type=number] { width: 12rem; height: 28px; font-size: 13px; text-align: left; } /* поля вкладки сравнения: подсказка в поле должна читаться */
 .app input:focus, .app select:focus { outline: 1px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
 .app input[type=checkbox], .app input[type=radio] { width: auto; height: auto; margin: 0; padding: 0; }
 .app input:disabled, .app select:disabled { color: var(--dis); background: var(--card); }
 label.dis { color: var(--dis) !important; }
 label.opt { display: inline-flex; flex-direction: row; align-items: center; gap: 5px; height: 18px; font-size: 12px; color: var(--ink); }
 .lrow { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 8px; align-items: center; font-size: 12px; color: var(--ink); }
-.radios { display: flex; gap: 16px; align-items: center; height: 23px; }
+/* #FR-88 v22 (D-1): подписи переключателя переносятся, высота строки растёт — подписи не налезают друг на друга */
+.radios { display: flex; flex-wrap: wrap; gap: 2px 16px; align-items: flex-start; min-width: 0; min-height: 23px; }
+.radios label.opt { height: auto; min-height: 18px; align-items: flex-start; line-height: 1.35; max-width: 100%; }
+.radios label.opt input { flex: none; margin-top: 2px; }
 .procmodes { display: flex; flex-direction: column; gap: 6px; }
 .optrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .optrow > label.opt { width: 150px; }
@@ -112,6 +116,21 @@ details.more > summary { cursor: pointer; color: var(--head); height: 18px; line
 ul.suggest { border-radius: 0; background: var(--card); box-shadow: 0 2px 6px rgba(0,0,0,.18); }
 ul.suggest li { padding: 2px 6px; }
 ul.suggest li.active, ul.suggest li:hover { background: var(--sel); }
+
+/* #FR-88 v22 (D-1p): печать окна — результат на страницах A4 потоком, без формы, вкладок, строки состояния; светлая тема */
+@media print {
+  @page { size: A4; margin: 12mm; }
+  html, body { height: auto !important; background: #fff !important; }
+  :root:root:root .app { --win:#fff; --card:#fff; --bg:#fff; --panel:#fff; --ink:#000; --head:#000; --muted:#333; --line:#777; --hline:#aaa; --grid:#bbb; color: #000; background: #fff; height: auto; overflow: visible; display: block; border: 0; }
+  .titlebar .caption, .titlebar .appicon, #form, .statusbar, .rtabs > .tabs, .suggest { display: none !important; }
+  .titlebar { height: auto; padding: 0 0 6px; border: 0; }
+  .titlebar h1 { white-space: normal; overflow: visible; text-overflow: clip; font-weight: 600; }
+  .split { display: block; overflow: visible; }
+  #result.result, .rtabs, .rtabs .tabbody, .tabbody { display: block; overflow: visible !important; padding: 0; flex: none; height: auto; max-height: none; }
+  .resblock, fieldset.rgroup { display: block; break-inside: auto; }
+  tr, .msg, .kpi { break-inside: avoid; }
+  .tablewrap, .nucgrid, .scroll { overflow: visible !important; height: auto; }
+}
 
 /* Адаптив для узких экранов */
 @media (max-width: 800px) {

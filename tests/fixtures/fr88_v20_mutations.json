@@ -1,0 +1,26 @@
+[
+ {
+  "name": "Z105 (v20, А-1): явный выбор «минимум/максимум», сброшенный формой в «рекомендованное», не учитывается — снова сообщение «рекомендованного нет»",
+  "file": "src/calc/processing.js",
+  "from": "const asked = processing.askedVariant ?? processing.variant;",
+  "to": "const asked = processing.variant;"
+ },
+ {
+  "name": "Z106 (v20, V-2): строка для сушёного при ручной группе выбирается по значению строки (до пересчёта на K)",
+  "file": "src/calc/norms.js",
+  "from": "const bOf = (r) => (isDryNorm(r) ? dryCtx.activity : dryCtx.activity / K) / r.value;",
+  "to": "const bOf = (r) => 1 / r.value;"
+ },
+ {
+  "name": "Z107 (v20, V-2): K не задан, строка выбрана по B — вердикт выдаётся, если строка «сухая»",
+  "file": "src/calc/form_norm.js",
+  "from": "!row.dryNorm || row.needsK",
+  "to": "!row.dryNorm"
+ },
+ {
+  "name": "Z108 (v20, V-3): запись КП без центра и только с нижней границей снова используется",
+  "file": "src/calc/model.js",
+  "from": "Math.sqrt(k.min * k.max) : k.min);",
+  "to": "Math.sqrt(k.min * k.max) : (k.min ?? k.max));"
+ }
+]

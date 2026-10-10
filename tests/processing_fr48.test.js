@@ -15,9 +15,7 @@ test('накопленные друг с другом не перемножаю�
   assert.equal(r.fr, 0.3);
   assert.equal(r.cumulativeCount, 2);
 });
-test('накопленное и поэтапное: произведение', () => {
-  assert.ok(Math.abs(combineFr([it(0.3, true), it(0.5)]).fr - 0.15) < 1e-12);
-});
+// накопленное + поэтапное (D-029, Q2): наибольшее, без произведения — см. tests/fr88_v19.test.js
 test('пустой список — Fr = 1', () => {
   assert.equal(combineFr([]).fr, 1);
 });

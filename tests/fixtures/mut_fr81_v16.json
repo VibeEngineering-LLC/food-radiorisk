@@ -1,0 +1,4 @@
+[
+ {"name": "v16_logpos_back", "file": "src/ui/render.js", "from": "// «1 год», «2 года»", "to": "export const logPos = (x) => x;\n// «1 год», «2 года»"},
+ {"name": "v16_risk_assessment_type_back", "file": "src/react/types.d.ts", "from": "export type DoseClass =", "to": "export type riskAssessment = null;\nexport type DoseClass ="}
+]

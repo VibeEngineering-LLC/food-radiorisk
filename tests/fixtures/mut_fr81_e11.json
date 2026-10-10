@@ -1,0 +1,4 @@
+[
+ {"name": "e11_no_warning", "file": "src/calc/model.js", "from": "if (missing.length) warnings.push(", "to": "if (false) warnings.push("},
+ {"name": "e11_not_normed_counted", "file": "src/calc/model.js", "from": "&& pickNormRecord(data.limits_ru, input.foodGroupCode, n, normOf(n), pstate).rec);", "to": ");"}
+]

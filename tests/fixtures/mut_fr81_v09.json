@@ -1,0 +1,7 @@
+[
+ {"name": "v09_old_dtp_phrase_back", "file": "src/react/Compare.jsx", "from": "<p className=\"hint\">{T.CMP_OTHER_RISKS}</p>", "to": "<p className=\"hint\">С гибелью в ДТП, инфарктом и инсультом риск не сравнивается: отсроченный вред от облучения и немедленная смерть — разные величины.</p>"},
+ {"name": "v09_risk_column_back", "file": "src/react/Compare.jsx", "from": "      { h: 'Облучение', f: exposure, c: me },", "to": "      { h: 'Облучение', f: exposure, c: me },\n      { h: 'Риск, порядок величины', f: () => '', c: me },"},
+ {"name": "v09_not_normed_removed", "file": "src/react/Compare.jsx", "from": "    <p className=\"hint\">{T.CMP_NOT_NORMED}</p>\n", "to": ""},
+ {"name": "v09_intro_wrong_horizon", "file": "src/react/Compare.jsx", "from": "fill(T.CMP_INTRO, { H })", "to": "fill(T.CMP_INTRO, { H: 70 })"},
+ {"name": "v09_incidence_paragraph_back", "file": "src/react/Compare.jsx", "from": "    <p className=\"hint\">{T.CMP_NOT_NORMED}</p>\n", "to": "    <p className=\"hint\">{T.CMP_NOT_NORMED} Добавка к риску заболеть раком считается по коэффициенту заболеваемости 0,1695.</p>\n"}
+]

@@ -1,0 +1,10 @@
+[
+ {"name": "v13_detriment_with_005", "file": "src/react/Reference.jsx", "from": "k57: fmtPerMillion(0.057 * totals.techDoseSvTotal)", "to": "k57: fmtPerMillion(0.05 * totals.techDoseSvTotal)"},
+ {"name": "v13_epa_in_lifetime_mode", "file": "src/react/Reference.jsx", "from": "{result.organRisk?.lifetime ? (", "to": "{false ? ("},
+ {"name": "v13_age_table_removed", "file": "src/react/Reference.jsx", "from": "<p className=\"hint\">{T.REF_AGE_TABLE}</p>", "to": ""},
+ {"name": "v13_natural_line_off", "file": "src/react/Reference.jsx", "from": "{totals.naturalNuclides.length > 0 && (", "to": "{false && ("},
+ {"name": "v13_tab_label_short", "file": "src/react/Result.jsx", "from": "label: 'Подробно (для специалиста)'", "to": "label: 'Подробно'"},
+ {"name": "v13_calc_table_back_on_main", "file": "src/react/Result.jsx", "from": "    <DoseBlock result={result} input={input} />\n", "to": "    <DoseBlock result={result} input={input} />\n    <p>Расчёт по нуклидам</p>\n"},
+ {"name": "v13_organrisk_wording_lost", "file": "src/react/OrganRisk.jsx", "from": "Модель EPA — проверка согласия двух моделей, а не независимая оценка", "to": "Модель EPA — независимая оценка"},
+ {"name": "v13_avg5_all_nuclides", "file": "src/react/Reference.jsx", "from": "E: fmtDose2(totals.doseTechAvg5)", "to": "E: fmtDose2(totals.doseSvAvg5 * 2)"}
+]

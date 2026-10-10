@@ -1,0 +1,44 @@
+[
+ {
+  "name": "Z98 (v19, А-1): зарубежные нормы в Бк/л только при группе норм «вода» — для воды из-под крана пропадают",
+  "file": "src/calc/model.js",
+  "from": "input.foodGroupCode === 'water' || pcs.includes('water');",
+  "to": "input.foodGroupCode === 'water';"
+ },
+ {
+  "name": "Z99 (v19, Q1): запись «не уточнено» снова применяется к конкретному нуклиду",
+  "file": "src/calc/processing.js",
+  "from": "if (nuclide && isGenericNuclide(pRec)) {",
+  "to": "if (false && nuclide && isGenericNuclide(pRec)) {"
+ },
+ {
+  "name": "Z100 (v19, Q2): накопленное Fr перемножается с обычным (прежнее правило)",
+  "file": "src/calc/processing.js",
+  "from": "const fr = cum.length ? Math.max(...cum.map(i => i.value), ...(stagedFr === null ? [] : [stagedFr])) : (stagedFr ?? 1);",
+  "to": "const fr = (cum.length ? Math.max(...cum.map(i => i.value)) : 1) * (stagedFr ?? 1);"
+ },
+ {
+  "name": "Z101 (v19, Q3): предупреждение «рекомендованного нет» выдаётся и при явном выборе минимума/максимума",
+  "file": "src/calc/processing.js",
+  "from": "if (!explicitPick) warn(",
+  "to": "warn("
+ },
+ {
+  "name": "Z102 (v19, Q4): при равных значениях выбирается последний пункт, а не меньший номер",
+  "file": "src/calc/norms.js",
+  "from": "(b.value < a.value || (b.value === a.value && pointNo(b) < pointNo(a)) ? b : a)",
+  "to": "(b.value <= a.value ? b : a)"
+ },
+ {
+  "name": "Z103 (v19, Q5): центральное КП берётся геометрическое, а не арифметическое",
+  "file": "src/calc/sample.js",
+  "from": "const centralVal = typeof rec.am === \"number\" && Number.isFinite(rec.am) ? rec.am : (typeof rec.gm === \"number\" && Number.isFinite(rec.gm) ? rec.gm : null);",
+  "to": "const centralVal = typeof rec.gm === \"number\" && Number.isFinite(rec.gm) ? rec.gm : (typeof rec.am === \"number\" && Number.isFinite(rec.am) ? rec.am : null);"
+ },
+ {
+  "name": "Z104 (v19, Q6; v21 — после утверждения текста): пункт «Известных ограничений» о нормах ЕС теряет утверждённое уточнение об исключённых из группы H-3, C-14 и K-40",
+  "file": "sources.html",
+  "from": "прямо из группы исключены лишь H-3, C-14 и K-40.",
+  "to": "прямо из группы исключены лишь H-3 и C-14."
+ }
+]

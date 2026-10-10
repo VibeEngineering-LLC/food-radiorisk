@@ -147,7 +147,8 @@ export function complianceB(items) {
   } else {
     verdict = VERDICT.UNDETERMINED;
   }
-  return { B, dB, verdict, precisionOk: dB <= 0.3 };
+  // #FR-81 E12: МУК 2.6.1.1194-03 п. 6.5 — условие точности ΔB ≤ 0,3 относится к продуктам, не признанным соответствующими (для B + ΔB ≤ 1 условия нет)
+  return { B, dB, verdict, precisionOk: verdict === VERDICT.CONFORMS || dB <= 0.3 };
 }
 
 /**

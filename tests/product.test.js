@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  normRu, elementOf, productNames, matchesProduct, transferValueText,
+  normRu, elementOf, productNames, transferValueText,
   transferLabel, transferOptions, concentrationFor, TUM_HINT, depositionHtml
 } from '../src/ui/product.js';
 
@@ -14,6 +14,10 @@ const choices = { transfer: [
   REC({ id: 'e1', item_ru: 'ёжевика, ягоды', min: 2 }),
   REC({ id: 's1', item_ru: 'черника, ягоды', nuclide: 'Sr-90', am: 1 }),
   REC({ id: 't1', item_ru: 'косуля', quantity: 'Tag', unit_factor: 1, source: 'TRS472', level: '⚠️', mass_basis: null })
+], // #FR-86: КП продукта — только явные ключи записи словаря (transfer — точные item_ru)
+products: [
+  { id: 'p_chernika', kind: 'product', name_ru: 'Черника', synonyms: ['черника'], transfer: ['черника, свежие ягоды, ТУМ А2', 'Черника, свежие ягоды, ТУМ А5', 'черника, ягоды'] },
+  { id: 'p_moroshka', kind: 'product', name_ru: 'Морошка', synonyms: ['морошка'], transfer: [] }
 ] };
 
 test("normRu: регистр, ё, пробелы", () => {
@@ -31,12 +35,6 @@ test("список продуктов без повторов", () => {
   assert.deepStrictEqual(productNames(choices), ["белый гриб", "ёжевика", "косуля", "свинушка тонкая", "черника"]);
 });
 
-test("поиск продукта без учёта регистра и ё", () => {
-  assert.strictEqual(matchesProduct("Черника, свежие ягоды", "черника"), true);
-  assert.strictEqual(matchesProduct("ёжевика, ягоды", "ежевика"), true);
-  assert.strictEqual(matchesProduct("белый гриб", "черника"), false);
-  assert.strictEqual(matchesProduct("белый гриб", "  "), true);
-});
 
 test("подпись: среднее и диапазон", () => {
   assert.strictEqual(transferValueText(choices.transfer[0]), "0,00311 м²/кг (0,0012–0,0064)");
@@ -62,10 +60,11 @@ test("список КП фильтруется по продукту", () => {
   assert.deepStrictEqual(ids, ["b1", "b2"]);
 });
 
-test("нет совпадений — показан весь список элемента", () => {
+test("у продукта нет ключей КП — весь список элемента с пометкой «нет ключей»", () => {
   const o = transferOptions(choices, "Cs-137", "морошка");
   assert.strictEqual(o.matched, 0);
   assert.strictEqual(o.fallback, true);
+  assert.strictEqual(o.reason, 'no_keys');
   const totalItems = o.groups.reduce((sum, g) => sum + g.items.length, 0);
   assert.strictEqual(totalItems, 6);
 });
@@ -119,15 +118,14 @@ test("таблица оценки загрязнения", () => {
   assert.ok(html.includes("сырая"));
 });
 
-test("основа первого значимого слова (шифры проб ЛСРМ)", async () => {
-  const { stemOf } = await import('../src/ui/product.js');
-  assert.strictEqual(stemOf("Сухое молоко Рогачев"), "моло");
-  assert.strictEqual(stemOf("Грузди"), "груз");
-  assert.strictEqual(stemOf("ОГО"), "");
-});
-
-test("второй проход поиска: по основе слова, если точного совпадения нет", () => {
+// #FR-85 v11: слова сравниваются по основам Snowball целых слов; лишние слова шифра — «частично», ключи КП — после подтверждения записи
+test("шифр пробы ЛСРМ с лишними словами — «частично», КП записи после подтверждения; падежная форма распознаётся по основе", () => {
+  const p = transferOptions(choices, "Cs-137", "Черника ОГО");
+  assert.deepEqual([p.fallback, p.reason], [true, 'partial']);
+  assert.deepEqual(transferOptions(choices, "Cs-137", "Черника ОГО", 'p_chernika').groups.flatMap(g => g.items).map(i => i.id), ["b1", "b2"]);
   const o = transferOptions(choices, "Cs-137", "Черникой");
   assert.strictEqual(o.fallback, false);
   assert.deepEqual(o.groups.flatMap(g => g.items).map(i => i.id), ["b1", "b2"]);
+  const u = transferOptions(choices, "Cs-137", "Черничный");
+  assert.deepEqual([u.fallback, u.reason, u.matched], [true, 'unknown', 0]);
 });

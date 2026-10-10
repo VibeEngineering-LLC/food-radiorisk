@@ -1,0 +1,20 @@
+[
+ {
+  "name": "v3_3_caveat_second_ref_pdf_page_8",
+  "file": "src/ui/texts_v.json",
+  "from": "Публикация 147 (2021), с. 6 и резюме",
+  "to": "Публикация 147 (2021), с. 8 и резюме"
+ },
+ {
+  "name": "v3_3_summary_g_pdf_page_17",
+  "file": "src/ui/texts_v.json",
+  "from": "и резюме (g), с. 15).",
+  "to": "и резюме (g), с. 17)."
+ },
+ {
+  "name": "v3_3_table_page_pdf_30",
+  "file": "src/ui/texts_v.json",
+  "from": "табл. 2.4 (с. 28):",
+  "to": "табл. 2.4 (с. 30):"
+ }
+]

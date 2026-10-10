@@ -1,0 +1,26 @@
+[
+ {
+  "name": "v3_1_summary_always_pm",
+  "file": "src/ui/summary_text.js",
+  "from": "B: fmtBpm(c.B, c.dB), group",
+  "to": "B: fmtNear(c.B, 1) + ' ± ' + fmtNear(c.dB, 0.3), group"
+ },
+ {
+  "name": "v3_1_tab_always_delta",
+  "file": "src/react/Result.jsx",
+  "from": "{fmtBLine(B, dB)}, <span",
+  "to": "{`B = ${fmtNear(B, 1)}, ΔB = ${fmtNear(dB, 0.3)}`}, <span"
+ },
+ {
+  "name": "v3_1_report_always_delta",
+  "file": "src/ui/report.js",
+  "from": "`${fmtBLine(B, dB)}, ${verdictText(verdict)}`",
+  "to": "`B = ${fmtNear(B, 1)}, ΔB = ${fmtNear(dB, 0.3)}, ${verdictText(verdict)}`"
+ },
+ {
+  "name": "v3_1_report_never_delta",
+  "file": "src/ui/report.js",
+  "from": "`${fmtBLine(B, dB)}, ${verdictText(verdict)}`",
+  "to": "`B = ${fmtNear(B, 1)}, ${verdictText(verdict)}`"
+ }
+]

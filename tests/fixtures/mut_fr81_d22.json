@@ -1,0 +1,3 @@
+[
+ {"name": "d22_divide_by_probe_activity", "file": "src/calc/model.js", "from": "? n.measuredUncertaintyBqPerKg / atSampleBqPerKg : 0;", "to": "? n.measuredUncertaintyBqPerKg / n.measuredBqPerKg : 0;"}
+]

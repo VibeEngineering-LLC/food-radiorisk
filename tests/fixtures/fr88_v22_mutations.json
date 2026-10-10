@@ -1,0 +1,38 @@
+[
+ {
+  "name": "Z113 (v22, D-2): при некорректной активности снова проверяется неопределённость — сообщение про неопределённость вместо поля активности",
+  "file": "src/calc/input_check.js",
+  "from": "if (!actOk) continue;",
+  "to": "if (false) continue;"
+ },
+ {
+  "name": "Z114 (v22, D-3): способ «из справочника» без записи снова даёт «нет записи обработки null»",
+  "file": "src/calc/processing.js",
+  "from": "if (id == null || id === '') throw",
+  "to": "if (false) throw"
+ },
+ {
+  "name": "Z115 (v22, D-4): в сообщении об обработке снова английское название продукта записи",
+  "file": "src/calc/processing.js",
+  "from": "[FOOD_RU[r.food] ?? r.food, r.process_ru]",
+  "to": "[r.food, r.process_ru]"
+ },
+ {
+  "name": "Z116 (v22, D-7а): при дозе выше ~100 мЗв в год нет предупреждения о неприменимости линейной беспороговой модели",
+  "file": "src/calc/model.js",
+  "from": "if (doseMaxYear > LNT_DOSE_LIMIT_SV) warnings.push(",
+  "to": "if (false) warnings.push("
+ },
+ {
+  "name": "Z117 (v22, D-7б): при вердикте «не соответствует» снова оговорка «вердикт «соответствует» неполон»",
+  "file": "src/calc/model.js",
+  "from": "compliance.verdict === 'nonconforms' ? '' :",
+  "to": "false ? '' :"
+ },
+ {
+  "name": "Z118 (v22, D-7а): вероятность больше 1 снова печатается числом (порог «больше 100 %» не срабатывает)",
+  "file": "src/ui/fmt.js",
+  "from": "export const riskOverOne = (p) => isFinite(p) && p > 1;",
+  "to": "export const riskOverOne = (p) => isFinite(p) && p > 1e9;"
+ }
+]

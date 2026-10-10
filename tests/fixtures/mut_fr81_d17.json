@@ -1,0 +1,4 @@
+[
+ {"name": "d17_show_raw_years_in_life_mode", "file": "src/ui/form.js", "from": "return life ? String(life.fromAge !== null && life.toAge !== null ? life.toAge - life.fromAge : '') : String(raw.years ?? '');", "to": "return String(raw.years ?? '');"},
+ {"name": "d17_hint_uses_years_field", "file": "src/react/formState.js", "from": "const life = lifetimeOf(raw), y = life ? life.toAge - life.fromAge : numOrNull(raw.years);", "to": "const y = numOrNull(raw.years);"}
+]

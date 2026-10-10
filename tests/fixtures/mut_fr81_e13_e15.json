@@ -1,0 +1,8 @@
+[
+ {"name": "e13_fmtnear_plain", "file": "src/ui/fmt.js", "from": "x !== ref && s === fmtNum(ref, sig)", "to": "false"},
+ {"name": "e13_report_plain_numbers", "file": "src/ui/fmt.js", "from": ": `B = ${fmtNear(B, 1)}`;", "to": ": `B = ${fmtNum(B)}`;"},
+ {"name": "e15_dose_unit_by_raw", "file": "src/ui/fmt.js", "from": "if (r3(abs * 1e6) < 1000) return", "to": "if (abs < 1e-3) return"},
+ {"name": "e15_million_rounding", "file": "src/ui/fmt.js", "from": "Math.abs(Number(Number(x).toPrecision(sig))) < 1e6", "to": "Math.abs(x) < 1e6"},
+ {"name": "e15_no_billions", "file": "src/ui/fmt.js", "from": "1 / p >= 1e9 ? `1 из ${fmtNum(1 / p / 1e9)} млрд` :", "to": ""},
+ {"name": "e15_years_fraction", "file": "src/ui/render.js", "from": "if (!Number.isInteger(n)) return 'года';", "to": ""}
+]

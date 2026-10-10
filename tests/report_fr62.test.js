@@ -142,7 +142,7 @@ test('Склонение лет в итоговой таблице (md и html):
     for (const fmt of ['md', 'html']) {
       const text = buildReport(fmt, c, meta, ISO).text;
       assert.ok(text.includes(`Доза за ${n} ${word}`), `${fmt}: «Доза за ${n} ${word}»`);
-      assert.ok(text.includes(`на 1 млн за ${n} ${word}`), `${fmt}: «на 1 млн за ${n} ${word}»`);
+      assert.ok(text.includes(`Риск от этого питания за ${n} ${word}`), `${fmt}: «Риск от этого питания за ${n} ${word}»`);
     }
   }
 });
@@ -151,5 +151,5 @@ test('Склонение лет: при years = 1 строк «за N …» не
   const one = buildReport('md', { input: { ...input, years: 1 }, result }, meta, ISO).text;
   assert.ok(!one.includes('Доза за 1 '), 'строка «Доза за N» при years = 1 не выводится');
   const many = buildReport('md', { input: { ...input, years: 2 }, result }, meta, ISO).text;
-  assert.ok(many.includes('Доля 70 мЗв за 70 лет'), 'строка нормы 70 лет на месте');
+  assert.ok(many.includes('Доза и нормы облучения'), 'блок «Доза и нормы облучения» на месте');
 });

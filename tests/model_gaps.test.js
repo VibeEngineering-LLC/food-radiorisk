@@ -8,7 +8,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const { data } = await loadAll(async (u) => JSON.parse(await readFile(root + u, 'utf8')));
 function close(actual, expected, rel, msg) { assert.ok(Math.abs(actual - expected) <= rel * Math.abs(expected), `${msg || ''} expected ${expected}, got ${actual}`); }
 const nuc = (nuclide, extra = {}) => ({ nuclide, source: 'measured', measuredBqPerKg: 1000, measuredUncertaintyBqPerKg: 0, sampleDate: null, depositionKBqPerM2: null, depositionDate: null, transferId: null, variant: 'central', ...extra });
-const base = (over = {}) => ({ age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.055, portionKg: 0.1, portionsPerYear: 10, years: 3, eatDate: null, dryMatterPercent: null, processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' }, foodGroupCode: null, nuclides: [nuc('Cs-137')], ...over });
+const base = (over = {}) => ({ age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.055, portionKg: 0.1, portionsPerYear: 10, years: 3, constantActivity: true, eatDate: null, dryMatterPercent: null, processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' }, foodGroupCode: null, nuclides: [nuc('Cs-137')], ...over });
 
 test('Предел с пустым значением (Sr-90 грибы свежие) не участвует в сравнении и не даёт NaN', () => {
   const r = computeScenario(data, base({ foodGroupCode: 'mushrooms_fresh', nuclides: [nuc('Cs-137'), nuc('Sr-90')] }));

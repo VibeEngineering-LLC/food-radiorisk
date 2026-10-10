@@ -1,0 +1,5 @@
+[
+ {"name": "d09_infant_starts_at_1y", "file": "src/calc/years.js", "from": "{ '3m': 0,", "to": "{ '3m': 1,"},
+ {"name": "d09_15y_starts_at_14", "file": "src/calc/years.js", "from": "'15y': 15,", "to": "'15y': 14,"},
+ {"name": "d09_10y_starts_at_9", "file": "src/calc/years.js", "from": "'10y': 10,", "to": "'10y': 9,"}
+]

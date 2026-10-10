@@ -1,0 +1,8 @@
+[
+ {"name": "v15_verbal_dropped", "file": "src/ui/report.js", "from": "sp.equiv, sp.verbal, ", "to": "sp.equiv, "},
+ {"name": "v15_number_dropped", "file": "src/ui/report.js", "from": "sp.head, sp.natural, sp.number, ", "to": "sp.head, sp.natural, "},
+ {"name": "v15_notes_dropped", "file": "src/ui/report.js", "from": "...sp.notes, sp.link]", "to": "sp.link]"},
+ {"name": "v15_verdict_lines_dropped", "file": "src/ui/report.js", "from": "${sp.verdict.lines.map(l => l.text).join(' ')}", "to": ""},
+ {"name": "v15_dose_lines_dropped", "file": "src/ui/report.js", "from": "${sp.dose.lines.join(' ')}", "to": ""},
+ {"name": "v15_avg5_row_back", "file": "src/ui/report.js", "from": "    ['Доза за первый год питания', fmtDose(totals.doseSvPerYear)],\n", "to": "    ['Ē₅ — наибольшая средняя годовая доза за 5 лет подряд', fmtDose(totals.doseSvAvg5)],\n    ['Доза за первый год питания', fmtDose(totals.doseSvPerYear)],\n"}
+]

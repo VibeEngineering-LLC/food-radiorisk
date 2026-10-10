@@ -1,0 +1,4 @@
+[
+ {"name": "e01_ambiguity_not_flagged", "file": "src/calc/norms.js", "from": "ambiguous: candidates.length > 1 }", "to": "ambiguous: false }"},
+ {"name": "e01_name_not_passed_to_pick", "file": "src/calc/model.js", "from": "r.nuclide, normOf(r.nuclide), pstate);", "to": "r.nuclide, null, pstate);"}
+]

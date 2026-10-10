@@ -1,0 +1,7 @@
+[
+ {"name": "v03_per_million_3_digits", "file": "src/ui/fmt.js", "from": "k.toPrecision(k >= 1 ? 2 : 1)", "to": "k.toPrecision(k >= 1 ? 3 : 1)"},
+ {"name": "v03_per_million_threshold", "file": "src/ui/fmt.js", "from": "k.toPrecision(k >= 1 ? 2 : 1)", "to": "k.toPrecision(k >= 0.1 ? 2 : 1)"},
+ {"name": "v03_dose2_unit_by_unrounded", "file": "src/ui/fmt.js", "from": "if (r2(abs * 1e6) < 1000) return", "to": "if (abs * 1e6 < 1000) return"},
+ {"name": "v03_count_3_digits", "file": "src/ui/fmt.js", "from": "Math.round(Number(n.toPrecision(2)))", "to": "Math.round(Number(n.toPrecision(3)))"},
+ {"name": "v03_pct2_3_digits", "file": "src/ui/fmt.js", "from": "fmtNum(frac * 100, 2)} %", "to": "fmtNum(frac * 100, 3)} %"}
+]

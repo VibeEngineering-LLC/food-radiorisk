@@ -1,0 +1,20 @@
+[
+ {
+  "name": "v4_1_gate_only_cs_sr_ra",
+  "file": "src/calc/model.js",
+  "from": "    {\n      const elem = r.nuclide.split('-')[0];\n      for (const f of data.limits_foreign) {",
+  "to": "    if (r.nuclide.startsWith('Cs') || r.nuclide.startsWith('Sr') || (isWater && r.nuclide.startsWith('Ra'))) {\n      const elem = r.nuclide.split('-')[0];\n      for (const f of data.limits_foreign) {"
+ },
+ {
+  "name": "v4_1_item_substring_match",
+  "file": "src/calc/model.js",
+  "from": "new RegExp(`(^|[^A-Za-z0-9-])${nuclide}(?![0-9])`).test(item)",
+  "to": "item.includes(nuclide)"
+ },
+ {
+  "name": "v4_1_item_no_digit_guard",
+  "file": "src/calc/model.js",
+  "from": "${nuclide}(?![0-9])`",
+  "to": "${nuclide}`"
+ }
+]

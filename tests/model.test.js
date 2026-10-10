@@ -15,10 +15,10 @@ function base(over = {}) {
   return {
     age: 'adult',
     doseSource: 'ICRP119_F1',
-    riskCoeffPerSv: 0.055,
     portionKg: 0.1046,
     portionsPerYear: 1,
     years: 1,
+    constantActivity: true, // #FR-81 D08: формулы без распада в продукте (constantActivity); распад по годам — fr81_d08_decay.test.js
     eatDate: null,
     dryMatterPercent: null,
     processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' },
@@ -51,10 +51,10 @@ test('RadGear через модель: 9800 Бк/кг × 104,6 г × e(взр.) 
   assert.equal(r.ok, true);
   const expected = 9800 * 0.1046 * eOf('Cs-137');
   close(r.rows[0].doseSvPerYear, expected, 1e-12);
-  close(r.rows[0].riskTotal, expected * 0.055, 1e-12);
+  close(r.rows[0].riskTotal, expected * 0.05, 1e-12);
   close(r.totals.doseSvPerYear, expected, 1e-12);
-  close(r.totals.budgetShare1mSv, expected / 1e-3, 1e-12);
-  close(r.totals.negligibleShare, expected / 1e-5, 1e-12);
+  close(r.totals.budgetShare1mSvAvg5, expected / 5 / 1e-3, 1e-12); // срок 1 год: Ē₅ = E / 5
+  close(r.totals.doseMaxYearTech, expected, 1e-12);
 });
 
 test('Прямая доза 13,3 мкЗв (e = 1,3e-8) — сверка порядка с RadGear', () => {
@@ -66,7 +66,7 @@ test('Годы и порции масштабируют линейно', () => {
   const onePortionDose = computeScenario(data, base()).rows[0].doseSvPerYear;
   close(r.rows[0].doseSvPerYear, 20 * onePortionDose, 1e-12);
   close(r.rows[0].doseSvTotal, 3 * (20 * onePortionDose), 1e-12);
-  close(r.rows[0].riskTotal, (3 * 20 * onePortionDose) * 0.055, 1e-12);
+  close(r.rows[0].riskTotal, (3 * 20 * onePortionDose) * 0.05, 1e-12);
 });
 
 test('Обработка mode fr = 0,5 вдвое снижает дозу', () => {
@@ -258,6 +258,12 @@ test('НРБ-источник: возраст 1-2y для Sr-90 и для Cs-137
     eVal = rec.value;
   }
 
+  // #FR-81 D07: тело теста обещало ошибку для 1–2 лет — проверяем её (Cs-137 и Sr-90)
+  for (const nuclide of ['Cs-137', 'Sr-90']) {
+    const e = computeScenario(data, base({ doseSource: src, age: '1-2y', nuclides: [{ ...base().nuclides[0], nuclide }] }));
+    assert.equal(e.ok, false, nuclide);
+    assert.match(e.errors[0], new RegExp(`для возраста «1–2 года» коэффициента для ${nuclide} нет`));
+  }
   const r = computeScenario(data, base({ doseSource: src, age: 'adult' }));
   assert.equal(r.ok, true);
   close(r.rows[0].eSvPerBq, eVal, 1e-12);
@@ -357,8 +363,6 @@ test('Бесконечные и отрицательные входы дают �
   const rNaN = computeScenario(data, base({ portionKg: NaN }));
   assert.equal(rNaN.ok, false);
 
-  const rRisk = computeScenario(data, base({ riskCoeffPerSv: 5 }));
-  assert.equal(rRisk.ok, false);
 
   // Check finite fields for valid tests
   const validResults = [

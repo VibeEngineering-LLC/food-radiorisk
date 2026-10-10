@@ -1,0 +1,5 @@
+[
+ {"name": "e07_sum_not_added", "file": "src/calc/model.js", "from": "p.activity += e.activity;", "to": "p.activity = e.activity;"},
+ {"name": "e07_who_levels_summed", "file": "src/calc/model.js", "from": "perNuclide: /^iaea_tecdoc1788/.test(f.id)", "to": "perNuclide: false"},
+ {"name": "e07_no_merge_by_record", "file": "src/calc/model.js", "from": "const k = e.perNuclide ? `${e.id}|${e.nuclides[0]}` : e.id,", "to": "const k = `${e.id}|${e.nuclides[0]}`,"}
+]

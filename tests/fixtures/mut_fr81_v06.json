@@ -1,0 +1,6 @@
+[
+ {"name": "без интерполяции (узел вниз)", "file": "src/calc/life_table.js", "from": "return y0 + (y1 - y0) * (x - x0) / (x1 - x0);", "to": "return x === x1 ? y1 : y0;"},
+ {"name": "веса полов поменять", "file": "src/calc/life_table.js", "from": "const wMale = lt.births.male / (lt.births.male + lt.births.female);", "to": "const wMale = lt.births.female / (lt.births.male + lt.births.female);"},
+ {"name": "85+ не учитывать", "file": "src/calc/life_table.js", "from": "const hi = Math.min(g1 === null ? Infinity : g1, b);", "to": "const hi = Math.min(g1 === null ? 0 : g1, b);"},
+ {"name": "группа учитывается, только если целиком внутри [a, b)", "file": "src/calc/life_table.js", "from": "if (hi > lo) {", "to": "if (hi > lo && lo === g0 && hi === (g1 === null ? Infinity : g1)) {"}
+]

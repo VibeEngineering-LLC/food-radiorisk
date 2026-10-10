@@ -1,0 +1,38 @@
+[
+ {
+  "name": "v4_2_no_warning",
+  "file": "src/calc/processing.js",
+  "from": "if (nuclide && isGenericNuclide(pRec)) warn(",
+  "to": "if (false && isGenericNuclide(pRec)) warn("
+ },
+ {
+  "name": "v4_2_everything_generic",
+  "file": "src/calc/processing.js",
+  "from": "typeof rec.nuclide === 'string' && !/^[A-Za-z]/.test(rec.nuclide);",
+  "to": "true;"
+ },
+ {
+  "name": "v4_2_nothing_generic",
+  "file": "src/calc/processing.js",
+  "from": "typeof rec.nuclide === 'string' && !/^[A-Za-z]/.test(rec.nuclide);",
+  "to": "false;"
+ },
+ {
+  "name": "v4_2_nuclide_not_passed",
+  "file": "src/calc/model.js",
+  "from": "input.processing, prov, warn, n.nuclide)",
+  "to": "input.processing, prov, warn)"
+ },
+ {
+  "name": "v4_2_no_source",
+  "file": "src/calc/processing.js",
+  "from": "(источник ${pRec.source}, ${pRec.loc}); для этого",
+  "to": "(источник не указан); для этого"
+ },
+ {
+  "name": "v4_2_wrong_nuclide_in_text",
+  "file": "src/calc/processing.js",
+  "from": "а не для ${nuclide} (источник",
+  "to": "а не для ${pRec.nuclide} (источник"
+ }
+]

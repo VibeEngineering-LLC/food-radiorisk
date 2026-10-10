@@ -7,27 +7,8 @@ import { loadSaved, save } from './persist.js';
 import { FORMATS, buildReport } from '../ui/report.js';
 import Form from './Form.jsx';
 import Result from './Result.jsx';
-import { fmtDose, fmtNum, verdictText } from '../ui/fmt.js';
-
-// Итог для строки состояния: нуклиды · доза за год · риск · вердикт по ТР ТС
-function statusText(calc) {
-  const r = calc?.result;
-  if (!r) return 'Загрузка данных…';
-  if (!r.ok) return 'Расчёт не выполнен — исправьте ввод';
-  const t = r.totals, v = r.limits?.compliance?.verdict;
-  return [r.rows.map(x => x.nuclide).join(', '), `${fmtDose(t.doseSvPerYear)}/год`, `риск ${fmtNum(t.riskPerYear * 1e6)} на 1 млн`, v ? `ТР ТС: ${verdictText(v)}` : ''].filter(Boolean).join(' · ');
-}
-
-// Цвет квадрата в строке состояния — худший из уровней: риск (НРБ-99/2009 п. 2.3) и вердикт ТР ТС
-function statusLevel(calc) {
-  const r = calc?.result;
-  if (calc?.error || (r && !r.ok)) return 'bad';
-  if (!r) return '';
-  const lv = { negligible: 'ok', within: 'warn', exceeds: 'bad' }[r.totals.riskAssessment?.level] || '';
-  const v = { conforms: 'ok', undetermined: 'warn', nonconforms: 'bad' }[r.limits?.compliance?.verdict] || '';
-  const rank = { '': 0, ok: 1, warn: 2, bad: 3 };
-  return rank[v] > rank[lv] ? v : lv;
-}
+import { statusText, statusLevel } from '../ui/status.js'; // #FR-81 V14: строка состояния — в status.js
+import { userMessage } from '../calc/input_check.js';
 
 export default function App() {
   // Состояние загрузки и данных
@@ -76,7 +57,7 @@ export default function App() {
       const result = computeScenario(boot.data, input);
       return { input, result };
     } catch (e) {
-      return { error: e.message };
+      return { error: userMessage(e) }; // #FR-88 v18: английский текст исключения пользователю не показываем
     }
   }, [boot, deferred]);
 

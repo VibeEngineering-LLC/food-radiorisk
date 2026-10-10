@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "food-radiorisk/organ_risk.schema.json",
+  "title": "Риск рака по локализациям на 1 Бк поступления с пищей (EPA FGR 13, #FR-75)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "nuclide", "age_band", "route", "pathway", "f1", "form_idx", "source", "loc", "unit", "mortality", "morbidity", "total_mortality", "total_morbidity", "unit_norm", "unit_factor", "unit_inferred"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9_.\\-]+$" },
+    "nuclide": { "type": "string", "minLength": 1 },
+    "age_band": { "enum": ["0-5", "5-15", "15-25", "25-70", "0-110"] },
+    "route": { "const": "ingestion" },
+    "pathway": { "const": "dietary" },
+    "f1": { "type": "number", "minimum": 0, "maximum": 1 },
+    "form_idx": { "type": "integer", "minimum": 0 },
+    "source": { "const": "EPA_FGR13" },
+    "loc": { "type": "string", "minLength": 1 },
+    "unit": { "const": "1/Bq" },
+    "mortality": { "type": "object", "minProperties": 14, "maxProperties": 14, "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1e-3 } },
+    "morbidity": { "type": "object", "minProperties": 14, "maxProperties": 14, "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1e-3 } },
+    "total_mortality": { "type": "number", "minimum": 0, "maximum": 1e-3 },
+    "total_morbidity": { "type": "number", "minimum": 0, "maximum": 1e-3 },
+    "unit_norm": { "type": ["string", "null"] },
+    "unit_factor": { "type": ["number", "null"] },
+    "unit_inferred": { "type": "boolean" }
+  }
+}

@@ -1,0 +1,20 @@
+[
+ {
+  "name": "d20_negligible_hardcoded",
+  "file": "src/calc/model.js",
+  "from": "optimNegligibleSv: o ? o.value / 1e6 : 1e-5,",
+  "to": "optimNegligibleSv: 1e-5,"
+ },
+ {
+  "name": "d20_year_limit_hardcoded",
+  "file": "src/calc/model.js",
+  "from": "yearSv: y ? y.value / 1e3 : LIMIT_YEAR_SV,",
+  "to": "yearSv: LIMIT_YEAR_SV,"
+ },
+ {
+  "name": "d20_life_limit_hardcoded",
+  "file": "src/calc/model.js",
+  "from": "lifeSv: l ? l.value / 1e3 : LIMIT_LIFE_SV,",
+  "to": "lifeSv: LIMIT_LIFE_SV,"
+ }
+]

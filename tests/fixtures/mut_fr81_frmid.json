@@ -1,0 +1,6 @@
+[
+ {"name": "frmid_is_max_again", "file": "src/calc/processing.js", "from": "frVal = (pRec.value_min + pRec.value_max) / 2;", "to": "frVal = pRec.value_max;"},
+ {"name": "frmid_is_min", "file": "src/calc/processing.js", "from": "frVal = (pRec.value_min + pRec.value_max) / 2;", "to": "frVal = pRec.value_min;"},
+ {"name": "frmid_no_screening_note", "file": "src/calc/processing.js", "from": "вариант «скрининг» — максимум диапазона Fr", "to": "максимум диапазона Fr"},
+ {"name": "frmid_single_value_midpoint", "file": "src/calc/processing.js", "from": "if (pRec.value_min != null && pRec.value_min !== pRec.value_max) {\n          frVal", "to": "if (true) {\n          frVal"}
+]

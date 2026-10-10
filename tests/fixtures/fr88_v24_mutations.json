@@ -1,0 +1,44 @@
+[
+ {
+  "name": "Z119 (v24, п. 2): пока вид продукта не выбран, форма подбирает норматив сухого продукта (молоко → сухие молочные, 500 Бк/кг)",
+  "file": "src/react/formState.js",
+  "from": "const normState = (s) => s === 'dried' ? 'dried' : 'fresh';",
+  "to": "const normState = (s) => s === 'fresh' ? 'fresh' : 'dried';"
+ },
+ {
+  "name": "Z120 (v24, п. 1): голый DOI вида 10.xxxx/… снова становится относительной ссылкой (404 на Pages)",
+  "file": "sources.html",
+  "from": "else if (/^10\\.\\d+\\//.test(s)) href",
+  "to": "else if (/^10x\\.\\d+\\//.test(s)) href"
+ },
+ {
+  "name": "Z121 (v24, п. 1): значение, не являющееся адресом или DOI, снова выводится относительной ссылкой",
+  "file": "sources.html",
+  "from": "else if (!/^https?:\\/\\//i.test(s)) return esc(s);",
+  "to": "else if (false) return esc(s);"
+ },
+ {
+  "name": "Z122 (v24, п. 3): в справке нет ссылки на тексты лицензий",
+  "file": "sources.html",
+  "from": "<a href=\"THIRD_PARTY_LICENSES.txt\">THIRD_PARTY_LICENSES.txt</a>",
+  "to": "THIRD_PARTY_LICENSES.txt"
+ },
+ {
+  "name": "Z123 (v24, п. 3): сборка не копирует тексты лицензий в сайт, а справка на них ссылается",
+  "file": "vite.config.js",
+  "from": "'dist/THIRD_PARTY_LICENSES.txt'",
+  "to": "'dist/LICENSES_NOT_PUBLISHED.txt'"
+ },
+ {
+  "name": "Z124 (v24, п. 3): из THIRD_PARTY_LICENSES.md пропал раздел react-dom",
+  "file": "THIRD_PARTY_LICENSES.md",
+  "from": "### 4. react-dom",
+  "to": "### 4. react-d"
+ },
+ {
+  "name": "Z125 (v24, п. 6): README не говорит про .nojekyll",
+  "file": "README.md",
+  "from": "лежит пустой файл `.nojekyll`",
+  "to": "лежит пустой файл"
+ }
+]

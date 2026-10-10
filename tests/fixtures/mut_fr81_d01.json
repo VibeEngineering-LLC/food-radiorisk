@@ -1,0 +1,3 @@
+[
+ {"name": "d01_unanchored_status", "file": "src/calc/model.js", "from": "if (/^(заменён|утратил|истёк)/i.test(st))", "to": "if (/^заменён|утратил|истёк/i.test(st))"}
+]

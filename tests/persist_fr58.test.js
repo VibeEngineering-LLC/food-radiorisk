@@ -11,7 +11,7 @@ const { data } = await loadAll(async (u) => JSON.parse(await readFile(root + u, 
 const ch = listChoices(data);
 const base = S.initialRaw(ch);
 const names = ch.nuclides;
-const edited = S.setField(S.setField(base, ch, 'product', 'черника'), ch, 'portionG', '250');
+const edited = S.setField(S.setField(base, ch, 'product', 'черника лесная'), ch, 'portionG', '250');
 
 const mem = () => { const m = new Map(); return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => { m.set(k, v); } }; };
 
@@ -41,7 +41,7 @@ test('Поле с несовпадающим типом падает до base: 
     const serialized = JSON.stringify({ v: SCHEMA_VERSION, tab: 0, raw: storedRaw });
     const result = restore(serialized, base, names);
     assert.equal(result.raw.portionG, base.portionG);
-    assert.equal(result.raw.product, 'черника');
+    assert.equal(result.raw.product, 'черника лесная');
 });
 
 test('Неизвестные сохраненные ключи удаляются: extra key evil', () => {

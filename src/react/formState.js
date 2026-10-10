@@ -1,8 +1,17 @@
-import { buildInput, doseSourceOptions, agesFor, processingOptions, kFor, perMonth, numOrNull, SOURCE_SHORT } from '../ui/form.js';
-import { transferOptions, TUM_HINT } from '../ui/product.js';
+import { buildInput, lifetimeOf, doseSourceOptions, agesFor, processingOptions, kFor, perMonth, numOrNull, SOURCE_SHORT } from '../ui/form.js';
+import { transferOptions } from '../ui/product.js';
 import { summaryOffered } from '../ui/form.js';
-import { categoryOf, limitGroupFor, dryMatterFor, dryingFactorFor } from '../calc/catalog.js';
+import { normCodeFor, dryMatterFor, dryingFactorFor } from '../calc/catalog.js';
+import { matchProduct, productEntry, normIdFor } from '../calc/products.js';
+import { transferHint } from '../ui/form.js';
 import { fmtNum } from '../ui/fmt.js';
+import { variantOffers } from '../calc/processing.js';
+import { T, fill } from '../ui/texts_v.js';
+import { dietPickFor } from '../ui/diet_view.js';
+export { dietView } from '../ui/diet_view.js';
+
+// #FR-81 V11: для подбора группы норм «готовое блюдо» и пустое поле считаются свежим продуктом
+const normState = (s) => s === 'dried' ? 'dried' : 'fresh';
 
 export function foodGroupOptions(choices) {
   const opts = [{ value: '', label: '— не сравнивать —' }];
@@ -25,30 +34,37 @@ export function fixAge(raw, choices) {
 }
 
 export function autoFill(raw, choices) {
-  const cat = categoryOf(raw.product);
-  const code = limitGroupFor(cat, raw.productState);
+  const entry = productEntry(choices.products, raw.product, raw.productConfirm || null); // #FR-85: запись словаря продуктов; v11 — частично распознанное только после подтверждения
+  const code = normCodeFor(choices.limitsRu || [], entry, normState(raw.measuredForm));
   const next = { ...raw };
-  if (code && foodGroupOptions(choices).some(o => o.value === code)) {
-    next.foodGroup = code;
-  }
-  const dm = dryMatterFor(choices.dryMatter || [], raw.product);
+  // группа выбрана вручную — не трогаем; иначе по названию продукта, а если название не узнано — сбрасываем прежнюю автоподстановку
+  if (!raw.groupUser) next.foodGroup = code && foodGroupOptions(choices).some(o => o.value === code) ? code : '';
+  const dm = dryMatterFor(choices.dryMatter || [], entry);
   if (!raw.dmUser) next.dryMatter = dm ? String(dm.value) : '';
-  const df = dryingFactorFor(choices.limitsRu || [], cat);
+  const df = dryingFactorFor(choices.limitsRu || [], entry);
   if (!raw.dfUser) next.dryingFactor = df ? String(df.value) : '';
   return next;
 }
 
-export function initialRaw(choices) {
+// #FR-81 D18: дата начала питания по умолчанию — сегодня (локальная дата)
+export const todayISO = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+export function initialRaw(choices, today = todayISO()) {
   const doseSource = doseSourceOptions(choices)[0]?.value ?? '';
   const nuc = choices.nuclides.includes('Cs-137') ? 'Cs-137' : (choices.nuclides[0] ?? '');
-  const base = { age: '', doseSource, riskCoeff: '0.05', portionG: '100', timesPerDay: '1', daysPerWeek: '1', weeksPerMonth: '4', monthsPerYear: '3', years: '1', lifeMode: false, startAge: '0', eatDate: '', dryMatter: '', dryingFactor: '', procMode: 'none', procFr: '1', procRecs: [], procVar: 'best', foodGroup: '', product: '', productState: 'fresh', prepMode: 'as_is', concK: '1', rawMass: '', probeMass: '', sampleMass: '', dmUser: false, dfUser: false, nuclides: [newNuclide(nuc)] };
+  const base = { age: '', doseSource, dietMode: 'default', portionG: '', timesPerDay: '', daysPerWeek: '', weeksPerMonth: '', monthsPerYear: '', years: '1', eatDate: today, lifeMode: false, startAge: '0', endAge: '70', constAct: false, includeY90: false, dryMatter: '', dryingFactor: '', procMode: 'none', procFr: '1', procRecs: [], procVar: 'best', foodGroup: '', product: '', measuredForm: '', prepMode: 'as_is', concK: '1', rawMass: '', probeMass: '', sampleMass: '', dmUser: false, dfUser: false, groupUser: false, dietGroup: '', productConfirm: '', nuclides: [newNuclide(nuc)] };
   return autoFill(fixAge(base, choices), choices);
 }
 
 export function setField(raw, choices, name, value) {
   const next = { ...raw, [name]: value };
   if (name === 'doseSource') return fixAge(next, choices);
-  if (name === 'product' || name === 'productState') return autoFill(next, choices);
+  if (name === 'product') { next.dietGroup = ''; next.productConfirm = ''; } // #FR-85: ручной выбор группы и подтверждение (v11) относятся к прежнему названию
+  if (name === 'product' || name === 'measuredForm' || name === 'productConfirm') return autoFill(next, choices);
+  if (name === 'foodGroup') {
+    next.groupUser = value !== '';
+    return value === '' ? autoFill(next, choices) : next;
+  }
   if (name === 'dryMatter') {
     next.dmUser = value !== '';
     return value === '' ? autoFill(next, choices) : next;
@@ -83,7 +99,7 @@ export function removeNuclide(raw, index) {
 export function transferView(raw, choices, index) {
   const n = raw.nuclides[index];
   const query = raw.product || '';
-  const o = transferOptions(choices, n.nuclide, query);
+  const o = transferOptions(choices, n.nuclide, query, raw.productConfirm || null);
   const count = o.groups.reduce((s, g) => s + g.items.length, 0);
   const options = [];
   if (summaryOffered(count, o.fallback, query)) {
@@ -94,25 +110,33 @@ export function transferView(raw, choices, index) {
   const allValues = [...options.map(x => x.value), ...groups.flatMap(g => g.items.map(i => i.value))];
   const value = (n.transferPicked && allValues.includes(n.transfer)) ? n.transfer : options[0].value;
   const transferIds = groups.flatMap(g => g.items.map(i => i.value));
-  let hint;
-  if (o.fallback) {
-    hint = 'Для этого продукта КП в данных нет — показан весь список.';
-  } else if (!query.trim()) {
-    hint = 'Введите продукт — сводная оценка строится по записям этого продукта. Показан весь список КП.';
-  } else {
-    hint = `Записей для продукта: ${o.matched}. ${TUM_HINT}`;
-  }
+  const hint = transferHint(o, query); // #FR-86: без ключей — весь список с пометкой
   return { options, groups, value, transferIds, hint };
 }
 
+/** #FR-85 (спека §3): продукт не распознан — выбор группы рациона вручную; неоднозначно — выбор из записей-кандидатов */
+export function productView(raw, choices) {
+  const m = matchProduct(choices.products, raw.product, raw.productConfirm || null);
+  const groups = (choices.diet || []).filter(g => g.kind === 'group' && g.code !== 'other').map(g => ({ value: g.code, label: g.label_ru }));
+  const candidates = m.candidates.map(e => e.name_ru);
+  // #FR-85 v11: «частично» — распознано по части слов; принять запись — только подтверждением (как ручной выбор), иначе группа вручную
+  const status = m.confirmed ? 'confirmed' : m.status, words = { entry: m.entry?.name_ru ?? '', matched: m.matchedWords.join(' '), rest: m.uncovered.join(' ') };
+  const text = status === 'unknown' && m.composite ? fill(m.composite.kind === 'dish' ? T.PRODUCT_COMPOSITE_DISH : T.PRODUCT_COMPOSITE_CHANGES, { words: m.composite.words.join('», «'), guess: m.composite.guess }) : status === 'unknown' ? T.PRODUCT_UNKNOWN : status === 'ambiguous' ? T.PRODUCT_AMBIGUOUS : status === 'partial' ? fill(T.PRODUCT_PARTIAL, words) : status === 'confirmed' ? fill(T.PRODUCT_CONFIRMED, words) : '';
+  const confirm = status === 'partial' || status === 'confirmed' ? { id: m.entry.id, label: fill(T.PRODUCT_CONFIRM_BTN, words) } : null;
+  return { status, text, confirm, candidates: status === 'ambiguous' ? candidates : [], groups: status === 'unknown' || status === 'partial' ? groups : [], value: raw.dietGroup || '' };
+}
+
 export function procView(raw, choices) {
-  const options = raw.nuclides[0] ? processingOptions(choices, raw.nuclides[0].nuclide, categoryOf(raw.product)) : [];
+  const options = raw.nuclides[0] ? processingOptions(choices, raw.nuclides[0].nuclide, productEntry(choices.products, raw.product, raw.productConfirm || null)) : [];
   const checked = (raw.procRecs || []).filter(id => options.some(o => o.value === id));
-  return { options, checked };
+  const sel = (choices.processing || []).filter(r => checked.includes(r.id));
+  return { options, checked, variants: variantOffers(sel) }; // #FR-81 D06c
 }
 
 export function effectiveRaw(raw, choices) {
-  return { ...raw, procRecs: procView(raw, choices).checked, nuclides: raw.nuclides.map((n, i) => { const t = transferView(raw, choices, i); return { ...n, transfer: t.value, transferIds: t.transferIds }; }) };
+  const pv = procView(raw, choices);
+  const procVar = raw.procVar === 'min' && !pv.variants.min || raw.procVar === 'max' && !pv.variants.max ? 'best' : raw.procVar; // вариант, которого нет у выбранных записей, не действует
+  return { ...raw, dietPick: dietPickFor(raw, choices), procVar, procVarAsked: raw.procVar, procRecs: pv.checked, nuclides: raw.nuclides.map((n, i) => { const t = transferView(raw, choices, i); return { ...n, transfer: t.value, transferIds: t.transferIds }; }) };
 }
 
 export function toInput(raw, choices) {
@@ -120,27 +144,31 @@ export function toInput(raw, choices) {
 }
 
 export function hints(raw, choices) {
-  const cat = categoryOf(raw.product);
+  const entry = productEntry(choices.products, raw.product, raw.productConfirm || null);
   let auto = '';
-  if (cat) {
-    const code = limitGroupFor(cat, raw.productState);
-    const groupLabel = (code && foodGroupOptions(choices).find(o => o.value === code)?.label) || 'нет группы';
-    const dm = dryMatterFor(choices.dryMatter || [], raw.product);
-    const df = dryingFactorFor(choices.limitsRu || [], cat);
+  if (entry) {
+    const code = normCodeFor(choices.limitsRu || [], entry, normState(raw.measuredForm));
+    const nid = normIdFor(entry, normState(raw.measuredForm)), rec015 = /^t015_/.test(nid || '') ? (choices.limitsRu || []).find(r => r.id === nid) : null; // #FR-85 v11: строка ТР ТС 015 — своё название группы
+    const groupLabel = (rec015?.food_group_ru || code && foodGroupOptions(choices).find(o => o.value === code)?.label || (code ? 'нет группы' : 'норматив РФ не установлен')) + (/^t015_/.test(normIdFor(entry, normState(raw.measuredForm)) || '') ? ' (ТР ТС 015 — документ на зерно, не на пищевой продукт; в B не входит)' : ''); // #FR-85 v11: зернобобовые, злаковые (кукуруза), масличные
+    const dm = dryMatterFor(choices.dryMatter || [], entry);
+    const df = dryingFactorFor(choices.limitsRu || [], entry);
     let dfTxt = '';
-    if (raw.productState === 'dried') {
-      dfTxt = df ? `; усушка по нормативу ТР ТС 021/2011: ${fmtNum(df.dried)} / ${fmtNum(df.fresh)} = ${fmtNum(df.value)}` : '; усушку задайте вручную (в нормативе нет пары свежий/сушёный)';
+    if (raw.measuredForm === 'dried') {
+      dfTxt = df ? `; коэффициент концентрирования при сушке по нормативу ТР ТС 021/2011: ${fmtNum(df.dried)} / ${fmtNum(df.fresh)} = ${fmtNum(df.value)}` : '; коэффициент концентрирования при сушке задайте вручную (в нормативе нет пары свежий/сушёный)';
     }
-    auto = `Категория: ${cat.ru}; нормы ТР ТС: ${groupLabel}` + (dm ? `; сухое вещество ${dm.item} ${fmtNum(dm.value)} % (${SOURCE_SHORT[dm.source] || dm.source})` : '') + dfTxt;
+    auto = `Продукт: ${entry.name_ru}${entry.caption ? ` (${entry.caption})` : ''}; нормы ТР ТС: ${groupLabel}` + (dm ? `; сухое вещество ${dm.item} ${fmtNum(dm.value)} % (${SOURCE_SHORT[dm.source] || dm.source})` : '') + dfTxt;
   }
   const c = kFor(raw);
   const prep = c.note || 'K = масса сырья / масса пробы после подготовки; A продукта = A пробы / K.';
   const pm = perMonth(raw);
   const m = numOrNull(raw.monthsPerYear);
   const g = numOrNull(raw.portionG);
-  const y = numOrNull(raw.years);
+  const life = lifetimeOf(raw), y = life ? life.toAge - life.fromAge : numOrNull(raw.years); // #FR-81 D17: тот же срок, что считается
   let diet = '';
-  if (pm !== null && m !== null) {
+  const dp = dietPickFor(raw, choices); // #FR-83 W05: при умолчании — масса из данных, тот же срок, что считается
+  if (dp) {
+    if (dp.status === 'default' && y) diet = fill(T.DIET_HINT, { value: fmtNum(dp.rec.value), total: fmtNum(dp.rec.value * y), years: fmtNum(y) });
+  } else if (pm !== null && m !== null) {
     diet = `= ${fmtNum(pm)} порц. в месяц, ${fmtNum(pm * m)} в год`;
     if (g !== null) diet += `, ${fmtNum(pm * m * g / 1000)} кг в год`;
     if (y) diet += `, ${fmtNum(pm * m * g * y / 1000)} кг за ${fmtNum(y)} г.`;
@@ -152,18 +180,20 @@ export function rawFromInput(input, choices) {
   const str = v => (v === null || v === undefined) ? '' : String(v);
   const plain = x => String(Number(Number(x).toPrecision(6)));
   const hasFreq = input.timesPerDay != null;
+  const dietOn = input.diet?.mode === 'default' || input.diet?.mode === 'high'; // #FR-83 W05: поля «знаю» при умолчании пусты
   const prep = input.nuclides[0]?.samplePrep || { mode: 'as_is', concentrationFactor: 1 };
   const recIds = input.processing.recordIds?.length ? input.processing.recordIds : (input.processing.recordId ? [input.processing.recordId] : []);
   const raw = {
-    age: input.age, doseSource: input.doseSource, riskCoeff: str(input.riskCoeffPerSv),
-    portionG: input.portionKg == null ? '' : plain(input.portionKg * 1000),
-    timesPerDay: hasFreq ? str(input.timesPerDay) : str(input.portionsPerMonth ?? input.portionsPerYear),
-    daysPerWeek: hasFreq ? str(input.daysPerWeek) : '1',
-    weeksPerMonth: hasFreq ? str(input.weeksPerMonth) : '1',
-    monthsPerYear: str(input.monthsPerYear ?? 1), years: str(input.years), lifeMode: !!input.lifetime, startAge: input.lifetime ? str(input.lifetime.fromAge) : '0', eatDate: input.eatDate || '',
+    age: input.age, doseSource: input.doseSource,
+    dietMode: dietOn ? input.diet.mode : 'own',
+    portionG: input.portionKg == null || dietOn ? '' : plain(input.portionKg * 1000),
+    timesPerDay: dietOn ? '' : hasFreq ? str(input.timesPerDay) : str(input.portionsPerMonth ?? input.portionsPerYear),
+    daysPerWeek: dietOn ? '' : hasFreq ? str(input.daysPerWeek) : '1',
+    weeksPerMonth: dietOn ? '' : hasFreq ? str(input.weeksPerMonth) : '1',
+    monthsPerYear: dietOn ? '' : str(input.monthsPerYear ?? 1), years: str(input.years), lifeMode: !!input.lifetime, startAge: input.lifetime ? str(input.lifetime.fromAge) : '0', endAge: input.lifetime ? str(input.lifetime.toAge) : '70', eatDate: input.eatDate || '', constAct: !!input.constantActivity, includeY90: !!input.includeY90,
     dryMatter: str(input.dryMatterPercent), dryingFactor: str(input.dryingFactor),
     procMode: input.processing.mode, procFr: str(input.processing.fr), procRecs: recIds, procVar: input.processing.variant || 'best',
-    foodGroup: input.foodGroupCode || '', product: input.product?.name || '', productState: input.product?.state || 'fresh',
+    foodGroup: input.foodGroupCode || '', product: input.product?.name || '', dietGroup: input.product?.dietGroup || '', productConfirm: input.product?.confirmId || '', measuredForm: input.product?.state || 'fresh',
     prepMode: prep.mode || 'as_is', concK: str(prep.concentrationFactor), rawMass: str(prep.rawMassG), probeMass: str(prep.probeMassG), sampleMass: str(prep.sampleMassG),
     dmUser: input.dryMatterPercent != null, dfUser: input.dryingFactor != null,
     nuclides: input.nuclides.map(n => ({ ...newNuclide(n.nuclide), source: n.source,

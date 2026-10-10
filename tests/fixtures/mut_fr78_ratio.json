@@ -1,0 +1,8 @@
+[
+  {"name": "отношение перевёрнуто (продукт / строка)", "from": "out[r.id] = r.doseSv / p.doseSv", "to": "out[r.id] = p.doseSv / r.doseSv"},
+  {"name": "нулевая доза продукта не отсекается (< 0 вместо <= 0)", "from": "p.doseSv <= 0", "to": "p.doseSv < 0"},
+  {"name": "строка продукта попадает в словарь", "from": "if (r.id !== 'product' && Number.isFinite(r.doseSv))", "to": "if (Number.isFinite(r.doseSv))"},
+  {"name": "делитель — не строка product, а природный фон", "from": "cmp?.rows?.find(r => r.id === 'product')", "to": "cmp?.rows?.find(r => r.id === 'bg_natural_world')"},
+  {"name": "делитель — доза за год вместо дозы сценария", "from": "out[r.id] = r.doseSv / p.doseSv", "to": "out[r.id] = r.doseSv / (p.doseSv / (cmp.horizonYears ? 1 : 1) / 3)"},
+  {"name": "пустой cmp не даёт null", "from": "if (!p || ", "to": "if ("}
+]

@@ -1,14 +1,13 @@
 import { fmtNum } from './fmt.js';
 import { ciKm2ToKBqM2, kBqM2ToCiKm2 } from '../calc/units.js';
-import { transferOptions, concentrationFor, productNames, TUM_HINT } from './product.js';
+import { transferOptions, concentrationFor, TUM_HINT } from './product.js';
 import { decodeSpe, parseSpeHeader, speToForm, concentrationFromMasses } from './spe.js';
-import { categoryOf, limitGroupFor, dryMatterFor, processingMatches, dryingFactorFor } from '../calc/catalog.js';
+import { normCodeFor, dryMatterFor, processingMatches, dryingFactorFor } from '../calc/catalog.js';
+import { productEntry, productSuggestions } from '../calc/products.js';
 import FOOD_RU from './food_ru.json' with { type: 'json' };
 import SOURCE_SHORT from './source_short.json' with { type: 'json' };
-import { attachSuggest, cleanProductNames } from './suggest.js';
+import { attachSuggest } from './suggest.js';
 import { AGE_BANDS, LIFETIME_END_AGE } from '../calc/lifetime.js';
-export const COMMON_PRODUCTS = ['Молоко', 'Молоко сухое', 'Творог', 'Сыр', 'Говядина', 'Свинина', 'Картофель', 'Морковь', 'Капуста', 'Свёкла',
-  'Хлеб', 'Мука пшеничная', 'Крупа гречневая', 'Рыба речная', 'Вода питьевая', 'Чай травяной'];
 export { SOURCE_SHORT };
 
 // K: по массам сырья и пробы (как в ЛСРМ), если обе заданы; иначе по способу подготовки
@@ -81,17 +80,19 @@ export function transferGroups(choices, nuclide) {
   return groups.sort((a, b) => a.source.localeCompare(b.source));
 }
 
-// category (из каталога по продукту): только обработка этого вида продуктов; нет совпадений — весь список
-export function processingOptions(choices, nuclide, category = null) {
+// entry — запись словаря продуктов (#FR-85): только обработка её групп (поле processing)
+export function processingOptions(choices, nuclide, entry = null) {
   // #FR-54: только записи вида выбранного продукта; продукт не задан или не узнан — пусто (без «всего списка»)
-  const list = category ? choices.processing.filter(r => processingMatches(r, category)) : [];
+  const list = entry ? choices.processing.filter(r => processingMatches(r, entry)) : [];
   const el = elementOf(nuclide);
   const opts = [];
   for (const rec of list) {
     const rEl = elementOf(String(rec.nuclide));
     if (rEl === el || !/^[A-Za-z]/.test(String(rec.nuclide)) || String(rec.nuclide).includes('радионуклид')) {
       // fillSelect читает value (было id → option.value = "undefined", справочник не работал); нет рекомендованного — диапазон
+      // #FR-81 D06a: рекомендованного нет — в списке прямо сказано, что берётся максимум диапазона
       const v = rec.value_best != null ? fmtNum(rec.value_best)
+        : rec.value_max != null ? (rec.value_min != null && rec.value_min !== rec.value_max ? `${fmtNum((rec.value_min + rec.value_max) / 2)} (середина диапазона ${fmtNum(rec.value_min)}–${fmtNum(rec.value_max)}, рекомендованного нет)` : `${fmtNum(rec.value_max)} (одно значение, рекомендованного нет)`)
         : (rec.value_min != null && rec.value_max != null ? `${fmtNum(rec.value_min)}–${fmtNum(rec.value_max)}` : fmtNum(rec.value_min ?? rec.value_max));
       // #FR-22: название продукта на экране — по-русски (словарь); в данных и провенансе остаётся оригинал первоисточника
       opts.push({ value: rec.id, id: rec.id, label: `${FOOD_RU[rec.food] ?? rec.food} — ${rec.process_ru}: Fr ${v} [${rec.level}]` });
@@ -103,45 +104,67 @@ export function processingOptions(choices, nuclide, category = null) {
 export function numOrNull(v) {
   if (v === '' || v === undefined || v === null) return null;
   if (typeof v === 'number') return isFinite(v) ? v : null;
-  const s = String(v).replace(',', '.');
+  const s = String(v).trim().replace(',', '.');
+  if (s === '') return null; // #FR-88 v18: пробелы — пустое поле, а не нуль (Number(' ') === 0)
   const n = Number(s);
   return isFinite(n) ? n : null;
 }
 
 // #FR-65: питание с начального возраста до 70 лет; возрастная группа в начале — для показателей «за год»
 export function lifetimeOf(raw) {
-  const start = numOrNull(raw.startAge);
-  if (!raw.lifeMode || raw.doseSource !== 'ICRP119_F1' || start === null || start < 0 || start >= LIFETIME_END_AGE) return null;
-  const band = AGE_BANDS.find(b => start >= b.from && start < b.to);
-  return { fromAge: start, toAge: LIFETIME_END_AGE, startBand: band.age };
+  // #FR-81: режим «с возраста a до возраста b»; конечный возраст по умолчанию 70; источник и неверные границы режим молча не выключают — ошибку даёт расчёт
+  if (!raw.lifeMode) return null;
+  const start = numOrNull(raw.startAge), end = raw.endAge === undefined || raw.endAge === '' ? LIFETIME_END_AGE : numOrNull(raw.endAge);
+  const band = start !== null && start >= 0 ? AGE_BANDS.find(b => start >= b.from && start < b.to) : null;
+  return { fromAge: start, toAge: end, startBand: band ? band.age : 'adult' };
 }
+
+// #FR-81 D17: «Сколько лет» на экране — то же число, что считается: в режиме «с N до M» только если режим действует (источник ICRP 119, начальный возраст задан)
+export function yearsShown(raw) {
+  const life = lifetimeOf(raw);
+  return life ? String(life.fromAge !== null && life.toAge !== null ? life.toAge - life.fromAge : '') : String(raw.years ?? '');
+}
+
+/** Неопределённость, %: пусто — 0; число — оно; мусор и бесконечность — NaN (модель сообщит об ошибке). */
+const uncPct = (v) => (String(v ?? '').trim() === '' ? 0 : numOrNull(v) ?? NaN);
 
 export function buildInput(raw) {
   const life = lifetimeOf(raw);
+  // #FR-83 W05: «не знаю» — масса из данных (кг в год, порций 1), нет значения — причина отказа; «знаю» — как раньше
+  const dietOn = raw.dietMode === 'default' || raw.dietMode === 'high';
+  const pick = dietOn ? raw.dietPick : null;
+  const dietOk = !!pick && pick.status === 'default';
+  const diet = !dietOn ? { mode: 'own' }
+    : dietOk ? { mode: raw.dietMode, id: pick.rec.id, group: pick.group.code, series: pick.rec.series, value: pick.rec.value, unit: pick.rec.unit, year: pick.rec.year ?? null }
+      : { mode: raw.dietMode, reason: pick?.reason ?? 'no_data', status: pick?.status ?? 'not_established', group: pick?.group?.code ?? null, missing: pick?.missing ?? null };
   return {
+    diet,
     age: life ? life.startBand : raw.age,
     lifetime: life ? { fromAge: life.fromAge, toAge: life.toAge } : null,
     doseSource: raw.doseSource,
-    riskCoeffPerSv: numOrNull(raw.riskCoeff),
     // рацион вводится в граммах и порциях в месяц × месяцев в году (#FR-12, #FR-16); модель получает кг и порций в год
-    portionKg: numOrNull(raw.portionG) === null ? null : numOrNull(raw.portionG) / 1000,
-    portionsPerYear: perMonth(raw) === null || numOrNull(raw.monthsPerYear) === null ? null : perMonth(raw) * numOrNull(raw.monthsPerYear),
+    portionKg: dietOn ? (dietOk ? pick.rec.value : null) : numOrNull(raw.portionG) === null ? null : numOrNull(raw.portionG) / 1000,
+    portionsPerYear: dietOn ? (dietOk ? 1 : null) : perMonth(raw) === null || numOrNull(raw.monthsPerYear) === null ? null : perMonth(raw) * numOrNull(raw.monthsPerYear),
     portionsPerMonth: perMonth(raw), monthsPerYear: numOrNull(raw.monthsPerYear),
     timesPerDay: numOrNull(raw.timesPerDay), daysPerWeek: numOrNull(raw.daysPerWeek), weeksPerMonth: numOrNull(raw.weeksPerMonth),
-    years: life ? life.toAge - life.fromAge : (numOrNull(raw.years) ?? 1),
+    years: life ? life.toAge - life.fromAge : numOrNull(raw.years), // #FR-81 D14: пусто — null (ошибка ввода), не 1
     eatDate: raw.eatDate || null,
+    includeY90: !!raw.includeY90, // #FR-81: Y-90 в равновесии с Sr-90 — отдельная добавка (шаг 4а)
+    constantActivity: !!raw.constAct, // #FR-81 D08: «активность продукта постоянна» — без распада по годам
     dryMatterPercent: numOrNull(raw.dryMatter),
     // #FR-34: только для сушёного продукта — пересчёт на исходный (свежий) продукт
-    dryingFactor: raw.productState === 'dried' ? numOrNull(raw.dryingFactor) : null,
-    processing: {
+    dryingFactor: raw.measuredForm === 'dried' ? numOrNull(raw.dryingFactor) : null,
+    // #FR-81 V11: готовое блюдо — кулинарная обработка уже учтена, Fr = 1 независимо от сохранённого выбора
+    processing: raw.measuredForm === 'cooked' ? { mode: 'none', fr: 1, recordId: null, recordIds: [], variant: 'best' } : {
       mode: raw.procMode,
       fr: numOrNull(raw.procFr),
       recordId: raw.procRecs?.[0] ?? raw.procRec ?? null,
       recordIds: raw.procRecs ?? (raw.procRec ? [raw.procRec] : []),
-      variant: raw.procVar || 'best'
+      variant: raw.procVar || 'best',
+      askedVariant: raw.procVarAsked || raw.procVar || 'best' // #FR-88 v20 (D-029, А-1): что пользователь выбрал сам (форма могла сбросить в «рекомендованное»)
     },
     foodGroupCode: raw.foodGroup || null,
-    product: { name: raw.product || '', state: raw.productState || 'fresh' },
+    product: { name: raw.product || '', state: raw.measuredForm ?? '', ...(raw.dietGroup ? { dietGroup: raw.dietGroup } : {}), ...(raw.productConfirm ? { confirmId: raw.productConfirm } : {}) }, // #FR-85 v11: confirmId — подтверждение частично распознанного названия // #FR-81 V11: пусто — ошибка расчёта, не 'fresh'; #FR-85: dietGroup — группа рациона, выбранная вручную для нераспознанного продукта
     nuclides: (raw.nuclides || []).map(n => ({
       // подготовка пробы общая для продукта; K считается из режима (высушена — из % сухого вещества)
       samplePrep: { mode: raw.prepMode || 'as_is', concentrationFactor: kFor(raw).k, rawMassG: numOrNull(raw.rawMass), probeMassG: numOrNull(raw.probeMass), sampleMassG: numOrNull(raw.sampleMass) },
@@ -149,7 +172,7 @@ export function buildInput(raw) {
       source: n.source,
       measuredBqPerKg: numOrNull(n.measured),
       // #FR-27: неопределённость вводится в %; в Бк/кг продукта (A пробы / K), т. к. правило B сравнивает с A продукта
-      measuredUncertaintyBqPerKg: (numOrNull(n.measured) ?? 0) / (kFor(raw).k || 1) * (numOrNull(n.unc) ?? 0) / 100,
+      measuredUncertaintyBqPerKg: (numOrNull(n.measured) ?? 0) / (kFor(raw).k || 1) * uncPct(n.unc) / 100, // #FR-88 v18: мусор в поле неопределённости — NaN (ошибка), а не молчаливый нуль
       sampleDate: n.sampleDate || null,
       depositionKBqPerM2: numOrNull(n.dep),
       depositionDate: n.depDate || null,
@@ -162,7 +185,7 @@ export function buildInput(raw) {
 
 export function presetRadGear() {
   return {
-    age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.05,
+    age: 'adult', doseSource: 'ICRP119_F1',
     portionKg: 0.1046, portionsPerYear: 1, years: 1, eatDate: null, dryMatterPercent: null,
     processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' },
     foodGroupCode: 'mushrooms_dried',
@@ -233,6 +256,18 @@ function fillTransferSelect(sel, groups, fallback = false, query = '') {
   if ((prev || sel.dataset.picked) && [...sel.options].some(o => o.value === prev)) sel.value = prev;
 }
 
+/** #FR-86: подпись списка КП — нет явных ключей у продукта, продукт не распознан или неоднозначен: весь список с пометкой */
+export const TRANSFER_HINT = {
+  no_keys: 'Для этого продукта коэффициентов перехода в словаре нет — показан весь список; записи в нём не для этого продукта, выбор — на ваше усмотрение.',
+  unknown: 'Продукт не распознан словарём — показан весь список коэффициентов перехода; записи в нём не подобраны к продукту.',
+  ambiguous: 'Название продукта неоднозначно — уточните его; пока показан весь список коэффициентов перехода.',
+  partial: 'Название распознано не полностью — подтвердите продукт выше; пока показан весь список коэффициентов перехода.' // #FR-85 v11
+};
+export function transferHint(o, query) {
+  if (o.fallback) return TRANSFER_HINT[o.reason] || TRANSFER_HINT.unknown;
+  return !String(query || '').trim() ? 'Введите продукт — сводная оценка строится по записям этого продукта. Показан весь список КП.' : `Записей для продукта: ${o.matched}. ${TUM_HINT}`;
+}
+
 // список КП карточки: по элементу нуклида и по введённому продукту; при отсутствии совпадений — весь список с пометкой
 function refreshTransfer(doc, choices, card) {
   const nuc = card.querySelector('.n-nuclide').value;
@@ -240,7 +275,7 @@ function refreshTransfer(doc, choices, card) {
   const query = doc.getElementById('product')?.value || '';
   fillTransferSelect(card.querySelector('.n-transfer'), o.groups, o.fallback, query);
   const h = card.querySelector('.n-trHint');
-  if (h) h.textContent = o.fallback ? 'Для этого продукта КП в данных нет — показан весь список.' : !query.trim() ? 'Введите продукт — сводная оценка строится по записям этого продукта. Показан весь список КП.' : `Записей для продукта: ${o.matched}. ${TUM_HINT}`;
+  if (h) h.textContent = transferHint(o, query);
 }
 
 export function initForm(doc, choices) {
@@ -267,7 +302,7 @@ export function initForm(doc, choices) {
     const raw = readRaw(doc);
     const nuc = raw.nuclides[0];
     if (nuc) {
-      fillSelect(procRecSel, processingOptions(choices, nuc.nuclide, categoryOf(doc.getElementById('product')?.value)));
+      fillSelect(procRecSel, processingOptions(choices, nuc.nuclide, productEntry(choices.products, doc.getElementById('product')?.value)));
     } else {
       fillSelect(procRecSel, []);
     }
@@ -306,9 +341,9 @@ export function initForm(doc, choices) {
   }
 
   // Продукт и проба: подсказки названий из данных; K вычисляется или вводится
-  // #FR-36: своя подсказка (datalist в приложении не фильтрует): только то, что каталог узнаёт как продукт, + обычные продукты
+  // #FR-36/#FR-85: своя подсказка (datalist в приложении не фильтрует): все названия и синонимы словаря продуктов, с нормативом и без
   const productInp = doc.getElementById('product');
-  if (productInp) attachSuggest(productInp, cleanProductNames(productNames(choices), n => !!categoryOf(n), COMMON_PRODUCTS));
+  if (productInp) attachSuggest(productInp, productSuggestions(choices.products));
   productInp?.addEventListener('input', () => { doc.querySelectorAll('#nuclides .nuc').forEach(c => refreshTransfer(doc, choices, c)); refreshProcRec(); });
   const syncK = () => {
     const kInp = doc.getElementById('concK');
@@ -352,17 +387,17 @@ export function initForm(doc, choices) {
   const dfInp = doc.getElementById('dryingFactor'), dfWrap = doc.getElementById('dryingWrap');
   dfInp?.addEventListener('input', () => { dfInp.dataset.user = dfInp.value ? '1' : ''; if (!dfInp.value) autoFill(); });
   const autoFill = () => {
-    const name = productInp.value, state = doc.getElementById('productState').value, cat = categoryOf(name);
-    const code = limitGroupFor(cat, state);
+    const name = productInp.value, state = doc.getElementById('productState').value, entry = productEntry(choices.products, name);
+    const code = normCodeFor(choices.limitsRu || [], entry, state);
     if (code && [...foodSel.options].some(o => o.value === code)) foodSel.value = code;
-    const dm = dryMatterFor(choices.dryMatter || [], name);
+    const dm = dryMatterFor(choices.dryMatter || [], entry);
     if (!dmInp.dataset.user) dmInp.value = dm ? dm.value : '';
-    // #FR-34: коэффициент усушки — из норматива (сушёный / свежий), ручной ввод не перезаписывается
-    const df = dryingFactorFor(choices.limitsRu || [], cat);
+    // #FR-34: коэффициент концентрирования при сушке — из норматива (сушёный / свежий), ручной ввод не перезаписывается
+    const df = dryingFactorFor(choices.limitsRu || [], entry);
     if (dfWrap) dfWrap.hidden = state !== 'dried';
     if (dfInp && !dfInp.dataset.user) dfInp.value = df ? df.value : '';
-    const dfTxt = state === 'dried' ? (df ? `; усушка по нормативу ТР ТС 021/2011: ${fmtNum(df.dried)} / ${fmtNum(df.fresh)} = ${fmtNum(df.value)}` : '; усушку задайте вручную (в нормативе нет пары свежий/сушёный)') : '';
-    if (autoHint) autoHint.textContent = cat ? `Категория: ${cat.ru}; нормы ТР ТС: ${(code && [...foodSel.options].find(o => o.value === code)?.textContent) || 'нет группы'}` + (dm ? `; сухое вещество ${dm.item} ${fmtNum(dm.value)} % (${SOURCE_SHORT[dm.source] || dm.source})` : '') + dfTxt : '';
+    const dfTxt = state === 'dried' ? (df ? `; коэффициент концентрирования при сушке по нормативу ТР ТС 021/2011: ${fmtNum(df.dried)} / ${fmtNum(df.fresh)} = ${fmtNum(df.value)}` : '; коэффициент концентрирования при сушке задайте вручную (в нормативе нет пары свежий/сушёный)') : '';
+    if (autoHint) autoHint.textContent = entry ? `Продукт: ${entry.name_ru}${entry.caption ? ` (${entry.caption})` : ''}; нормы ТР ТС: ${(code && [...foodSel.options].find(o => o.value === code)?.textContent) || 'нет группы'}` + (dm ? `; сухое вещество ${dm.item} ${fmtNum(dm.value)} % (${SOURCE_SHORT[dm.source] || dm.source})` : '') + dfTxt : '';
     refreshProcRec();
     syncK();
   };
@@ -491,7 +526,7 @@ export function addNuclideCard(doc, choices, initial = {}) {
     const cards = container.querySelectorAll('.nuc');
     if (cards[0] === card) {
       const procRecSel = doc.getElementById('procRec');
-      fillSelect(procRecSel, processingOptions(choices, nucSel.value, categoryOf(doc.getElementById('product')?.value)));
+      fillSelect(procRecSel, processingOptions(choices, nucSel.value, productEntry(choices.products, doc.getElementById('product')?.value)));
     }
   });
 
@@ -502,7 +537,7 @@ export function addNuclideCard(doc, choices, initial = {}) {
       const procRecSel = doc.getElementById('procRec');
       const raw = readRaw(doc);
       if (raw.nuclides.length > 0) {
-        fillSelect(procRecSel, processingOptions(choices, raw.nuclides[0].nuclide, categoryOf(raw.product)));
+        fillSelect(procRecSel, processingOptions(choices, raw.nuclides[0].nuclide, productEntry(choices.products, raw.product)));
       } else {
         fillSelect(procRecSel, []);
       }

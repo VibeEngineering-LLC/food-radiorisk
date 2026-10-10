@@ -1,0 +1,6 @@
+[
+  {"name": "fmtTimes: две значащие цифры вместо трёх", "from": "`×${fmtNum(x, 3)", "to": "`×${fmtNum(x, 2)"},
+  {"name": "fmtTimes: обычный пробел вместо неразрывного", "from": ".replace(/ /g, String.fromCharCode(160))", "to": ""},
+  {"name": "fmtTimes: знак × потерян", "from": "`×${fmtNum(x, 3)", "to": "`${fmtNum(x, 3)"},
+  {"name": "fmtTimes: NaN не даёт прочерк", "from": "(!isFinite(x)) ? '—' : `×", "to": "false ? '—' : `×"}
+]

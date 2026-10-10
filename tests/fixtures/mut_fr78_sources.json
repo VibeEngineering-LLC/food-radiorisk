@@ -1,0 +1,4 @@
+[
+  {"name": "sources.json: год UNSCEAR2008 2008 -> 2009", "from": "\"year\": 2008,\n   \"publisher\": \"United Nations", "to": "\"year\": 2009,\n   \"publisher\": \"United Nations"},
+  {"name": "sources.json: запись UNSCEAR2008 переименована", "from": "\"UNSCEAR2008\": {", "to": "\"UNSCEAR2088\": {"}
+]

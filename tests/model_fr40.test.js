@@ -8,7 +8,7 @@ import { computeScenario } from '../src/calc/model.js';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const { data } = await loadAll(async (u) => JSON.parse(await readFile(root + u, 'utf8')));
 const r = computeScenario(data, { age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.055, portionKg: 0.1, portionsPerYear: 10, years: 1, eatDate: null,
-  dryMatterPercent: null, product: { name: 'черника', state: 'fresh' }, processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' }, foodGroupCode: null,
+  dryMatterPercent: null, product: { name: 'черника лесная', state: 'fresh' }, processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' }, foodGroupCode: null,
   nuclides: [{ nuclide: 'Cs-137', source: 'measured', measuredBqPerKg: 1000, measuredUncertaintyBqPerKg: 0, variant: 'central', samplePrep: { mode: 'as_is', concentrationFactor: 1 } }] });
 
 test('ранги не убывают; первая — обязательный акт', () => {
@@ -20,7 +20,7 @@ test('ранги не убывают; первая — обязательный 
 test('нет утративших силу; аварийные нормы есть и помечены', () => {
   assert.ok(r.limits.foreign.length > 0);
   const doc = (f) => data.limits_foreign.find(x => x.id === f.id);
-  assert.ok(r.limits.foreign.every(f => !/^заменён|утратил|истёк/.test(doc(f).status)));
+  assert.ok(r.limits.foreign.every(f => !/^(заменён|утратил|истёк)/.test(doc(f).status)));
   assert.ok(r.limits.foreign.every(f => !/560\.750/.test(f.document)));
   const dil = r.limits.foreign.find(f => /555\.880/.test(f.document));
   assert.ok(dil, 'FDA DIL показан');

@@ -1,0 +1,4 @@
+[
+ {"name": "d12_no_quartiles_in_label", "file": "src/ui/product.js", "from": "; квартили (25–75 %) ${fmtNum(kD.min)} – ${fmtNum(kD.max)};", "to": ";"},
+ {"name": "d12_no_source_note", "file": "src/ui/product.js", "from": "Это разброс по источникам КП, а не погрешность оценки;", "to": "Это погрешность оценки;"}
+]

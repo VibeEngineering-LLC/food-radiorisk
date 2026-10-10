@@ -1,0 +1,7 @@
+[
+ {"name": "c3_equal_ages_allowed", "file": "src/calc/model.js", "from": "lt.toAge > lt.fromAge && lt.toAge <= 120", "to": "lt.toAge >= lt.fromAge && lt.toAge <= 120"},
+ {"name": "c3_default_end_age", "file": "src/ui/form.js", "from": "raw.endAge === '' ? LIFETIME_END_AGE", "to": "raw.endAge === '' ? 60"},
+ {"name": "c3_nrb_guard_off", "file": "src/calc/model.js", "from": "else if (lt && !AGE_BANDS.every(", "to": "else if (false && !AGE_BANDS.every("},
+ {"name": "c3_weight_always_1", "file": "src/calc/years.js", "from": "const weight = t1 - t0;", "to": "const weight = 1;"},
+ {"name": "c3_floor_instead_of_ceil", "file": "src/calc/years.js", "from": "Math.ceil(years - 1e-9)", "to": "Math.floor(years)"}
+]

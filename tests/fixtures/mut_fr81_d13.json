@@ -1,0 +1,4 @@
+[
+ {"name": "d13_no_natural_note", "file": "src/calc/model.js", "from": "if (nat.length) warnings.push(", "to": "if (false) warnings.push("},
+ {"name": "d13_note_for_all", "file": "src/calc/model.js", "from": "const nat = rows.filter(r => r.natural).map(r => r.nuclide);", "to": "const nat = rows.map(r => r.nuclide);"}
+]

@@ -1,0 +1,5 @@
+[
+ {"name": "d02_dash_not_flagged", "file": "src/calc/model.js", "from": "notNormed: !!dash,", "to": "notNormed: false,"},
+ {"name": "d02_other_regulation_in_B", "file": "src/calc/norms.js", "from": "(r) => isBNorm(r) && r.food_group_code === code", "to": "(r) => (isBNorm(r) || r.id.startsWith('t033_')) && r.food_group_code === code"},
+ {"name": "d02_no_reference_row", "file": "src/calc/model.js", "from": "const ref = dash ? null : data.limits_ru.find(", "to": "const ref = null && data.limits_ru.find("}
+]

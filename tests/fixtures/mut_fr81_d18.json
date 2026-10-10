@@ -1,0 +1,5 @@
+[
+ {"name": "d18_negative_days_allowed", "file": "src/calc/model.js", "from": "if (!(d >= 0)) throw", "to": "if (!(d >= -1e9)) throw"},
+ {"name": "d18_default_not_today", "file": "src/react/formState.js", "from": "eatDate: today, lifeMode", "to": "eatDate: '', lifeMode"},
+ {"name": "d18_field_label_lost", "file": "src/react/Form.jsx", "from": "Дата начала питания <input", "to": "Дата <input"}
+]

@@ -1,0 +1,5 @@
+[
+ {"name": "e08_no_division", "file": "src/calc/model.js", "from": "activity: r.rawBqPerKg / recon,", "to": "activity: r.rawBqPerKg,"},
+ {"name": "e08_no_warning", "file": "src/calc/model.js", "from": "if (dried && recon === 1 && foreign.length)", "to": "if (false && dried && recon === 1 && foreign.length)"},
+ {"name": "e08_fresh_divided", "file": "src/calc/model.js", "from": "const dried = input.product?.state === 'dried';", "to": "const dried = true;"}
+]

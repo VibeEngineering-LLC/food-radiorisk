@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "food-radiorisk/organ_dose.schema.json",
+  "title": "Органные эквивалентные дозы при поступлении с пищей, Зв/Бк (EPA FGR 13, #FR-75)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "nuclide", "age", "route", "f1", "form_idx", "source", "loc", "unit", "organs", "h_rem", "e50", "unit_norm", "unit_factor", "unit_inferred"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9_.\\-]+$" },
+    "nuclide": { "type": "string", "minLength": 1 },
+    "age": { "enum": ["3m", "1y", "5y", "10y", "15y", "adult"] },
+    "route": { "const": "ingestion" },
+    "f1": { "type": "number", "minimum": 0, "maximum": 1 },
+    "form_idx": { "type": "integer", "minimum": 0 },
+    "source": { "const": "EPA_FGR13" },
+    "loc": { "type": "string", "minLength": 1 },
+    "unit": { "const": "Sv/Bq" },
+    "organs": {
+      "type": "object",
+      "minProperties": 31,
+      "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1e-3 }
+    },
+    "h_rem": { "type": "number", "minimum": 0, "maximum": 1e-3 },
+    "e50": { "type": "number", "exclusiveMinimum": 0, "maximum": 1e-3 },
+    "unit_norm": { "type": ["string", "null"] },
+    "unit_factor": { "type": ["number", "null"] },
+    "unit_inferred": { "type": "boolean" }
+  }
+}

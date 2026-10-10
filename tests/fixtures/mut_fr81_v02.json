@@ -1,0 +1,7 @@
+[
+ {"name": "v02_class_by_avg5", "file": "src/calc/model.js", "from": "doseClassOf(techMaxYear, lim0)", "to": "doseClassOf(techAvg5, lim0)"},
+ {"name": "v02_c1_strict", "file": "src/calc/model.js", "from": "doseSv <= lim.optimNegligibleSv ? 'c1'", "to": "doseSv < lim.optimNegligibleSv ? 'c1'"},
+ {"name": "v02_c3_ge", "file": "src/calc/model.js", "from": "doseSv <= lim.yearSv ? 'c2'", "to": "doseSv < lim.yearSv ? 'c2'"},
+ {"name": "v02_r_by_first_year", "file": "src/calc/model.js", "from": "riskNominal: tech.length ? riskFromDose(techT, riskCoeff) : null", "to": "riskNominal: tech.length ? riskFromDose(techY, riskCoeff) : null"},
+ {"name": "v02_class_with_natural", "file": "src/calc/model.js", "from": "const doseClass = tech.length ? doseClassOf(techMaxYear, lim0) : null;", "to": "const doseClass = tech.length ? doseClassOf(doseMaxYear, lim0) : null;"}
+]

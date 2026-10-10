@@ -77,7 +77,8 @@ test('МУК п. 6.1: ΔB — квадратичная сумма (Cs 25±30 /10
 
 test('МУК п. 6.5: точность ΔB ≤ 0,3', () => {
   assert.equal(C.complianceB([{a: 10, da: 30, h: 100}]).precisionOk, true);
-  assert.equal(C.complianceB([{a: 10, da: 31, h: 100}]).precisionOk, false);
+  assert.equal(C.complianceB([{a: 150, da: 30, h: 100}]).precisionOk, true); // #FR-81 P2-7: B = 1,5, ΔB = 0,3 ровно (граница ≤ 0,3), не соответствует
+  assert.equal(C.complianceB([{a: 150, da: 31, h: 100}]).precisionOk, false); // B = 1,5, ΔB = 0,31: не соответствует, точность не удовлетворяет
 });
 
 test('Распад: через один период полураспада — 0,5', () => {

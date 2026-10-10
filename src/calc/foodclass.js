@@ -13,7 +13,7 @@ export function foreignClasses(foodCategoryRu) {
   const t = String(foodCategoryRu ?? '').toLowerCase().replace(/ё/g, 'е');
   if (!t.trim()) return [];
   const rules = [
-    ['infant', /детск|младен/, /кроме детск|без категории для младенц/],
+    ['infant', /детск|младен/, /кроме детск|без (отдельной )?категории для младенц/],
     ['milk', /молок|молочн/, null], // исключение «кроме молочн» в реальных категориях не встречается (52 записи) — не нужно
     ['water', /питьев/, /жидкие/],
     ['liquid', /жидкие/, null],
@@ -27,17 +27,35 @@ export function foreignClasses(foodCategoryRu) {
   return classes.length ? classes : ['general'];
 }
 
-/** @param {string} foodGroupCode */
+/**
+ * Классы группы норм ТР ТС по убыванию специфичности (группа выбрана вручную или продукт не распознан словарём).
+ * #FR-81 E09: у молока и детского питания есть и общие нормы (Codex, FDA). Пункт внутри группы молочных продуктов неизвестен — как у молока.
+ * @param {string|null} foodGroupCode
+ */
 export function productClasses(foodGroupCode) {
-  if (foodGroupCode === 'baby_food') return ['infant'];
-  if (['milk', 'milk_products'].includes(foodGroupCode)) return ['milk'];
+  if (foodGroupCode === 'baby_food') return ['infant', 'general'];
+  if (foodGroupCode === 'milk' || foodGroupCode === 'milk_products') return ['milk', 'general'];
   if (foodGroupCode === 'water') return ['water', 'liquid'];
   return ['general'];
 }
 
+/**
+ * #FR-85: классы продукта — поле codex записи словаря (сыр и масло — не «молоко», сливки — молоко), если группа норм не изменена вручную:
+ * entryCode — группа строки норматива записи (catalog.js normCodeFor), foodGroupCode — группа, по которой считается сравнение.
+ * @param {object|null} entry @param {string|null} entryCode @param {string|null} foodGroupCode
+ */
+export function classesFor(entry, entryCode, foodGroupCode) {
+  if (entry && Array.isArray(entry.codex) && entry.codex.length && (entryCode || null) === (foodGroupCode || null)) return [...entry.codex];
+  return productClasses(foodGroupCode);
+}
+
+/** Номер первого класса продукта среди классов нормы (0 — самая узкая); -1 — норма к продукту не относится. */
+export function classRank(foodCategoryRu, classes) {
+  const f = foreignClasses(foodCategoryRu);
+  return classes.findIndex(c => f.includes(c));
+}
+
 /** @param {string} foodCategoryRu @param {string} foodGroupCode */
 export function appliesTo(foodCategoryRu, foodGroupCode) {
-  const f = foreignClasses(foodCategoryRu);
-  const p = productClasses(foodGroupCode);
-  return p.some(c => f.includes(c));
+  return classRank(foodCategoryRu, productClasses(foodGroupCode)) >= 0;
 }

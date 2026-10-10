@@ -1,0 +1,4 @@
+[
+ {"name": "e04_fats_label_replaced", "file": "src/calc/norms.js", "from": "fats_oils: 'Масла, жиры, спреды, маргарины", "to": "fats_oils: 'Спреды растительно-сливочные"},
+ {"name": "e04_label_from_last_record", "file": "src/calc/model.js", "from": "ru: groupLabel(code, data.limits_ru) }", "to": "ru: data.limits_ru.filter(r => r.food_group_code === code).pop().food_group_ru }"}
+]

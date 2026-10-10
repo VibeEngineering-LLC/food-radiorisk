@@ -9,14 +9,14 @@ const { data } = await loadAll(async (u) => JSON.parse(await readFile(root + u, 
 function close(actual, expected, rel, msg) { assert.ok(Math.abs(actual - expected) <= rel * Math.abs(expected), `${msg || ''} expected ${expected}, got ${actual}`); }
 const nuc = (extra = {}) => ({ nuclide: 'Cs-137', source: 'measured', measuredBqPerKg: 1000, measuredUncertaintyBqPerKg: 0, sampleDate: null, transferId: null, variant: 'central', samplePrep: { mode: 'as_is', concentrationFactor: 1 }, ...extra });
 // аудит audit/risk-fields-review-2026-10-03.md: F1 (r = 0,05), F3 (природные не нормируются), F6 (70 мЗв за 70 лет)
-const base = (nuclides, over = {}) => ({ age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.05, portionKg: 0.1, portionsPerYear: 10, years: 17, eatDate: null, dryMatterPercent: null, product: { name: 'орехи', state: 'fresh' }, processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' }, foodGroupCode: null, nuclides, ...over });
+const base = (nuclides, over = {}) => ({ age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.05, portionKg: 0.1, portionsPerYear: 10, years: 17, constantActivity: true, eatDate: null, dryMatterPercent: null, product: { name: 'орехи', state: 'fresh' }, processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' }, foodGroupCode: null, nuclides, ...over });
 const eOf = (n) => data.dose_coeff.find(r => r.nuclide === n && r.age === 'adult' && r.source === 'ICRP119_F1').value;
 
 test('смесь: доли норм только по техногенной части, природные перечислены отдельно', () => {
   const r = computeScenario(data, base([nuc(), nuc({ nuclide: 'Ra-226', measuredBqPerKg: 30 })]));
   const cs = 1000 * 1 * eOf('Cs-137');
   close(r.totals.techDoseSvPerYear, cs, 1e-12);
-  close(r.totals.budgetShare1mSv, cs / 1e-3, 1e-12);
+  close(r.totals.budgetShare1mSvAvg5, cs / 1e-3, 1e-12);
   close(r.totals.lifeShare70mSv, cs * 17 / 70e-3, 1e-12);
   assert.deepEqual(r.totals.techNuclides, ['Cs-137']);
   assert.deepEqual(r.totals.naturalNuclides, ['Ra-226']);
@@ -25,24 +25,23 @@ test('смесь: доли норм только по техногенной ч�
 
 test('только природные: доли норм и ПГП не определены', () => {
   const r = computeScenario(data, base([nuc({ nuclide: 'Th-232', measuredBqPerKg: 30 }), nuc({ nuclide: 'K-40', measuredBqPerKg: 100 })]));
-  assert.equal(r.totals.budgetShare1mSv, null);
+  assert.equal(r.totals.budgetShare1mSvAvg5, null);
   assert.equal(r.totals.lifeShare70mSv, null);
   assert.ok(r.rows.every(x => x.natural && x.pgpBqPerYear === null && x.pgpShare === null));
 });
 
 test('r = 0,05: годовая доза 1 мЗв даёт ровно уровень НРБ 5·10⁻⁵ (шкала и проценты согласованы)', () => {
-  const r = computeScenario(data, base([nuc({ measuredBqPerKg: 1e-3 / eOf('Cs-137') })], { years: 1 }));
-  close(r.totals.budgetShare1mSv, 1, 1e-12);
+  const r = computeScenario(data, base([nuc({ measuredBqPerKg: 1e-3 / eOf('Cs-137') })], { years: 5 }));
+  close(r.totals.budgetShare1mSvAvg5, 1, 1e-12);
   close(r.totals.riskPerYear, 5e-5, 1e-12);
-  assert.equal(r.totals.riskAssessment.level, 'within');
+  close(r.totals.doseMaxYearTech, 1e-3, 1e-12);
 });
 
-// #FR-70: коэффициент риска для взрослых (4,1·10⁻²) ребёнку не подходит — предупреждение
-test('коэффициент для взрослых и возраст ребёнка: предупреждение; для взрослого и r = 0,055 — нет', () => {
+// #FR-70 → D-021: коэффициенты для взрослых работников убраны из выбора, предупреждение о них снято (см. fr81_d21_staff_coeff.test.js)
+test('предупреждения «коэффициент риска для взрослых» нет ни для ребёнка, ни для взрослого', () => {
   const w = (o) => computeScenario(data, base([nuc()], o)).warnings.filter(x => x.includes('коэффициент риска для взрослых'));
-  assert.equal(w({ age: '5y', riskCoeffPerSv: 0.041 }).length, 1);
-  assert.equal(w({ age: 'adult', riskCoeffPerSv: 0.041 }).length, 0);
   assert.equal(w({ age: '5y', riskCoeffPerSv: 0.055 }).length, 0);
+  assert.equal(w({ age: 'adult', riskCoeffPerSv: 0.05 }).length, 0);
 });
 
 // #FR-71: США, питьевая вода — MCL (40 CFR 141.66) и бутилированная вода (21 CFR 165.110) показываются как обязательные нормы

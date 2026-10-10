@@ -1,0 +1,4 @@
+[
+ {"name": "e10_report_no_nuclide_col", "file": "src/ui/report.js", "from": "const fHead = ['Нуклид', 'Юрисдикция'", "to": "const fHead = ['Группа', 'Юрисдикция'"},
+ {"name": "e10_screen_col_renamed", "file": "src/react/Result.jsx", "from": "{ h: 'Нуклид', f: l => l.nuclides.join(' + ') }", "to": "{ h: 'Элемент', f: l => l.nuclides.join(' + ') }"}
+]

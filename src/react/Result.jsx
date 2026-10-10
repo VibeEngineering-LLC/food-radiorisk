@@ -1,11 +1,15 @@
 import { useState } from 'react';
-import { esc, fmtNum, fmtSci, fmtDose, fmtRiskPerMillion, fmtOneIn, fmtPct, levelClass, verdictText } from '../ui/fmt.js';
+import { esc, fmtNum, fmtNear, fmtBLine, fmtSci, fmtDose, fmtRiskPerMillion, fmtPct, levelClass, verdictText } from '../ui/fmt.js';
 import { depositionHtml } from '../ui/product.js';
 import { AGE_LABEL, SOURCE_LABEL } from '../ui/form.js';
 import { locRu, unitRu } from '../ui/ru.js';
 import { FOOD_CLASS_RU } from '../calc/foodclass.js';
-import { sourceFull, JUR_RU, yearsWord, RISK_TXT, logPos } from '../ui/render.js';
+import { sourceFull, JUR_RU, yearsWord } from '../ui/render.js';
+import { T, fill } from '../ui/texts_v.js';
+import { RiskSummary, VerdictBox, DoseBlock } from './Summary.jsx';
 import Compare from './Compare.jsx';
+import LifeRisks from './LifeRisks.jsx';
+import Reference from './Reference.jsx';
 
 export function Kpi({ value, unit, label, level }) {
   return <div className={'kpi' + (level ? ' risk-' + level : '')}><div className="v">{value}{unit && <span className="u"> {unit}</span>}</div><div className="l">{label}</div></div>;
@@ -28,52 +32,21 @@ export function KpiGrid({ totals, input }) {
   const horizon = input.age === 'adult' ? '50 лет' : 'до 70 лет возраста';
   const who = `Вся доза, которую даст поступление за 1 год, накопленная за ${horizon} (${(AGE_LABEL[input.age] || input.age).toLowerCase()}); ${SOURCE_LABEL[input.doseSource] || input.doseSource}`;
   const n = input.years, span = input.lifetime ? `${input.lifetime.fromAge}–${input.lifetime.toAge} лет` : `${n} ${yearsWord(n)}`;
-  const mln = (p) => Number.isFinite(p) ? fmtNum(p * 1e6) : '—';
-  return <div className={n > 1 ? 'kgrid' : 'kgrid one'}>
-    {n > 1 && <div />}<div className="kh">Ожидаемая эффективная доза</div><div className="kh">Пожизненный риск (номинальный)</div><div className="kh">Доля нормы НРБ-99/2009</div>
-    {n > 1 && <div className="kr">1 год</div>}
+  return <div className="kgrid" style={{ gridTemplateColumns: 'max-content repeat(2, minmax(0, 1fr))' }}>
+    <div /><div className="kh">Ожидаемая эффективная доза</div><div className="kh">Доля нормы НРБ-99/2009</div>
+    {/* #FR-81 V13: справочная сетка вкладки «Подробно»: доза и доля нормы; риск — только главное число и строки вкладки */}
+    <div className="kr">1-й год питания</div>
     <Kpi value={fmtDose(totals.doseSvPerYear)} label={who} />
-    <Kpi value={mln(totals.riskPerYear)} unit="на 1 млн" label="от 1 года потребления; уровни НРБ п. 2.3 — 1 и 50 на 1 млн" level={totals.riskAssessment?.level} />
-    {normKpi(totals.budgetShare1mSv, 'от предела 1 мЗв/год (табл. 3.1, п. 5.2.4)', totals)}
+    {normKpi(totals.maxYearShare5mSv, 'наибольшая годовая доза — от предела 5 мЗв в один год (табл. 3.1)', totals)}
+    <div className="kr">Ē₅ — наибольшая средняя за 5 лет подряд</div>
+    <Kpi value={fmtDose(totals.doseSvAvg5)} label="в год, в среднем за любые 5 лет подряд (за пределами срока доза от продукта 0)" />
+    {normKpi(totals.budgetShare1mSvAvg5, 'Ē₅ от предела 1 мЗв/год (табл. 3.1, п. 5.2.4)', totals)}
     {n > 1 && <>
       <div className="kr">{span}</div>
-      <Kpi value={fmtDose(totals.doseSvTotal)} label={input.lifetime ? 'вся доза от питания в этот период, накопленная за жизнь (до 70 лет)' : `вся доза от поступления за ${n} ${yearsWord(n)} (сумма по годам), накопленная за ${horizon} после каждого поступления`} />
-      <Kpi value={mln(totals.riskTotal)} unit="на 1 млн" label="сумма за период; уровня риска для суммы в НРБ нет" />
+      <Kpi value={fmtDose(totals.doseSvTotal)} label={input.lifetime ? 'вся доза от питания в этот период, накопленная до 70 лет возраста' : `вся доза от поступления за ${n} ${yearsWord(n)} (сумма по годам), накопленная за ${horizon} после каждого поступления`} />
       {normKpi(totals.lifeShare70mSv, 'от 70 мЗв за период жизни 70 лет (п. 3.1.4)', totals)}
     </>}
   </div>;
-}
-
-export function RiskBlock({ totals, years, age }) {
-  const horizon = age && age !== 'adult' ? 'до 70 лет возраста' : '50 лет';
-  const ra = totals.riskAssessment;
-  if (!ra) return <><div className="n">{fmtRiskPerMillion(totals.riskTotal)}</div><div className="t">добавочный риск за {years} {yearsWord(years)}</div></>;
-
-  const main = years > 1 ? totals.riskTotal : totals.riskPerYear;
-  const mark = (v, t) => <i className="tick" style={{ left: `${logPos(v)}%` }} title={t}></i>;
-
-  return <>
-    <div className="t"><b>Пожизненный радиационный риск{years > 1 ? ` от ${years} ${yearsWord(years)} потребления` : ' от 1 года потребления'}</b></div>
-    <div className="n">{fmtNum(main * 1e6)} на 1 млн</div>
-    <div className="t">Риск рассчитан по МКРЗ 103 на оставшуюся жизнь: по ожидаемой дозе, накопленной после поступления — взрослому за 50 лет, ребёнку до 70 лет возраста (МКРЗ 103, прил. B, п. (f); здесь: {horizon}).</div>
-    <div className="t">В долях: {fmtSci(main)} ({(main * 100).toLocaleString('ru-RU', { maximumSignificantDigits: 3, maximumFractionDigits: 20 })} %, {fmtOneIn(main)}) — в таком виде НРБ-99/2009 задают индивидуальный пожизненный риск.</div>
-    <div className="t">Номинальный риск с учётом вреда (МКРЗ 103, табл. 1; НРБ-99/2009, п. 2.3): коэффициент учитывает тяжесть последствий — летальность и потерянные годы жизни (МКРЗ 103, п. A106). Это не число заболевших: частота заболеваний раком на 1 Зв выше (МКРЗ 103, табл. A.4.1).</div>
-    <div className="t">{years > 1 ? `Риск от одного года потребления — ${fmtNum(totals.riskPerYear * 1e6)} на 1 млн (точка на шкале). ` : ''}Это <b>{RISK_TXT[ra.level]}</b></div>
-    <div className="riskscale">
-      {mark(ra.negligible.value, '10⁻⁶ пренебрежимо малый')}
-      {mark(ra.limit.value, '5·10⁻⁵ НРБ п. 2.3')}
-      {totals.riskPerYear > 0 && <b className="dot" style={{ left: `${logPos(totals.riskPerYear)}%` }}></b>}
-    </div>
-    <div className="scalelbl">
-      <span style={{ left: '0' }}>0,01 на млн</span>
-      <span style={{ left: `${logPos(ra.negligible.value)}%` }}>1</span>
-      <span style={{ left: `${logPos(ra.limit.value)}%` }}>50</span>
-      <span style={{ left: '100%' }}>1000 на млн</span>
-    </div>
-    {years > 1 && <p className="hint risksrc">Шкала показывает риск от одного года потребления: уровни НРБ заданы для годового облучения. Риск за {years} {yearsWord(years)} — {fmtNum(totals.riskTotal * 1e6)} на 1 млн, это сумма за все годы, и со шкалой его сравнивать нельзя.</p>}
-    <p className="hint risksrc">Уровни риска: НРБ-99/2009, {(ra.limit.loc || 'п. 2.3').replace(/PDF p\./g, 'с. PDF ')}; риск = доза × коэффициент номинального риска (ICRP 103, табл. 1; НРБ-99/2009, п. 2.3), линейная беспороговая модель. Пределы доз населения установлены по пожизненному риску от облучения в течение года (НРБ-99/2009, п. 2.3): при усреднённом коэффициенте 0,05 Зв⁻¹ уровни 1 и 50 на 1 млн соответствуют (расчёт: риск / 0,05) 20 мкЗв и 1 мЗв за год; сам предел для населения — 1 мЗв в год в среднем за любые последовательные 5 лет, но не более 5 мЗв в год (табл. 3.1).</p>
-    <p className="hint risksrc">Риск номинальный — усреднён по полу и возрасту населения. Это мера для сравнения с нормами, а не прогноз для конкретного человека (МКРЗ, Публ. 103, п. B252).</p>
-  </>;
 }
 
 export function DataTable({ rows, cols }) {
@@ -92,13 +65,16 @@ export function DataTable({ rows, cols }) {
   </tbody></table></div>;
 }
 
-export default function Result({ result, input, meta }) {
+export default function Result({ result, input, meta, initialTab = '' }) {
   // #FR-66: нормы РФ, зарубежные нормы и источники — одна вкладочная группа
-  const [rt, setRt] = useState('');
-  const [radonC, setRadonC] = useState(100); // #FR-73: концентрация радона дома, Бк/м³ — состояние здесь, чтобы не сбрасывалось при смене вкладки
+  const [rt, setRt] = useState(initialTab); // initialTab — для тестов: открыть нужную вкладку при серверном рендере
+  const [radonC, setRadonC] = useState(100); // #FR-73: ОА радона-222 дома, Бк/м³ — состояние здесь, чтобы не сбрасывалось при смене вкладки
+  const [dwellU, setDwellU] = useState(NaN); // #FR-74: мощность дозы в жилище, мкЗв/ч (пусто — строки нет)
   const messages = [];
   result.errors.forEach(e => messages.push(<div key={e} className="msg err">{e}</div>));
   result.warnings.forEach(w => messages.push(<div key={w} className="msg warn">{w}</div>));
+  if (!input.foodGroupCode && result.limits?.ruNone) messages.push(<div key="nogroup" className="msg warn">{result.limits.intervention ? T.VERDICT_UV : fill(T.VERDICT_NO_RU_NORM, { entry: result.limits.productName })}</div>); // v14 п. 7: у воды из колодца — уровни вмешательства НРБ-99/2009, а не «норматива нет» // #FR-85 v11: норматива РФ у продукта нет — так и сказано в результате
+  else if (!input.foodGroupCode) messages.push(<div key="nogroup" className="msg warn">Группа продукта по ТР ТС 021/2011 не определена по названию — выберите её на вкладке «3 · Потребитель и нормы». Без группы нормы РФ / ЕАЭС не показываются, а зарубежные берутся для прочих пищевых продуктов.</div>);
 
   if (!result.ok) {
     return <>
@@ -117,7 +93,9 @@ export default function Result({ result, input, meta }) {
 
   const hasRu = !!(input.foodGroupCode && limits.ru.length), hasForeign = limits.foreign.length > 0;
   // #FR-59: группы таблиц в одну колонку (расчёт с источниками, нормы РФ, зарубежные); последняя группа тянется до низа
-  const tabs = [hasRu && { id: 'ru', label: 'Нормы РФ / ЕАЭС' }, hasForeign && { id: 'foreign', label: 'Зарубежные нормы' }, result.comparison && { id: 'cmp', label: 'Сравнение' }, { id: 'src', label: 'Источники' }].filter(Boolean);
+  const span = input.lifetime ? `${input.lifetime.fromAge}–${input.lifetime.toAge} лет` : `${input.years} ${yearsWord(input.years)}`;
+  // #FR-81 V13 (D-022): вкладки — нормы РФ, нормы других стран, сравнение, бытовые риски, подробно, расчёт и источники
+  const tabs = [limits.intervention && { id: 'uv', label: 'Уровни вмешательства' }, hasRu && { id: 'ru', label: 'Нормы РФ и ЕАЭС' }, hasForeign && { id: 'foreign', label: 'Нормы других стран' }, result.comparison && { id: 'cmp', label: 'Сравнение с облучением' }, result.lifeRisks && { id: 'life', label: `Бытовые риски за ${span}` }, { id: 'ref', label: 'Подробно (для специалиста)' }, { id: 'src', label: 'Расчёт и источники' }].filter(Boolean);
   const curTab = tabs.some(t => t.id === rt) ? rt : tabs[0].id;
   const grp = (key, grow) => ({ className: 'rgroup' + (grow ? ' grow' : '') });
   const massKg = input.portionKg * input.portionsPerYear;
@@ -125,58 +103,42 @@ export default function Result({ result, input, meta }) {
   return <div className="science">
     {messages}
     <div className="resblock">
-    <KpiGrid totals={totals} input={input} />
-    <div className={'riskbox risk risk-' + (totals.riskAssessment?.level || 'none')}><RiskBlock totals={totals} years={input.years} age={input.age} /></div>
+    {/* #FR-81 V04 (D-022): A — риск, B — соответствие нормам, C — доза и нормы; KpiGrid уходит во вкладку «Подробно» (V13) */}
+    <RiskSummary result={result} input={input} />
+    <VerdictBox result={result} input={input} />
+    <DoseBlock result={result} input={input} />
     </div>
 
-    <fieldset {...grp('calc', false)}><legend>Расчёт по нуклидам</legend>
-    <DataTable rows={rows} cols={[
-      { h: 'Нуклид', f: r => r.nuclide },
-      { h: 'A, Бк/кг', f: r => fmtNum(r.rawBqPerKg), c: 'num' },
-      { h: 'Fr', f: r => fmtNum(r.frUsed), c: 'num' },
-      { h: 'M, кг/год', f: () => fmtNum(massKg), c: 'num' },
-      { h: 'e, Зв/Бк', f: r => fmtSci(r.eSvPerBq), c: 'num' },
-      { h: 'Доза, мкЗв/год', f: r => fmtNum(r.doseSvPerYear * 1e6), c: 'num' }
-    ]} />
-    <details className="more"><summary>Поступление, риск и ПГП по нуклидам</summary>
-      <DataTable rows={rows} cols={[
-        { h: 'Нуклид', f: r => r.nuclide },
-        { h: 'Поступление, Бк/год', f: r => fmtNum(r.intakeBqPerYear), c: 'num' },
-        { h: 'Пожизненный риск за период', f: r => fmtRiskPerMillion(r.riskTotal), c: 'num' },
-        { h: 'ПГП, Бк/год', f: r => r.natural ? 'не нормируется' : fmtNum(r.pgpBqPerYear), c: 'num' },
-        { h: 'Доля ПГП', f: r => r.natural ? '—' : fmtPct(r.pgpShare), c: 'num' }
-      ]} />
-    </details>
-
-    {rows.some(r => r.lifetimeBands) && <details className="more"><summary>Доза по возрастным группам (питание {input.lifetime.fromAge}–{input.lifetime.toAge} лет)</summary>
-      <DataTable rows={rows.flatMap(r => (r.lifetimeBands || []).map(b => ({ ...b, nuclide: r.nuclide })))} cols={[
-        { h: 'Нуклид', f: b => b.nuclide },
-        { h: 'Возрастная группа', f: b => AGE_LABEL[b.age] || b.age },
-        { h: 'Лет', f: b => fmtNum(b.years), c: 'num' },
-        { h: 'e, Зв/Бк', f: b => fmtSci(b.eSvPerBq), c: 'num' },
-        { h: 'Доза, мкЗв', f: b => fmtNum(b.doseSv * 1e6), c: 'num' }
-      ]} />
-    </details>}
-
-    {dep && <div style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: dep }} />}
-
-    </fieldset>
 
     {tabs.length > 0 && <div className="rtabs"><div className="tabs" role="tablist">{tabs.map(t => <button type="button" role="tab" key={t.id} aria-selected={curTab === t.id} className={curTab === t.id ? 'on' : undefined} onClick={() => setRt(t.id)}>{t.label}</button>)}</div>
     <div className="tabbody" role="tabpanel">
     {curTab === 'ru' && <>
       <DataTable rows={limits.ru} cols={[
         { h: 'Нуклид', f: l => l.nuclide },
-        { h: 'Норматив H', f: l => l.limitId ? `${fmtNum(l.H)} ${unitRu(l.unit)}` : (l.notNormed ? 'не нормируется' : 'нет данных'), c: 'num' },
-        { h: 'Активность, Бк/кг', f: l => fmtNum(l.activity), c: 'num' },
+        { h: 'Норматив H', f: l => l.limitId ? `${fmtNum(l.H)} ${unitRu(l.unit)}` : (l.cooked ? 'для готового блюда не установлен' : l.notNormed ? 'не нормируется' : l.reference ? `справочно: ${fmtNum(l.reference.H)} ${unitRu(l.reference.unit)} (другой регламент, в B не входит${l.reference.note ? "; " + l.reference.note : ""})` : 'нет данных в Прил. 4'), c: 'num' },
+        { h: 'Активность, Бк/кг', f: l => l.cooked ? fmtNum(l.activity) : l.converted ? <>{fmtNum(l.activity)}<br /><span className="hint">{fmtNum(l.converted.aDry)} / {fmtNum(l.converted.K)}: пересчёт на сырьё</span></> : fmtNum(l.activity), c: 'num' },
         { h: 'Отношение A/H', f: l => fmtNum(l.ratio), c: 'num' },
         // краткое имя документа (до «названия» или скобки), полное — во всплывающей подсказке
-        { h: 'Документ и место', f: l => l.document ? <span title={l.document}>{l.document.split(/\s[«(]/)[0]} ({locRu(l.loc)})</span> : '' }
+        { h: 'Документ и место', f: l => l.document ? <span title={l.document}>{l.document.split(/\s[«(]/)[0]}{locRu(l.loc) ? ` (${locRu(l.loc)})` : ''}</span> : '' }
       ]} />
+      {limits.formNote?.kind === 'cooked' && <p className="hint">{T.VERDICT_COOKED}</p>}
+      {limits.formNote?.kind === 'no_k' && <p className="msg warn">{T.VERDICT_NO_K}</p>}
       {limits.compliance && (() => {
         const { B, dB, verdict, precisionOk } = limits.compliance;
-        return <p>B = {fmtNum(B)}, ΔB = {fmtNum(dB)}, <span className={'verdict ' + verdict}>{verdictText(verdict)}</span>{!precisionOk && ' Точность измерения не удовлетворяет ΔB ≤ 0,3 (МУК 2.6.1.1194-03 п. 6.5)'}</p>;
+        return <p>{fmtBLine(B, dB)}, <span className={'verdict ' + verdict}>{verdictText(verdict)}</span>{!precisionOk && ' Точность измерения не удовлетворяет ΔB ≤ 0,3 (МУК 2.6.1.1194-03 п. 6.5)'}</p>;
       })()}
+      {limits.productCaption && <p className="hint" id="productCaption">{fill(T.VERDICT_CAPTION, { entry: limits.productName, caption: limits.productCaption })}</p>}
+    </>}
+
+    {curTab === 'uv' && limits.intervention && <>
+      <p className="hint" id="uvNote">{T.UV_NOTE}</p>
+      <DataTable rows={limits.intervention} cols={[
+        { h: 'Нуклид', f: l => l.nuclide },
+        { h: 'Уровень вмешательства', f: l => l.uv == null ? T.UV_NOT_SET : `${fmtNum(l.uv)} ${unitRu(l.unit)}`, c: 'num' },
+        { h: 'Активность, Бк/кг', f: l => fmtNum(l.activity), c: 'num' },
+        { h: 'Отношение A/УВ', f: l => l.ratio == null ? '' : fmtNum(l.ratio), c: 'num' },
+        { h: 'Документ и место', f: l => l.uv == null ? '' : `НРБ-99/2009, Прил. 2а${locRu(l.loc) ? ` (${locRu(l.loc)})` : ''}` }
+      ]} />
     </>}
 
     {curTab === 'foreign' && hasForeign && (() => {
@@ -186,6 +148,7 @@ export default function Result({ result, input, meta }) {
         {limits.foreign.some(l => l.emergency) && <p className="hint">Аварийные уровни (Codex, Euratom 2016/52, FDA) действуют только после радиационной аварии; уровень FDA — ориентир для решения, не допустимый уровень и не предел для продукта на рынке. Сила каждого документа указана в колонке.</p>}
         {!input.foodGroupCode && <p className="hint">Группа продукта не выбрана — показаны нормы для прочих пищевых продуктов.</p>}
         <DataTable rows={limits.foreign} cols={[
+          { h: 'Нуклид', f: l => l.nuclides.join(' + ') }, // #FR-81 E10
           { h: 'Юрисдикция', f: l => JUR_RU[l.jurisdiction] || l.jurisdiction },
           { h: 'Сила документа', f: l => l.force?.label || '', c: l => l.force?.rank === 3 ? 'muted' : '' },
           { h: 'Документ', f: l => l.document },
@@ -204,8 +167,45 @@ export default function Result({ result, input, meta }) {
         ]} />
       </>;
     })()}
-    {curTab === 'cmp' && <Compare comparison={result.comparison} input={input} radonC={radonC} setRadonC={setRadonC} />}
+    {curTab === 'ref' && <Reference result={result} input={input} />}
+    {curTab === 'cmp' && <Compare comparison={result.comparison} input={input} radonC={radonC} setRadonC={setRadonC} dwellU={dwellU} setDwellU={setDwellU} />}
+    {curTab === 'life' && <LifeRisks life={result.lifeRisks} input={input} />}
     {curTab === 'src' && <>
+    <fieldset {...grp('calc', false)}><legend>Расчёт по нуклидам</legend>
+    <DataTable rows={rows} cols={[
+      { h: 'Нуклид', f: r => r.nuclide },
+      { h: 'A, Бк/кг', f: r => fmtNum(r.rawBqPerKg), c: 'num' },
+      { h: 'Fr', f: r => fmtNum(r.frUsed), c: 'num' },
+      { h: 'M, кг/год', f: () => fmtNum(massKg), c: 'num' },
+      { h: 'e, Зв/Бк', f: r => fmtSci(r.eSvPerBq), c: 'num' },
+      { h: 'Доза, мкЗв/год', f: r => fmtNum(r.doseSvPerYear * 1e6), c: 'num' },
+      { h: 'Орган с наибольшей дозой, за 1 год питания', f: r => { const o = result.organs?.byNuclide?.find(x => x.nuclide === r.nuclide); return o ? `${o.label}: ${fmtNum(o.doseSvPerYear * 1e6)} мкЗв${o.ratio != null ? `, ×${fmtNum(o.ratio, 2)} к эффективной дозе` : ''}` : '—'; } }
+    ]} />
+    <details className="more"><summary>Поступление, риск и ПГП по нуклидам</summary>
+      <DataTable rows={rows} cols={[
+        { h: 'Нуклид', f: r => r.nuclide },
+        { h: 'Поступление, Бк/год', f: r => fmtNum(r.intakeBqPerYear), c: 'num' },
+        { h: 'Пожизненный риск за период', f: r => fmtRiskPerMillion(r.riskTotal), c: 'num' },
+        { h: 'ПГП, Бк/год', f: r => r.natural ? 'не нормируется' : fmtNum(r.pgpBqPerYear), c: 'num' },
+        { h: 'Доля ПГП', f: r => r.natural ? '—' : fmtPct(r.pgpShare), c: 'num' }
+      ]} />
+    </details>
+
+    {/* #FR-81 шаг 4а: Y-90 — отдельная добавка к Sr-90 */}
+    {rows.filter(r => r.y90).map(r => <p className="hint" key={'y90' + r.nuclide}>Иттрий-90 в продукте при {r.nuclide}: {r.y90.included ? 'включён в дозу (отметка в форме)' : 'не включён'}; отдельная добавка в равновесии — {fmtNum(r.y90.doseSvPerYear * 1e6)} мкЗв за 1-й год, {fmtNum(r.y90.doseSvTotal * 1e6)} мкЗв за весь срок (+{fmtNum(r.y90.ratio * 100)} % к дозе {r.nuclide} 1-го года). В e(g) стронция-90 входит только иттрий, образовавшийся в теле (МКРЗ 119 п. 16); иттрий, уже бывший в продукте, — отдельное поступление.</p>)}
+    {rows.some(r => r.lifetimeBands) && <details className="more"><summary>Доза по возрастным группам (питание {input.lifetime.fromAge}–{input.lifetime.toAge} лет)</summary>
+      <DataTable rows={rows.flatMap(r => (r.lifetimeBands || []).map(b => ({ ...b, nuclide: r.nuclide })))} cols={[
+        { h: 'Нуклид', f: b => b.nuclide },
+        { h: 'Возрастная группа', f: b => AGE_LABEL[b.age] || b.age },
+        { h: 'Лет', f: b => fmtNum(b.years), c: 'num' },
+        { h: 'e, Зв/Бк', f: b => fmtSci(b.eSvPerBq), c: 'num' },
+        { h: 'Доза, мкЗв', f: b => fmtNum(b.doseSv * 1e6), c: 'num' }
+      ]} />
+    </details>}
+
+    {dep && <div style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: dep }} />}
+
+    </fieldset>
     <p className="hint">Описание каждого документа и методика расчёта — на странице <a href="sources.html">«Справка»</a>.</p>
     <DataTable rows={provRows} cols={[
       { h: 'Величина', f: p => `${p.nuclide} · ${p.step}${p.what ? ': ' + p.what : ''}` },

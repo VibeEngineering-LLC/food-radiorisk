@@ -1,0 +1,74 @@
+[
+ {
+  "name": "Z55 (v14 п. 1): формы «лоси…» снова той же основы, что «лосось»",
+  "file": "public/data/products.json",
+  "from": "\"лоси\": \"лось\"",
+  "to": "\"лоси\": \"лос\""
+ },
+ {
+  "name": "Z56 (v14 п. 2): «лосиное мясо» больше не синоним лося",
+  "file": "public/data/products.json",
+  "from": "\"лосиное мясо\"",
+  "to": "\"лосиное филе\""
+ },
+ {
+  "name": "Z57 (v14 п. 3): «дикая утка» больше не дичь",
+  "file": "public/data/products.json",
+  "from": "\"дикая утка\"",
+  "to": "\"дикая кряква\""
+ },
+ {
+  "name": "Z58 (v14 п. 4): «сырки» снова другая основа, чем «сырок»",
+  "file": "public/data/products.json",
+  "from": "\"сырки\": \"сырок\"",
+  "to": "\"сырки\": \"сырки\""
+ },
+ {
+  "name": "Z59 (v14 п. 5): льняное масло снова «вся группа» без подписи «оценка сверху»",
+  "file": "public/data/products.json",
+  "from": "\"synonyms\": [\n    \"масло льняное\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": false,\n   \"norm\": {\n    \"fresh\": \"t021_p4_r20_cs137\",\n    \"dried\": \"t021_p4_r20_cs137\"\n   },\n   \"codex\": [\n    \"general\"\n   ],\n   \"diet\": {\n    \"group\": \"oil\",\n    \"base\": false",
+  "to": "\"synonyms\": [\n    \"масло льняное\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": false,\n   \"norm\": {\n    \"fresh\": \"t021_p4_r20_cs137\",\n    \"dried\": \"t021_p4_r20_cs137\"\n   },\n   \"codex\": [\n    \"general\"\n   ],\n   \"diet\": {\n    \"group\": \"oil\",\n    \"base\": true"
+ },
+ {
+  "name": "Z60 (v14 п. 6): в словаре снова блюдо (синоним со словом «салат» у грибов)",
+  "file": "public/data/products.json",
+  "from": "\"грибы съедобные\"",
+  "to": "\"грибы салат\""
+ },
+ {
+  "name": "Z61 (v14 п. 7): у воды из колодца потеряно указание на уровни вмешательства",
+  "file": "public/data/products.json",
+  "from": "\"intervention\": \"nrb2009_app2a\"",
+  "to": "\"intervention\": \"nrb2009_app2b\""
+ },
+ {
+  "name": "Z62 (v14 п. 8): пропала запись «Сиг»",
+  "file": "public/data/products.json",
+  "from": "\"id\": \"p_sig\"",
+  "to": "\"id\": \"p_sigg\""
+ },
+ {
+  "name": "Z63 (v14 п. 9): заглушка 100 г снова только строка '100'",
+  "file": "src/react/persist.js",
+  "from": "Number(pg) === 100",
+  "to": "pg === '100'"
+ },
+ {
+  "name": "Z64 (v14 п. 10): справка НКДАР для детей снова со столбцом «Взрослый»",
+  "file": "src/ui/texts_v.json",
+  "from": "\"Ребёнок, 10 лет\"]",
+  "to": "\"Ребёнок, 10 лет\", \"Взрослый\"]"
+ },
+ {
+  "name": "Z65 (v14 п. 11): «зелёный» снова той же основы, что «зелень»",
+  "file": "public/data/products.json",
+  "from": "\"зеленый\": \"зеленый\"",
+  "to": "\"зеленый\": \"зелен\""
+ },
+ {
+  "name": "Z66 (v14 п. 12): «покупная» речная рыба остаётся в группе речной рыбы",
+  "file": "public/data/products.json",
+  "from": "\"to\": \"fish\"",
+  "to": "\"to\": \"fish_river\""
+ }
+]

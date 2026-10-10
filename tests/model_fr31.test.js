@@ -8,7 +8,7 @@ import { computeScenario } from '../src/calc/model.js';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const { data } = await loadAll(async (u) => JSON.parse(await readFile(root + u, 'utf8')));
 const nuc = (extra) => ({ nuclide: 'Cs-137', source: 'measured', measuredBqPerKg: 1000, measuredUncertaintyBqPerKg: 0, variant: 'central', samplePrep: { mode: 'as_is', concentrationFactor: 1 }, ...extra });
-const run = (n) => computeScenario(data, { age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.055, portionKg: 0.1, portionsPerYear: 10, years: 1, eatDate: null, dryMatterPercent: 15, product: { name: 'черника', state: 'fresh' }, processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' }, foodGroupCode: null, nuclides: [nuc(n)] });
+const run = (n) => computeScenario(data, { age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.055, portionKg: 0.1, portionsPerYear: 10, years: 1, eatDate: null, dryMatterPercent: 15, product: { name: 'черника лесная', state: 'fresh' }, processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' }, foodGroupCode: null, nuclides: [nuc(n)] });
 const kp = data.transfer.filter(r => r.nuclide === 'Cs-137' && /черник/i.test(r.item_ru) && ['Tag', 'KP'].includes(r.quantity));
 const good = kp.filter(r => r.mass_basis != null && r.level === '✅' && !r.source_anomaly).map(r => r.id);
 // не ✅ (в т. ч. с основой массы по выводу, #FR-33) — в сводную не входят

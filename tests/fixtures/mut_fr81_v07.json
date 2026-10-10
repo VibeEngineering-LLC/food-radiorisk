@@ -1,0 +1,26 @@
+[
+ {
+  "name": "v07_horizon_70_instead_of_end_of_life",
+  "file": "src/calc/model.js",
+  "from": "BG_CODE, a, Infinity), year",
+  "to": "BG_CODE, a, 70), year"
+ },
+ {
+  "name": "v07_lifetime_from_age_ignored",
+  "file": "src/calc/model.js",
+  "from": "const a = input.lifetime ? input.lifetime.fromAge : NOMINAL_AGE[input.age];",
+  "to": "const a = NOMINAL_AGE[input.age];"
+ },
+ {
+  "name": "v07_no_table_gives_zero_background",
+  "file": "src/calc/model.js",
+  "from": "|| !records.some(r => r.kind === 'life_table')) return null;",
+  "to": "|| !records.some(r => r.kind === 'life_table')) return { a, code: BG_CODE, F: 0, year: 2019 };"
+ },
+ {
+  "name": "v07_code_all_causes",
+  "file": "src/calc/model.js",
+  "from": "F: causeProb(makeLifeTable(records), BG_CODE, a, Infinity)",
+  "to": "F: causeProb(makeLifeTable(records), '1000', a, Infinity)"
+ }
+]

@@ -1,0 +1,20 @@
+[
+ {
+  "name": "v4_3_no_remap",
+  "file": "src/calc/processing.js",
+  "from": "(processing.variant === 'min' || processing.variant === 'max') && noSpread ? 'best'",
+  "to": "false ? 'best'"
+ },
+ {
+  "name": "v4_3_remap_only_min",
+  "file": "src/calc/processing.js",
+  "from": "(processing.variant === 'min' || processing.variant === 'max') && noSpread ? 'best'",
+  "to": "processing.variant === 'min' && noSpread ? 'best'"
+ },
+ {
+  "name": "v4_3_remap_only_max",
+  "file": "src/calc/processing.js",
+  "from": "(processing.variant === 'min' || processing.variant === 'max') && noSpread ? 'best'",
+  "to": "processing.variant === 'max' && noSpread ? 'best'"
+ }
+]

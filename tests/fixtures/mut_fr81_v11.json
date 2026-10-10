@@ -1,0 +1,8 @@
+[
+ {"name": "v11_cooked_keeps_processing_in_form", "file": "src/ui/form.js", "from": "processing: raw.measuredForm === 'cooked' ? {", "to": "processing: false ? {"},
+ {"name": "v11_cooked_fr_not_forced_in_model", "file": "src/calc/model.js", "from": "const frUsed = cooked ? 1 :", "to": "const frUsed = false ? 1 :"},
+ {"name": "v11_default_fresh", "file": "src/react/formState.js", "from": "product: '', measuredForm: '',", "to": "product: '', measuredForm: 'fresh',"},
+ {"name": "v11_state_check_off", "file": "src/calc/model.js", "from": "!['fresh', 'dried', 'cooked'].includes(input.product.state)", "to": "false"},
+ {"name": "v11_old_state_migrated", "file": "src/react/persist.js", "from": "    // #FR-81 V01: коэффициент риска не выбирается", "to": "    if (stored.productState) resultRaw.measuredForm = stored.productState;\n    // #FR-81 V01: коэффициент риска не выбирается"},
+ {"name": "v11_cooked_option_missing", "file": "src/react/Form.jsx", "from": "{T.FORM_STATE_OPTS.map(", "to": "{T.FORM_STATE_OPTS.slice(0, 2).map("}
+]

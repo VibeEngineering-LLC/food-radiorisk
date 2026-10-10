@@ -1,0 +1,4 @@
+[
+ {"name": "d16_label_without_period", "file": "src/react/Result.jsx", "from": "'Орган с наибольшей дозой, за 1 год питания'", "to": "'Орган с наибольшей дозой'"},
+ {"name": "d16_organs_tab_no_period", "file": "src/react/Organs.jsx", "from": "Срок питания — {input.years} {yearsWord(input.years)}:", "to": "Дозы:"}
+]

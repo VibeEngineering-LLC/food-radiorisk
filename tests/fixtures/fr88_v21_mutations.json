@@ -1,0 +1,26 @@
+[
+ {
+  "name": "Z109 (v21, слой c): в таблице зарубежных норм отчёта юрисдикция снова кодом (EU, Japan, USA, Codex), а не по-русски, как на экране",
+  "file": "src/ui/report.js",
+  "from": "JUR_RU[l.jurisdiction] || l.jurisdiction, docStr",
+  "to": "l.jurisdiction, docStr"
+ },
+ {
+  "name": "Z110 (v21, слой c): в таблице зарубежных норм отчёта норматив и отношение A/норматив поменяны местами",
+  "file": "src/ui/report.js",
+  "from": "l.food_category_ru, fmtNum(l.value), fmtNum(l.ratio)]",
+  "to": "l.food_category_ru, fmtNum(l.ratio), fmtNum(l.value)]"
+ },
+ {
+  "name": "Z111 (v21, слой c): в «Источниках чисел» отчёта значение печатается без единицы",
+  "file": "src/ui/report.js",
+  "from": "const valStr = `${fmtNum(p.value)} ${unitRu(p.unit)}`.trim();",
+  "to": "const valStr = `${fmtNum(p.value)}`.trim();"
+ },
+ {
+  "name": "Z112 (v21, п. 1): в «Известных ограничениях» снова заглушка «[текст]» вместо утверждённой формулировки",
+  "file": "sources.html",
+  "from": "<strong>Масло какао</strong> в Приложении 4",
+  "to": "<strong>Масло какао</strong> [текст] в Приложении 4"
+ }
+]

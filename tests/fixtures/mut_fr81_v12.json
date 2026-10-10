@@ -1,0 +1,38 @@
+[
+ {
+  "name": "v12_share_by_avg5",
+  "file": "src/ui/summary_text.js",
+  "from": "p: fmtPct2(totals.budgetShareMaxYear)",
+  "to": "p: fmtPct2(totals.budgetShare1mSvAvg5)"
+ },
+ {
+  "name": "v12_uniform_note_off",
+  "file": "src/ui/summary_text.js",
+  "from": "totals.doseMaxYearUniform && result.period.years > 1",
+  "to": "totals.doseMaxYearUniform && result.period.years > 99"
+ },
+ {
+  "name": "v12_age_note_off",
+  "file": "src/ui/summary_text.js",
+  "from": "} else if (totals.doseMaxYearAge != null) {\n      note =",
+  "to": "} else if (false) {\n      note ="
+ },
+ {
+  "name": "v12_negl_dose_is_total",
+  "file": "src/ui/summary_text.js",
+  "from": "fill(T.DOSE_NEGL, { E: fmtDose2(totals.doseMaxYearTech) })",
+  "to": "fill(T.DOSE_NEGL, { E: fmtDose2(totals.techDoseSvTotal) })"
+ },
+ {
+  "name": "v12_total_share_wrong",
+  "file": "src/ui/summary_text.js",
+  "from": "w: fmtPct2(totals.lifeShare70mSv)",
+  "to": "w: fmtPct2(totals.budgetShareMaxYear)"
+ },
+ {
+  "name": "v12_natural_only_text_lost",
+  "file": "src/ui/summary_text.js",
+  "from": "doseLines.push(fill(T.DOSE_NATURAL_ONLY, { list: totals.naturalNuclides.join(', ') }));",
+  "to": "doseLines.push('');"
+ }
+]

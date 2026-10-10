@@ -1,0 +1,16 @@
+[
+ {"name": "v10_conversion_off", "file": "src/calc/form_norm.js", "from": "const aRaw = aDry / K;", "to": "const aRaw = aDry;"},
+ {"name": "v10_dry_norm_by_id_lost", "file": "src/calc/form_norm.js", "from": "/_dry_(cs137|sr90)$/.test(String(rec?.id ?? '')) ||", "to": "false ||"},
+ {"name": "v10_dry_norm_label_without_sukh", "file": "src/calc/form_norm.js", "from": "/сух|суш|вялен|сублим/i.test(", "to": "/суш|вялен|сублим/i.test("},
+ {"name": "v10_dry_norm_label_with_exclusions", "file": "src/calc/form_norm.js", "from": ".split(' (')[0]", "to": ""},
+ {"name": "v10_k_below_one_accepted", "file": "src/calc/form_norm.js", "from": "const kDefined = Number.isFinite(K) && K >= 1;", "to": "const kDefined = Number.isFinite(K) && K >= 0;"},
+ {"name": "v10_cooked_branch_off", "file": "src/calc/form_norm.js", "from": "if (state === 'cooked') {", "to": "if (false) {"},
+ {"name": "v10_foreign_shown_for_cooked", "file": "src/calc/model.js", "from": "if (input.product?.state === 'cooked') foreign = [];", "to": "if (false) foreign = [];"},
+ {"name": "v10_fr_in_b", "file": "src/calc/model.js", "from": "activity: r.rawBqPerKg, ratio: r.rawBqPerKg / lim.value", "to": "activity: r.rawBqPerKg * r.frUsed, ratio: r.rawBqPerKg * r.frUsed / lim.value"},
+ {"name": "v10_uncertainty_not_divided_by_k", "file": "src/calc/model.js", "from": "da: daOf(x.nuclide) / (x.converted?.K ?? 1)", "to": "da: daOf(x.nuclide)"},
+ {"name": "v10_b_computed_without_k", "file": "src/calc/model.js", "from": "if (itemsWithLim.length > 0 && adj.note?.kind !== 'no_k') {", "to": "if (itemsWithLim.length > 0) {"},
+ {"name": "v10_no_k_text_off", "file": "src/ui/summary_text.js", "from": "limits.formNote?.kind === 'no_k') {", "to": "false) {"},
+ {"name": "v10_converted_line_off", "file": "src/ui/summary_text.js", "from": "if (conv) verdictLines.push(", "to": "if (false) verdictLines.push("},
+ {"name": "v10_converted_caption_off", "file": "src/react/Result.jsx", "from": "пересчёт на сырьё</span>", "to": "</span>"},
+ {"name": "v10_cooked_cell_text_off", "file": "src/react/Result.jsx", "from": "l.cooked ? 'для готового блюда не установлен' :", "to": "l.cooked ? '' :"}
+]

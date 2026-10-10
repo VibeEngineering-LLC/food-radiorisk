@@ -1,0 +1,3 @@
+[
+ {"name": "pgp_adult_again", "file": "src/calc/model.js", "from": "const eForPgp = worst.eSvPerBq;", "to": "const eForPgp = eByAge.adult > 0 && input.lifetime ? eByAge.adult : worst.eSvPerBq;"}
+]

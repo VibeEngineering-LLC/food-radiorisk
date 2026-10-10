@@ -7,7 +7,7 @@
   "required": ["id", "kind", "label_ru", "value", "unit", "source", "loc", "quote", "level", "unit_norm", "unit_factor", "unit_inferred"],
   "properties": {
     "id": { "type": "string", "pattern": "^[A-Za-z0-9_.\\-]+$" },
-    "kind": { "enum": ["single", "annual", "coeff", "baseline"] },
+    "kind": { "enum": ["single", "annual", "coeff", "baseline", "param"] },
     "label_ru": { "type": "string", "minLength": 1 },
     "value": { "type": "number", "exclusiveMinimum": 0 },
     "unit": { "type": "string", "minLength": 1 },

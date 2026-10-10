@@ -7,28 +7,20 @@ import { loadAll } from '../src/data/loader.js';
 import { computeScenario } from '../src/calc/model.js';
 import { presetRadGear } from '../src/ui/form.js';
 import { buildReport } from '../src/ui/report.js';
-import { RISK_TXT } from '../src/ui/render.js';
+import { T } from '../src/ui/texts_v.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const { data } = await loadAll(async (u) => JSON.parse(await readFile(root + u, 'utf8')));
 const BAD = /случа|заболеть|человек из|млн в год/i; // НРБ п. 2.3: 10⁻⁶ и 5·10⁻⁵ — пожизненный риск, не «в год»
 const input = { ...presetRadGear(), years: 10 };
 
-test('отчёт md и уровни НРБ: риск без «случаев рака», с пометкой «с учётом вреда»', () => {
+test('отчёт md: «Итог» без «случаев рака» и без формулировок с «в год» у риска (V15: строки как на экране)', () => {
   const text = buildReport('md', { input, result: computeScenario(data, input) }, { datasets: 1, records: 1, sha: '0' }, '2026-10-03T00:00:00.000Z').text;
-  assert.match(text, /Пожизненный риск \(номинальный, с учётом вреда\)/);
   assert.doesNotMatch(text, BAD);
-  for (const v of Object.values(RISK_TXT)) {
-    assert.doesNotMatch(v, BAD);
-  }
 });
 
-test('блок риска (Result.jsx): без «случаев», ссылки на п. A106 и табл. A.4.1', async () => {
-  for (const f of ['src/react/Result.jsx']) {
-    const raw = await readFile(root + f, 'utf8');
-    const ui = raw.split('\n').filter(line => !line.trim().startsWith('//')).join('\n');
-    assert.doesNotMatch(ui, BAD, f);
-    assert.match(ui, /п\. A106/, f);
-    assert.match(ui, /табл\. A\.4\.1/, f);
-  }
+test('тексты главного экрана (texts_v.json): без «случаев», «заболеть» и «в год» у риска; подпись числа без слова «рак»', () => {
+  for (const [k, v] of Object.entries(T)) if (/^(MAIN|VERBAL|EQUIV|DOSE|LINK|AGE|LNT)/.test(k) && typeof v === 'string') assert.doesNotMatch(v, BAD, k);
+  assert.doesNotMatch(T.MAIN_CAPTION, /рак/i); // МКРЗ 103 п. 87: слова «рак» в формулировке о смертельном риске нет (D-022)
+  assert.match(T.MAIN_CAPTION, /номинальный риск смерти от последствий облучения для условного человека/i);
 });

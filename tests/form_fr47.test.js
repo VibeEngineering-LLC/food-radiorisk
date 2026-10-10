@@ -22,6 +22,6 @@ test("сводная предлагается только при введённ
 
 test("записи сводной — только выбранный продукт: для черники меньше, чем для пустого поля", () => {
     const all = transferOptions(choices, 'Cs-137', '');
-    const bil = transferOptions(choices, 'Cs-137', 'черника');
+    const bil = transferOptions(choices, 'Cs-137', 'черника лесная'); // #FR-85 v11: «черника» без уточнения — выбор садовая/лесная
     assert.ok(count(bil) > 0 && count(bil) < count(all) / 5, `${count(bil)} из ${count(all)}`);
 });

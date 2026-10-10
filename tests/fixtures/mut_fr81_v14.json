@@ -1,0 +1,8 @@
+[
+ {"name": "v14_level_by_verdict_only", "file": "src/ui/status.js", "from": "const maxRank = Math.max(rankV, rankD);", "to": "const maxRank = rankV;"},
+ {"name": "v14_level_by_dose_class_only", "file": "src/ui/status.js", "from": "const maxRank = Math.max(rankV, rankD);", "to": "const maxRank = rankD;"},
+ {"name": "v14_text_risk_of_max_year", "file": "src/ui/status.js", "from": "k: fmtPerMillion(result.totals.riskNominal),", "to": "k: fmtPerMillion(result.totals.riskMaxYear),"},
+ {"name": "v14_lifetime_span_lost", "file": "src/ui/status.js", "from": "const span = input.lifetime", "to": "const span = false"},
+ {"name": "v14_natural_only_branch_off", "file": "src/ui/status.js", "from": "if (result.totals.riskNominal === null) {", "to": "if (false) {"},
+ {"name": "v14_warn_as_ok", "file": "src/ui/status.js", "from": "undetermined: 2,", "to": "undetermined: 1,"}
+]

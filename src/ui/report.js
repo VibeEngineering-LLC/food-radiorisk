@@ -1,7 +1,10 @@
-import { esc, fmtNum, fmtSci, fmtDose, fmtPct, verdictText } from './fmt.js';
+import { esc, fmtNum, fmtSci, fmtNear, fmtBLine, fmtDose, fmtPct, verdictText } from './fmt.js';
 import { AGE_LABEL, SOURCE_LABEL } from './form.js';
 import { locRu, unitRu } from './ru.js';
-import { sourceFull, yearsWord } from './render.js';
+import { sourceFull, yearsWord, JUR_RU } from './render.js';
+import { summaryParts } from './summary_text.js';
+import { T, fill } from './texts_v.js';
+import { seriesLabel, shortSource } from '../calc/diet.js';
 
 export const FORMATS = [
   { id: 'md', label: 'Markdown (.md)', ext: 'md', mime: 'text/markdown;charset=utf-8' },
@@ -11,6 +14,14 @@ export const FORMATS = [
 
 // Утилита для очистки HTML тегов и сущностей
 const plain = (html) => String(html).replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+
+// #FR-83 W08: откуда взята масса продукта — из данных (по умолчанию) или введена пользователем
+function dietReportText(input, result) {
+  const d = result.diet;
+  if (d) return fill(T.DIET_REPORT_DEFAULT, { value: fmtNum(d.value), series: seriesLabel(d.series) + (d.year ? `, ${d.year} г.` : ''), source: shortSource(d.source), loc: locRu(d.loc) }) + (d.manual ? ` Группа рациона: ${d.label}.` : ''); // #FR-85: продукт не распознан — ручной выбор помечен
+  const mass = input.portionKg * input.portionsPerYear;
+  return fill(T.DIET_REPORT_OWN, { portion: fmtNum(input.portionKg * 1000), times: fmtNum(input.portionsPerYear), mass: fmtNum(mass) });
+}
 
 // Построение модели блоков отчета
 function blocks(calc, meta, isoDate) {
@@ -33,21 +44,19 @@ function blocks(calc, meta, isoDate) {
 
   // b. Итог
   b.push({ kind: 'h2', text: 'Итог' });
+  // #FR-81 V15 (D-022): «Итог» — те же строки, что на главном экране (summaryParts), затем справочная таблица
+  const sp = summaryParts(result, input);
+  [sp.head, sp.natural, sp.number, sp.caption, sp.background, sp.equiv, sp.verbal, ...sp.notes, sp.link].filter(Boolean).forEach(text => b.push({ kind: 'p', text }));
+  b.push({ kind: 'p', text: `${sp.verdict.title}. ${sp.verdict.lines.map(l => l.text).join(' ')} ${sp.verdict.sep}` });
+  b.push({ kind: 'p', text: `${sp.dose.head}. ${sp.dose.lines.join(' ')}` });
   const summaryRows = [
-    ['Доза за год', fmtDose(totals.doseSvPerYear)],
-    ['Пожизненный риск (номинальный, с учётом вреда) от 1 года потребления, на 1 млн', fmtNum(totals.riskPerYear * 1e6)],
+    ['Доза за первый год питания', fmtDose(totals.doseSvPerYear)],
     ['Возрастная группа и источник коэффициентов', `${AGE_LABEL[input.age] || input.age}; ${SOURCE_LABEL[input.doseSource] || input.doseSource}`]
   ];
-  if (input.years > 1) {
-    const span = input.years + ' ' + yearsWord(input.years);
-    summaryRows.push(['Доза за ' + span, fmtDose(totals.doseSvTotal)]);
-    summaryRows.push(['Пожизненный риск (номинальный) на 1 млн за ' + span + ' потребления', fmtNum(totals.riskTotal * 1e6)]);
-  }
-  // доли норм НРБ-99/2009 — только техногенная часть (п. 3.1.3, 5.3.1)
+  summaryRows.splice(1, 0, ['Потребление продукта', dietReportText(input, result)]); // #FR-83 W08
+  if (input.years > 1) summaryRows.push(['Доза за ' + input.years + ' ' + yearsWord(input.years), fmtDose(totals.doseSvTotal)]);
   summaryRows.push(['Горизонт ожидаемой дозы (МКРЗ 103, прил. B, п. (f))', input.lifetime ? 'до 70 лет возраста (питание с ' + input.lifetime.fromAge + ' до ' + input.lifetime.toAge + ' лет)' : input.age === 'adult' ? '50 лет после поступления (взрослый)' : 'до 70 лет возраста (ребёнок)']);
-  summaryRows.push(['Коэффициент риска, Зв⁻¹', fmtNum(input.riskCoeffPerSv)]);
-  summaryRows.push(['Доля предела 1 мЗв/год (НРБ табл. 3.1), техногенные', totals.budgetShare1mSv == null ? 'не нормируется (только природные нуклиды)' : fmtPct(totals.budgetShare1mSv)]);
-  if (input.years > 1) summaryRows.push(['Доля 70 мЗв за 70 лет (НРБ п. 3.1.4), техногенные', totals.lifeShare70mSv == null ? 'не нормируется' : fmtPct(totals.lifeShare70mSv)]);
+  summaryRows.push(['Коэффициент риска, Зв⁻¹', '0,05 (НРБ-99/2009, п. 2.3)']);
   if (totals.naturalNuclides?.length) summaryRows.push(['Природные нуклиды (предел дозы не установлен)', totals.naturalNuclides.join(', ')]);
   b.push({ kind: 'table', head: ['Показатель', 'Значение'], body: summaryRows, num: [false, false] });
 
@@ -76,29 +85,40 @@ function blocks(calc, meta, isoDate) {
         hVal = `${fmtNum(l.H)} ${unitRu(l.unit)}`;
       } else if (l.notNormed) {
         hVal = 'не нормируется';
+      } else if (l.reference) {
+        hVal = `справочно: ${fmtNum(l.reference.H)} ${unitRu(l.reference.unit)} (другой регламент, в B не входит${l.reference.note ? "; " + l.reference.note : ""})`;
       }
-      const docStr = `${l.document || ''} (${l.loc ? locRu(l.loc) : ''})`;
+      const docStr = `${l.document || ''}${l.loc && locRu(l.loc) ? ` (${locRu(l.loc)})` : ''}`;
       return [l.nuclide, hVal, fmtNum(l.activity), fmtNum(l.ratio), docStr];
     });
     b.push({ kind: 'table', head: ruHead, body: ruBody, num: ruNum });
 
     if (result.limits.compliance) {
       const { B, dB, verdict } = result.limits.compliance;
-      b.push({ kind: 'p', text: `B = ${fmtNum(B)}, ΔB = ${fmtNum(dB)}, ${verdictText(verdict)}` });
+      b.push({ kind: 'p', text: `${fmtBLine(B, dB)}, ${verdictText(verdict)}` });
     }
+    if (result.limits.productCaption) b.push({ kind: 'p', text: fill(T.VERDICT_CAPTION, { entry: result.limits.productName, caption: result.limits.productCaption }) }); // #FR-85 v17 (B4-1)
+  }
+
+  // d2. Уровни вмешательства для воды нецентрализованного водоснабжения (#FR-85 v14 п. 7, НРБ-99/2009 Прил. 2а)
+  if (result.limits?.intervention?.length) {
+    b.push({ kind: 'h2', text: 'Уровни вмешательства (НРБ-99/2009, Прил. 2а)' });
+    b.push({ kind: 'p', text: T.UV_NOTE });
+    const uvBody = result.limits.intervention.map(l => [l.nuclide, l.uv == null ? T.UV_NOT_SET : `${fmtNum(l.uv)} ${unitRu(l.unit)}`, fmtNum(l.activity), l.ratio == null ? '' : fmtNum(l.ratio)]);
+    b.push({ kind: 'table', head: ['Нуклид', 'Уровень вмешательства', 'Активность, Бк/кг', 'A/УВ'], body: uvBody, num: [false, true, true, true] });
   }
 
   // e. Зарубежные нормы
   if (result.limits?.foreign?.length) {
     b.push({ kind: 'h2', text: 'Зарубежные нормы' });
-    const fHead = ['Юрисдикция', 'Документ', 'Категория', 'Норматив, Бк/кг', 'A/норматив'];
-    const fNum = [false, false, false, true, true];
+    const fHead = ['Нуклид', 'Юрисдикция', 'Документ', 'Категория', 'Норматив, Бк/кг', 'A/норматив'];
+    const fNum = [false, false, false, false, true, true];
     const fBody = result.limits.foreign.map(l => {
       let docStr = l.document;
       if (l.force?.label) {
         docStr += ` — ${l.force.label}`;
       }
-      return [l.jurisdiction, docStr, l.food_category_ru, fmtNum(l.value), fmtNum(l.ratio)];
+      return [l.nuclides.join(' + '), JUR_RU[l.jurisdiction] || l.jurisdiction, docStr, l.food_category_ru, fmtNum(l.value), fmtNum(l.ratio)];
     });
     b.push({ kind: 'table', head: fHead, body: fBody, num: fNum });
   }

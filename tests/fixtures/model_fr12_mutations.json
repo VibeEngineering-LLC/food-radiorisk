@@ -1,6 +1,6 @@
 [
- {"name": "risk_levels_swapped", "from": "level: riskT <= neg.value ? 'negligible' : riskT <= lim.value ? 'within' : 'exceeds',", "to": "level: riskT <= lim.value ? 'negligible' : riskT <= neg.value ? 'within' : 'exceeds',"},
- {"name": "risk_inverse_wrong",  "from": "oneIn: riskT > 0 ? 1 / riskT : null", "to": "oneIn: riskT > 0 ? riskT : null"},
- {"name": "limit_state_ignored", "from": "limitRecordFor(data.limits_ru, input.foodGroupCode, r.nuclide, input.product?.state || 'fresh')", "to": "limitRecordFor(data.limits_ru, input.foodGroupCode, r.nuclide, 'fresh')"},
- {"name": "best_null_no_fallback", "from": "if (key === 'value_best' && pRec.value_best == null && pRec.value_max != null) {", "to": "if (false) {"}
+ {"name": "risk_levels_swapped", "file": "src/calc/model.js", "from": "level: riskY <= neg.value ? 'negligible' : riskY <= lim.value ? 'within' : 'exceeds',", "to": "level: riskY <= lim.value ? 'negligible' : riskY <= neg.value ? 'within' : 'exceeds',"},
+ {"name": "risk_inverse_wrong",  "file": "src/calc/model.js", "from": "oneIn: riskY > 0 ? 1 / riskY : null", "to": "oneIn: riskY > 0 ? riskY : null"},
+ {"name": "limit_state_ignored", "file": "src/calc/model.js", "from": "const pstate = input.product?.state || 'fresh';", "to": "const pstate = 'fresh';"},
+ {"name": "best_null_no_fallback", "file": "src/calc/processing.js", "from": "if (key === 'value_best' && pRec.value_best == null && pRec.value_max != null) {", "to": "if (false) {"}
 ]

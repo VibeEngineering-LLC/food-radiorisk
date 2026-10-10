@@ -27,9 +27,9 @@ for (const [text, expected] of CASES) {
 }
 
 test("продукт: коды групп", () => {
-  assert.deepEqual(productClasses("baby_food"), ["infant"]);
-  assert.deepEqual(productClasses("milk"), ["milk"]);
-  assert.deepEqual(productClasses("milk_products"), ["milk"]);
+  assert.deepEqual(productClasses("baby_food"), ["infant", "general"]);
+  assert.deepEqual(productClasses("milk"), ["milk", "general"]);
+  assert.deepEqual(productClasses("milk_products"), ["milk", "general"]);
   assert.deepEqual(productClasses("water"), ["water", "liquid"]);
   assert.deepEqual(productClasses("berries_wild"), ["general"]);
   assert.deepEqual(productClasses(null), ["general"]);
@@ -44,7 +44,7 @@ test("применимость: ягоды — только общие норм�
 
 test("применимость: молоко", () => {
   assert.equal(appliesTo("Молочные продукты", "milk"), true);
-  assert.equal(appliesTo("Прочие продукты", "milk"), false);
+  assert.equal(appliesTo("Прочие продукты", "milk"), true); // #FR-81 E09: общие нормы к молоку применимы
 });
 
 test("подписи классов", () => {

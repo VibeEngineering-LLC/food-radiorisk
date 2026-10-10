@@ -44,7 +44,7 @@ export function toTransferBasis(activityBqPerKg, productState, transferBasis, dr
     throw new RangeError(`toTransferBasis: transferBasis must be "fresh" or "dry" (got ${transferBasis})`);
   }
   // #FR-33/#FR-34: всегда через исходный (свежий) продукт. Сушёный ≠ абсолютно сухой: сушёный → свежий делением
-  // на коэффициент усушки (по нормативу 800/160 = 5 для ягод), свежий → сухая масса — через % сухого вещества
+  // на коэффициент концентрирования при сушке (по нормативу 800/160 = 5 для ягод), свежий → сухая масса — через % сухого вещества
   let fresh = activityBqPerKg;
   if (productState === "dried") {
     need("toTransferBasis", "dryingFactor", dryingFactor, v => v >= 1, "must be finite >= 1");

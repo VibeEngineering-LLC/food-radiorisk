@@ -1,5 +1,18 @@
 // Константа конечного возраста для расчета дозы за жизнь
 export const LIFETIME_END_AGE = 70;
+/** Наибольший срок питания, лет (как верхняя граница возраста в режиме «с a до b»). */
+export const MAX_PERIOD_YEARS = 120;
+
+/**
+ * #FR-81 D14: срок питания в годах — ЕДИНОЕ правило для всех вкладок (результат, сравнение, органы, риск EPA, риски жизни).
+ * Режим «с N до M» — M − N; иначе введённое число лет, не меньше 1; пусто, 0, меньше 1 — null (ошибка ввода, а не молчаливая 1).
+ * @param {{years?: number|null, lifetime?: {fromAge: number, toAge: number}|null}} input @returns {number|null}
+ */
+export function periodYears(input) {
+  if (input.lifetime) return input.lifetime.toAge - input.lifetime.fromAge;
+  const y = input.years;
+  return Number.isFinite(y) && y >= 1 && y <= MAX_PERIOD_YEARS ? y : null; // #FR-88 v18: огромный срок не строит ряд на миллиарды лет (нехватка памяти)
+}
 
 // Возрастные группы согласно ICRP 72/119
 export const AGE_BANDS = [

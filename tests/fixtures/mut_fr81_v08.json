@@ -1,0 +1,12 @@
+[
+ {"name": "v08_horizon_70_instead_of_a_plus_N", "file": "src/calc/life_risks.js", "from": "const b = Math.min(a + N, LAST_AGE);", "to": "const b = Math.min(70, LAST_AGE);"},
+ {"name": "v08_cap_at_85_removed", "file": "src/calc/life_risks.js", "from": "const b = Math.min(a + N, LAST_AGE);", "to": "const b = a + N;"},
+ {"name": "v08_product_row_first_year_only", "file": "src/calc/life_risks.js", "from": "p: R, code: null", "to": "p: result.totals.riskPerYear, code: null"},
+ {"name": "v08_suicide_row_returned", "file": "src/calc/life_risks.js", "from": "'1099', '1100'];", "to": "'1099', '1100', '1101'];"},
+ {"name": "v08_age_85_not_excluded", "file": "src/calc/life_risks.js", "from": "|| a >= LAST_AGE", "to": "|| a > LAST_AGE"},
+ {"name": "v08_no_nominal_risk_not_excluded", "file": "src/calc/life_risks.js", "from": "if (!Number.isFinite(R)) return null;", "to": "if (false) return null;"},
+ {"name": "v08_cap_note_removed", "file": "src/react/LifeRisks.jsx", "from": "{life.capped && <p className=\"msg warn\">", "to": "{false && <p className=\"msg warn\">"},
+ {"name": "v08_capped_header_lost", "file": "src/react/LifeRisks.jsx", "from": "life.capped ? T.LIFE_COL_P_CAPPED : T.LIFE_COL_P", "to": "T.LIFE_COL_P"},
+ {"name": "v08_tab_label_without_span", "file": "src/react/Result.jsx", "from": "label: `Бытовые риски за ${span}`", "to": "label: `Бытовые риски за ${input.years} ${yearsWord(input.years)}`"},
+ {"name": "v08_age_word_nominative", "file": "src/ui/summary_text.js", "from": "yearsWord: ageWord(a),", "to": "yearsWord: plural(String(a), WORDS.year),"}
+]

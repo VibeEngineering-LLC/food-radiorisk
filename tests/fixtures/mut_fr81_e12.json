@@ -1,0 +1,4 @@
+[
+ {"name": "e12_precision_for_conforming", "file": "src/calc/core.js", "from": "precisionOk: verdict === VERDICT.CONFORMS || dB <= 0.3", "to": "precisionOk: dB <= 0.3"},
+ {"name": "e12_precision_never_fails", "file": "src/calc/core.js", "from": "precisionOk: verdict === VERDICT.CONFORMS || dB <= 0.3", "to": "precisionOk: true"}
+]

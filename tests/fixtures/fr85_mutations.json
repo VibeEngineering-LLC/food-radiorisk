@@ -1,0 +1,314 @@
+[
+ {
+  "name": "Z03: форма не показывает кандидатов неоднозначного названия",
+  "file": "src/react/formState.js",
+  "from": "candidates: status === 'ambiguous' ? candidates : [],",
+  "to": "candidates: [],"
+ },
+ {
+  "name": "Z04: пара Sr-90 не выводится из строки Cs-137",
+  "file": "src/calc/products.js",
+  "from": "return id.replace(/_cs137$/, '_sr90');",
+  "to": "return id;"
+ },
+ {
+  "name": "Z05: ручной выбор группы рациона для нераспознанного продукта не действует",
+  "file": "src/calc/diet.js",
+  "from": "const picked = manualGroup ? groups.find(g => g.code === manualGroup && g.code !== 'other') : null;",
+  "to": "const picked = null;"
+ },
+ {
+  "name": "Z06: группа, выбранная вручную, считается основой учёта (без «оценки сверху»)",
+  "file": "src/calc/diet.js",
+  "from": "if (picked) return { group: picked, base: false, manual: true };",
+  "to": "if (picked) return { group: picked, base: true, manual: true };"
+ },
+ {
+  "name": "Z07: класс Codex/EU из записи словаря и при группе норм, выбранной вручную (детское питание получает классы черники)",
+  "file": "src/calc/foodclass.js",
+  "from": "(entryCode || null) === (foodGroupCode || null)) return",
+  "to": "true) return"
+ },
+ {
+  "name": "Z08: подпись для нераспознанного продукта — как для продукта без ключей",
+  "file": "src/ui/form.js",
+  "from": "return TRANSFER_HINT[o.reason] || TRANSFER_HINT.unknown;",
+  "to": "return TRANSFER_HINT.no_keys;"
+ },
+ {
+  "name": "Z09: нераспознанный продукт получает все способы обработки",
+  "file": "src/ui/form.js",
+  "from": "processingMatches(r, entry)) : [];",
+  "to": "processingMatches(r, entry)) : choices.processing;"
+ },
+ {
+  "name": "Z10: в ручном выборе есть служебная группа «не распознан»",
+  "file": "src/react/formState.js",
+  "from": "g.kind === 'group' && g.code !== 'other').map",
+  "to": "g.kind === 'group').map"
+ },
+ {
+  "name": "Z11: подпись «ключей нет» не говорит, что коэффициентов в словаре нет",
+  "file": "src/ui/form.js",
+  "from": "no_keys: 'Для этого продукта коэффициентов перехода в словаре нет",
+  "to": "no_keys: 'Для этого продукта КП в данных нет"
+ },
+ {
+  "name": "Z12: у бобовых нет пометки «документ на зерно»",
+  "file": "src/calc/model.js",
+  "from": "/^t015_grain_/.test(ref.id) ? '; документ на зерно, не на пищевой продукт' : ''",
+  "to": "''"
+ },
+ {
+  "name": "Z13: ядро не отмечает ручной выбор группы",
+  "file": "src/calc/diet.js",
+  "from": "manual: !!want.manual, blocked",
+  "to": "manual: false, blocked"
+ },
+ {
+  "name": "Z14: словарь — сливки без строки п. 5 (решение D-024 С1 потеряно)",
+  "file": "public/data/products.json",
+  "from": "\"сливки 20 %\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": false,\n   \"norm\": {\n    \"fresh\": \"t021_p4_r05_cs137\",",
+  "to": "\"сливки 20 %\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": false,\n   \"norm\": {\n    \"fresh\": null,"
+ },
+ {
+  "name": "Z15: словарь — ключ КП черники испорчен (нет такой записи данных)",
+  "file": "public/data/products.json",
+  "from": "\"transfer\": [\n    \"Черника\",\n    \"Черника, сухие выпадения 1986, сухо-воздушный вес\",",
+  "to": "\"transfer\": [\n    \"Черника (нет)\",\n    \"Черника, сухие выпадения 1986, сухо-воздушный вес\","
+ },
+ {
+  "name": "Z16 (v11 п. 1): особая форма «яиц» потеряна — родительный падеж не сводится к «яйца»",
+  "file": "public/data/products.json",
+  "from": "    \"яиц\": \"яйц\",",
+  "to": "    \"яиц\": \"яиц\","
+ },
+ {
+  "name": "Z17 (v11 п. 1): «сырья» сведено к основе «сыр» — сырьё снова принимается за сыр",
+  "file": "public/data/products.json",
+  "from": "    \"сырья\": \"сырье\",",
+  "to": "    \"сырья\": \"сыр\","
+ },
+ {
+  "name": "Z18 (v11 п. 1): стеммер JS расходится с Python на одном слове словаря",
+  "file": "src/calc/products.js",
+  "from": "    const result = ruStemmer.stem(w);",
+  "to": "    const result = w === 'агроцибе' ? w : ruStemmer.stem(w);"
+ },
+ {
+  "name": "Z19 (v11 п. 2): непокрытое слово «кошек» проглочено как стоп-слово — «молоко для кошек» принято молча",
+  "file": "public/data/products.json",
+  "from": "    \"для\",\n    \"на\",",
+  "to": "    \"для\",\n    \"кошек\",\n    \"на\","
+ },
+ {
+  "name": "Z20 (v11 п. 2): подтверждение пользователя не отмечено в результате и отчёте",
+  "file": "src/calc/model.js",
+  "from": "  if (pm.confirmed) warnings.push(",
+  "to": "  if (false) warnings.push("
+ },
+ {
+  "name": "Z21 (v11 п. 2): подтверждение не сбрасывается при смене названия",
+  "file": "src/react/formState.js",
+  "from": "{ next.dietGroup = ''; next.productConfirm = ''; }",
+  "to": "{ next.dietGroup = ''; }"
+ },
+ {
+  "name": "Z22 (v11 п. 3): «телятина» убрана из словаря",
+  "file": "public/data/products.json",
+  "from": "    \"мясо телят\",\n    \"телятина\"\n",
+  "to": "    \"мясо телят\"\n"
+ },
+ {
+  "name": "Z23 (v11 п. 3): выбор «смородина» ссылается на несуществующую запись — выбора нет",
+  "file": "public/data/products.json",
+  "from": "    \"p_smorodina_sadovaya\",\n    \"p_smorodina_lesnaya\"\n   ],",
+  "to": "    \"p_smorodina_sadovaya\",\n    \"p_smorodina_lesnaya_x\"\n   ],"
+ },
+ {
+  "name": "Z24 (v11 п. 4): строка ТР ТС 015 в группе «крупы» заменяется пунктом Прил. 4 (кукуруза получает B по п. 15)",
+  "file": "src/calc/norms.js",
+  "from": "  if (normId && limitsRu.some((r) => r.id === normId && r.food_group_code === code && !isBNorm(r))) return { rec: null, ambiguous: false };",
+  "to": ""
+ },
+ {
+  "name": "Z25 (v11 п. 4): сухое вещество гороха посевного снова от гороха полевого",
+  "file": "public/data/products.json",
+  "from": "\"trs472_dry_matter_n_a_garden_pea_seeds\"",
+  "to": "\"trs472_dry_matter_n_a_field_pea_seeds\""
+ },
+ {
+  "name": "Z26 (v11 п. 4): корица снова «прочие» вместо малозначимых (Annex II)",
+  "file": "public/data/products.json",
+  "from": "    \"корица\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": false,\n   \"norm\": {\n    \"fresh\": null,\n    \"dried\": null\n   },\n   \"codex\": [\n    \"minor\",",
+  "to": "    \"корица\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": false,\n   \"norm\": {\n    \"fresh\": null,\n    \"dried\": null\n   },\n   \"codex\": [\n    \"general\","
+ },
+ {
+  "name": "Z27 (v11 п. 4): выбор «окунь» потерял синоним — «окунь» не распознан",
+  "file": "public/data/products.json",
+  "from": "   \"name_ru\": \"Окунь\",\n   \"synonyms\": [\n    \"окунь\"\n   ],",
+  "to": "   \"name_ru\": \"Окунь\",\n   \"synonyms\": [\n    \"окунь речной морской\"\n   ],"
+ },
+ {
+  "name": "Z28 (v11 п. 5): служебный код решения снова в тексте результата",
+  "file": "src/calc/model.js",
+  "from": "\"документ на зерно, не на пищевой продукт\"",
+  "to": "\"документ на зерно, не на пищевой продукт (D-024 С3)\""
+ },
+ {
+  "name": "Z29 (v12 п. 1): нейтральные уточнения не исключаются из непокрытых слов",
+  "file": "src/calc/products.js",
+  "from": " && !isNeutral(index.extras, w, entry)",
+  "to": ""
+ },
+ {
+  "name": "Z30 (v12 п. 1): нейтральное слово действует в любой группе рациона, а не только в своей",
+  "file": "src/calc/products_neutral.js",
+  "from": "group.groups.has(entry.diet.group)",
+  "to": "true"
+ },
+ {
+  "name": "Z31 (v12 п. 1): проценты («2,5%») не считаются нейтральными",
+  "file": "src/calc/products_neutral.js",
+  "from": "return /^\\d+%?$/.test(w);",
+  "to": "return /^\\d+$/.test(w);"
+ },
+ {
+  "name": "Z32 (v12 п. 2): сужение до вида отключено — при равной длине родовой и видовой синонимы дают «неоднозначно»",
+  "file": "src/calc/products.js",
+  "from": "narrowed.length < best.length && dn.every(",
+  "to": "false && dn.every("
+ },
+ {
+  "name": "Z33 (v12 п. 2): сужение до вида не проверяет строку норматива (рыба с картошкой уходит в картофель)",
+  "file": "src/calc/products.js",
+  "from": "g.norm.fresh === e.norm.fresh",
+  "to": "g.norm.fresh.length > 0"
+ },
+ {
+  "name": "Z34 (v12 п. 2): родовое слово поглощается видом любой строки норматива",
+  "file": "src/calc/products_neutral.js",
+  "from": "return entryFresh === genericFresh;",
+  "to": "return true;"
+ },
+ {
+  "name": "Z35 (v12 п. 3): «печень свиная» не синоним субпродуктов (слова остаются из выгрузки основ)",
+  "file": "public/data/products.json",
+  "from": "\"печень свиная\"",
+  "to": "\"сердце свиная\""
+ },
+ {
+  "name": "Z36 (v12 п. 3): «печень трески» не синоним трески",
+  "file": "public/data/products.json",
+  "from": ",\n    \"печень трески\"",
+  "to": ""
+ },
+ {
+  "name": "Z37 (v12 п. 3): «печень гуся» не синоним гусиной печени",
+  "file": "public/data/products.json",
+  "from": "\"гусиная печень\",\n    \"печень гуся\"",
+  "to": "\"гусиная печень\""
+ },
+ {
+  "name": "Z38 (v12 п. 4): в файле стеммера нет указания источника (лицензия ISC)",
+  "file": "src/calc/snowball_ru.js",
+  "from": "https://github.com/mazko/jssnowball",
+  "to": "https://example.invalid/"
+ },
+ {
+  "name": "Z39 (v12 п. 1): синоним может опираться только на слово состояния («вареная» находит «варенье»)",
+  "file": "src/calc/products.js",
+  "from": "(coreSet.size === 0 || s.tokens.some(t => coreSet.has(t)))",
+  "to": "true"
+ },
+ {
+  "name": "Z40 (v13 п. 4): блокирующие слова (блюдо, слово-замена) не учитываются — кнопка «Да, это X» для «рисовой каши на молоке»",
+  "file": "src/calc/products.js",
+  "from": "const blocked = uncovered.length > 0 ? findBlockers(index.extras, uncovered, entry) : [];",
+  "to": "const blocked = [];"
+ },
+ {
+  "name": "Z41 (v13 п. 1): у выбора («ягоды») сужение требует совпадения строки у ВСЕХ вариантов — «ягода черника» снова неоднозначно",
+  "file": "src/calc/products.js",
+  "from": "s.entries.some(g => same(g, e))",
+  "to": "s.entries.every(g => same(g, e))"
+ },
+ {
+  "name": "Z42 (v13 п. 3): «норматив не установлен» у обеих записей — не та же строка («фрукт яблоко» неоднозначно)",
+  "file": "src/calc/products.js",
+  "from": " || (!(g.norm && g.norm.fresh) && !(e.norm && e.norm.fresh) && !!g.diet?.group && g.diet.group === e.diet?.group)",
+  "to": ""
+ },
+ {
+  "name": "Z43 (v13 п. 6): слово состояния в названии не запоминается (stateInName всегда null)",
+  "file": "src/calc/products.js",
+  "from": "const stateInName = modWords.length > 0 && !modWords.some(w => covered.has(index.tok(w))) ? state : null;",
+  "to": "const stateInName = null;"
+ },
+ {
+  "name": "Z44 (v13 п. 3): родовое слово с нулевой нормой не поглощается видом той же группы рациона",
+  "file": "src/calc/products_neutral.js",
+  "from": "if (!entryFresh && !genericFresh) {",
+  "to": "if (false) {"
+ },
+ {
+  "name": "Z45 (v13 п. 4): блокирующее слово воды действует у любого продукта (область не проверяется)",
+  "file": "src/calc/products_neutral.js",
+  "from": "if (g.entries.size === 0 || (entry && g.entries.has(entry.id))) { out.push",
+  "to": "if (true) { out.push"
+ },
+ {
+  "name": "Z46 (v13 п. 6): противоречие названия и вида пробы не даёт предупреждения",
+  "file": "src/calc/model.js",
+  "from": "if (pm.status === 'ok' && pm.stateInName &&",
+  "to": "if (false && pm.stateInName &&"
+ },
+ {
+  "name": "Z47 (v13 п. 4): форма не показывает текст «блюдо / меняет продукт» (общий текст «не найден»)",
+  "file": "src/react/formState.js",
+  "from": "const text = status === 'unknown' && m.composite ? fill(",
+  "to": "const text = false ? fill("
+ },
+ {
+  "name": "Z48 (v13 п. 6): слово состояния при совпадении по ядру не запоминается",
+  "file": "src/calc/products.js",
+  "from": "r.stateInName = state; //",
+  "to": "r.stateInName = null; //"
+ },
+ {
+  "name": "Z49 (v13 п. 4): область блокирующих слов из словаря игнорируется (все — общие)",
+  "file": "src/calc/products_neutral.js",
+  "from": "const entries = new Set(Array.isArray(group.entries) ? group.entries.filter(e => typeof e === 'string') : []);\n      blockers.push",
+  "to": "const entries = new Set();\n      blockers.push"
+ },
+ {
+  "name": "Z50 (v13 п. 3): слово «охлаждённая» не в списке нейтральных (холод)",
+  "file": "public/data/products.json",
+  "from": "\"охлажденная\"",
+  "to": "\"охлажденнаяя\""
+ },
+ {
+  "name": "Z51 (v13 п. 1): выбор «ягоды» сводится к одной записи (вопроса «садовые / лесные» нет)",
+  "file": "public/data/products.json",
+  "from": "\"p_yagody_sadovye\",\n    \"p_yagody\"\n   ],\n   \"note\": \"D-024 Сверка 2: «ягоды»",
+  "to": "\"p_yagody\",\n    \"p_yagody\"\n   ],\n   \"note\": \"D-024 Сверка 2: «ягоды»"
+ },
+ {
+  "name": "Z52 (v13 п. 2): родовое «мясо» снова получает КП мяса ягнёнка Арктики",
+  "file": "public/data/products.json",
+  "from": "\"тушенка\"\n   ],\n   \"hidden_synonyms\": [\n    \"мясо всех видов животных\",\n    \"мясо взрослых животных\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": false,\n   \"norm\": {\n    \"fresh\": \"t021_p4_r01_cs137\",\n    \"dried\": \"t021_p4_r01_cs137\"\n   },\n   \"codex\": [\n    \"general\"\n   ],\n   \"diet\": {\n    \"group\": \"meat\",\n    \"base\": true,\n    \"factor\": null\n   },\n   \"processing\": [\n    \"meat\"\n   ],\n   \"transfer\": [],\n   ",
+  "to": "\"тушенка\"\n   ],\n   \"hidden_synonyms\": [\n    \"мясо всех видов животных\",\n    \"мясо взрослых животных\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": false,\n   \"norm\": {\n    \"fresh\": \"t021_p4_r01_cs137\",\n    \"dried\": \"t021_p4_r01_cs137\"\n   },\n   \"codex\": [\n    \"general\"\n   ],\n   \"diet\": {\n    \"group\": \"meat\",\n    \"base\": true,\n    \"factor\": null\n   },\n   \"processing\": [\n    \"meat\"\n   ],\n   \"transfer\": [\"Мясо ягнёнка, ранний период, Арктика\"],\n   "
+ },
+ {
+  "name": "Z53 (v13 п. 2): «молоко сухое» снова получает КП жидкого молока",
+  "file": "public/data/products.json",
+  "from": "\"молоко сухое\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": true,\n   \"norm\": {\n    \"fresh\": \"t021_p4_r07_cs137\",\n    \"dried\": \"t021_p4_r07_cs137\"\n   },\n   \"codex\": [\n    \"milk\",\n    \"general\"\n   ],\n   \"diet\": {\n    \"group\": \"milk_concentrates\",\n    \"base\": true,\n    \"factor\": null\n   },\n   \"processing\": [\n    \"milk_products\"\n   ],\n   \"transfer\": [],\n   ",
+  "to": "\"молоко сухое\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": true,\n   \"norm\": {\n    \"fresh\": \"t021_p4_r07_cs137\",\n    \"dried\": \"t021_p4_r07_cs137\"\n   },\n   \"codex\": [\n    \"milk\",\n    \"general\"\n   ],\n   \"diet\": {\n    \"group\": \"milk_concentrates\",\n    \"base\": true,\n    \"factor\": null\n   },\n   \"processing\": [\n    \"milk_products\"\n   ],\n   \"transfer\": [\"Коровье молоко, ранний период, Арктика\"],\n   "
+ },
+ {
+  "name": "Z54 (v13 п. 4): слово «оливье» не блокирующее (блюдо)",
+  "file": "public/data/products.json",
+  "from": "\"оливье\"",
+  "to": "\"оливьеее\""
+ }
+]

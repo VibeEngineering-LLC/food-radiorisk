@@ -8,7 +8,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const { data } = await loadAll(async (u) => JSON.parse(await readFile(root + u, 'utf8')));
 function close(actual, expected, rel, msg) { assert.ok(Math.abs(actual - expected) <= rel * Math.abs(expected), `${msg || ''} expected ${expected}, got ${actual}`); }
 const nuc = (extra = {}) => ({ nuclide: 'Cs-137', source: 'measured', measuredBqPerKg: 1000, measuredUncertaintyBqPerKg: 0, sampleDate: null, depositionKBqPerM2: null, depositionDate: null, transferId: null, variant: 'central', samplePrep: { mode: 'as_is', concentrationFactor: 1 }, ...extra });
-const base = (over = {}) => ({ age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.055, portionKg: 0.1, portionsPerYear: 10, years: 1, eatDate: null, dryMatterPercent: null, product: { name: 'черника', state: 'fresh' }, processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' }, foodGroupCode: null, nuclides: [nuc()], ...over });
+const base = (over = {}) => ({ age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.055, portionKg: 0.1, portionsPerYear: 10, years: 1, eatDate: null, dryMatterPercent: null, product: { name: 'черника лесная', state: 'fresh' }, processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' }, foodGroupCode: null, nuclides: [nuc()], ...over });
 const A2 = 'perevolotsky2006_t57_kp_cs137_bilberry_A2';
 const PORCINI_DRY = 'perevolotsky2006_t51_kp_cs137_porcini_dry';
 
@@ -63,8 +63,8 @@ test("оценка загрязнения по высушенной пробе �
 });
 
 test("оценка загрязнения: сушёный продукт, КП на сырую массу", () => {
-  // #FR-34: 3110 Бк/кг сушёной / усушка 5 = 622 Бк/кг свежей; КП A2 3,11·10⁻³ → D = 622 / 3,11 = 200 кБк/м²
-  const r = computeScenario(data, base({ dryMatterPercent: 15, dryingFactor: 5, product: { name: 'черника', state: 'dried' }, nuclides: [nuc({ measuredBqPerKg: 3110, transferId: A2 })] }));
+  // #FR-34: 3110 Бк/кг сушёной / коэффициент концентрирования при сушке 5 = 622 Бк/кг свежей; КП A2 3,11·10⁻³ → D = 622 / 3,11 = 200 кБк/м²
+  const r = computeScenario(data, base({ dryMatterPercent: 15, dryingFactor: 5, product: { name: 'черника лесная', state: 'dried' }, nuclides: [nuc({ measuredBqPerKg: 3110, transferId: A2 })] }));
   assert.ok(r.ok === true);
   close(r.rows[0].depositionEstimate.kBqPerM2.central, 200, 1e-9);
 });

@@ -9,7 +9,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const { data } = await loadAll(async (u) => JSON.parse(await readFile(root + u, 'utf8')));
 const near = (a, b) => assert.ok(Math.abs(a - b) <= 1e-9 * Math.abs(b), `${a} vs ${b}`);
 const nuc = (u) => ({ nuclide: 'Sr-90', source: 'measured', measuredBqPerKg: 1000, measuredUncertaintyBqPerKg: u, transferId: 'perevolotsky2006_kp_sr_90_bilberry', variant: 'central', sampleDate: null });
-const scen = (u) => computeScenario(data, { age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.055, portionKg: 0.1, portionsPerYear: 1, years: 1, eatDate: null, dryMatterPercent: null, product: { name: 'черника', state: 'fresh' }, processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' }, foodGroupCode: null, nuclides: [nuc(u)] }).rows[0].depositionEstimate.range;
+const scen = (u) => computeScenario(data, { age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.055, portionKg: 0.1, portionsPerYear: 1, years: 1, eatDate: null, dryMatterPercent: null, product: { name: 'черника лесная', state: 'fresh' }, processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' }, foodGroupCode: null, nuclides: [nuc(u)] }).rows[0].depositionEstimate.range;
 
 test('границы: разброс КП и погрешность A; кБк/м² и Ки/км²', () => {
   const b = depositionBounds({ central: 10, min: 5, max: 20, unbounded: false }, 0.1);

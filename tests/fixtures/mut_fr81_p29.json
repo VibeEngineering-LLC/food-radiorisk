@@ -1,0 +1,20 @@
+[
+ {
+  "name": "p29_organ_header_period_lost",
+  "file": "src/react/Result.jsx",
+  "from": "h: 'Орган с наибольшей дозой, за 1 год питания'",
+  "to": "h: 'Орган с наибольшей дозой'"
+ },
+ {
+  "name": "p29_organs_tab_term_lost",
+  "file": "src/react/Organs.jsx",
+  "from": "Срок питания — {input.years} {yearsWord(input.years)}",
+  "to": "Срок питания"
+ },
+ {
+  "name": "p29_foreign_nuclide_col_renamed",
+  "file": "src/react/Result.jsx",
+  "from": "h: 'Нуклид', f: l => l.nuclides.join(' + ')",
+  "to": "h: 'Элемент', f: l => l.nuclides.join(' + ')"
+ }
+]

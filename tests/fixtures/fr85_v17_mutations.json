@@ -1,0 +1,44 @@
+[
+ {
+  "name": "Z77 (v17, п. 1): короткие основы снова сопоставляются по основе (налив = налим, репей = репа, медь = мёд)",
+  "file": "src/calc/products.js",
+  "from": "return shortForms.has(st) && !shortForms.get(st).has(w) ? '!' + w : st;",
+  "to": "return st;"
+ },
+ {
+  "name": "Z78 (v17, п. 1): в формах слова на «ь» нет родительного множественного (лосей)",
+  "file": "src/calc/products.js",
+  "from": "'ь': ['ь', 'и', 'ью', 'я', 'ю', 'ем', 'е', 'ей', 'ям', 'ями', 'ях']",
+  "to": "'ь': ['ь', 'и', 'ью', 'я', 'ю', 'ем', 'е', 'ям', 'ями', 'ях']"
+ },
+ {
+  "name": "Z79 (v17, B4-1): подпись масла какао не передаётся из записи в результат расчёта (вердикт, отчёт, экран)",
+  "file": "src/calc/model.js",
+  "from": "productCaption: prodEntry?.caption ?? null",
+  "to": "productCaption: null"
+ },
+ {
+  "name": "Z80 (v17, B4-2): растительное молоко снова не находится как своя запись",
+  "file": "public/data/products.json",
+  "from": "\"растительное молоко\"",
+  "to": "\"растительное молоко соевое\""
+ },
+ {
+  "name": "Z81 (v17, B4-3): «дикий лук» снова уходит в культурный лук",
+  "file": "public/data/products.json",
+  "from": "\"дикий лук\"",
+  "to": "\"дикий сыр\""
+ },
+ {
+  "name": "Z82 (v17, B4-9): в таблице уровней вмешательства снова пустые скобки",
+  "file": "src/react/Result.jsx",
+  "from": "`НРБ-99/2009, Прил. 2а${locRu(l.loc) ? ` (${locRu(l.loc)})` : ''}`",
+  "to": "`НРБ-99/2009, Прил. 2а (${locRu(l.loc)})`"
+ },
+ {
+  "name": "Z83 (v17, B4-11): снова «около меньше 0,01»",
+  "file": "src/ui/summary_text.js",
+  "from": "(kk => /^меньше/.test(kk) ? kk : 'около ' + kk)(fmtPerMillion(totals.riskNominal))",
+  "to": "'около ' + fmtPerMillion(totals.riskNominal)"
+ }
+]

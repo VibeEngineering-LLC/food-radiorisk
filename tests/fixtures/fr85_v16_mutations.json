@@ -1,0 +1,26 @@
+[
+ {
+  "name": "Z73 (v16): натуральное масло какао снова на п. 21",
+  "file": "public/data/products.json",
+  "from": "\"масло какао натуральное\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": false,\n   \"norm\": {\n    \"fresh\": \"t021_p4_r20_cs137\"",
+  "to": "\"масло какао натуральное\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": false,\n   \"norm\": {\n    \"fresh\": \"t021_p4_r21_cs137\""
+ },
+ {
+  "name": "Z74 (v16, v17): у масла какао пропала подпись «в ТР ТС 021 не названо, отнесено к п. 20»",
+  "file": "public/data/products.json",
+  "from": "\"caption\": \"в ТР ТС 021 не названо, отнесено к п. 20 (растительные масла)\"",
+  "to": "\"caption\": \"\""
+ },
+ {
+  "name": "Z75 (v16): заменитель масла какао ушёл на п. 20",
+  "file": "public/data/products.json",
+  "from": "\"улучшители масла какао\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": false,\n   \"norm\": {\n    \"fresh\": \"t021_p4_r21_cs137\"",
+  "to": "\"улучшители масла какао\"\n   ],\n   \"states\": [\n    \"fresh\",\n    \"dried\",\n    \"cooked\"\n   ],\n   \"modifiers_change_product\": false,\n   \"norm\": {\n    \"fresh\": \"t021_p4_r20_cs137\""
+ },
+ {
+  "name": "Z76 (v16): заменитель масла какао вышел из группы масел (и «оценки сверху»)",
+  "file": "public/data/products.json",
+  "from": "\"group\": \"oil\",\n    \"base\": false,\n    \"factor\": null\n   },\n   \"processing\": [],\n   \"transfer\": [],\n   \"dry_matter\": null,\n   \"note\": \"D-026: ТР ТС 021/2011 Прил. 4 п. 21",
+  "to": "\"group\": null,\n    \"base\": false,\n    \"factor\": null\n   },\n   \"processing\": [],\n   \"transfer\": [],\n   \"dry_matter\": null,\n   \"note\": \"D-026: ТР ТС 021/2011 Прил. 4 п. 21"
+ }
+]

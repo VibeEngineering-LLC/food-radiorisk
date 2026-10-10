@@ -1,0 +1,5 @@
+[
+ {"name": "e09_fda_infant_exclusion_lost", "file": "src/calc/foodclass.js", "from": "/кроме детск|без (отдельной )?категории для младенц/", "to": "/кроме детск|без категории для младенц/"},
+ {"name": "e09_best_class_filter_lost", "file": "src/calc/model.js", "from": "foreign = foreign.filter(e => e.classRank === best.get(e.key));", "to": ";"},
+ {"name": "e09_baby_no_general_norms", "file": "src/calc/foodclass.js", "from": "return ['infant', 'general'];", "to": "return ['infant'];"}
+]

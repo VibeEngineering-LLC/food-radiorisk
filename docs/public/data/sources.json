@@ -92,6 +92,21 @@
     "библиотека оператора/catalog.json:21694"
    ]
   },
+  "UNSCEAR2008": {
+   "title": "Sources and Effects of Ionizing Radiation. UNSCEAR 2008 Report, Vol. I, Annex B: Exposures of the public and workers from various sources of radiation",
+   "title_ru": "Источники и эффекты ионизирующего излучения. Доклад НКДАР ООН 2008 г., т. I, прил. B: облучение населения и работников от различных источников",
+   "authors": "United Nations Scientific Committee on the Effects of Atomic Radiation",
+   "year": 2008,
+   "publisher": "United Nations, New York, 2010",
+   "doi": null,
+   "url": null,
+   "local": "audit/_lit_bg/UNSCEAR_2008_Annex-B-CORR2.pdf",
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "audit/bg-no-radon-literature-2026-10-04.md:38"
+   ]
+  },
   "RESRAD_DCH1993": {
    "title": "Data Collection Handbook to Support Modeling Impacts of Radioactive Material in Soil",
    "title_ru": "Справочник по сбору данных для моделирования воздействия радиоактивного материала в почве",
@@ -848,6 +863,52 @@
     "audit/risk-comparison-literature-2026-10-04.md:89"
    ]
   },
+  "EPA_FGR13": {
+   "title": "Federal Guidance Report No. 13: Cancer Risk Coefficients for Environmental Exposure to Radionuclides (CD Supplement, FGR13PAK)",
+   "title_ru": "Федеральное руководство EPA № 13: коэффициенты дозы и риска рака при поступлении радионуклидов (приложение на CD, FGR13PAK)",
+   "authors": "Eckerman K.F., Leggett R.W., Nelson C.B., Puskin J.S., Richardson A.C.B.",
+   "year": 1999,
+   "publisher": "U.S. Environmental Protection Agency, EPA 402-R-99-001",
+   "doi": null,
+   "url": "https://www.epa.gov/radiation/federal-guidance-report-no-13-cd-supplement",
+   "local": null,
+   "kind": "руководство EPA",
+   "same_as": null,
+   "evidence": [
+    "audit/dcfpak-fgr13-check-2026-10-04.md:34",
+    "audit/fgr13-lh-rule-2026-10-04.md"
+   ]
+  },
+  "METTLER2008": {
+   "title": "Effective doses in radiology and diagnostic nuclear medicine: a catalog",
+   "title_ru": "Эффективные дозы в рентгенологии и диагностической ядерной медицине: каталог",
+   "authors": "Mettler F.A., Huda W., Yoshizumi T.T., Mahesh M.",
+   "year": 2008,
+   "publisher": "Radiology, 248(1):254–263",
+   "doi": "10.1148/radiol.2481071451",
+   "url": null,
+   "local": null,
+   "kind": "статья",
+   "same_as": null,
+   "evidence": [
+    "audit/bg-no-radon-literature-2026-10-04.md:157"
+   ]
+  },
+  "MUK_1088": {
+   "title": "МУК 2.6.1.1088-02. Оценка индивидуальных эффективных доз облучения населения за счёт природных источников ионизирующего излучения",
+   "title_ru": "МУК 2.6.1.1088-02. Оценка индивидуальных эффективных доз облучения населения за счёт природных источников ионизирующего излучения",
+   "authors": "Минздрав России",
+   "year": 2002,
+   "publisher": "Минздрав России",
+   "doi": null,
+   "url": null,
+   "local": null,
+   "kind": "методические указания",
+   "same_as": null,
+   "evidence": [
+    "audit/bg-no-radon-literature-2026-10-04.md:88"
+   ]
+  },
   "HPS_PS010": {
    "title": "Radiation Risk in Perspective, Position Statement PS010-4",
    "title_ru": "Радиационный риск в перспективе, позиция Общества физики здоровья PS010-4",
@@ -876,6 +937,143 @@
    "same_as": null,
    "evidence": [
     "audit/risk-comparison-literature-2026-10-04.md:182"
+   ]
+  },
+  "ROSSTAT_DEMOG2023": {
+   "title": "Demographic Yearbook of Russia. 2023 (data up to 2022)",
+   "title_ru": "Демографический ежегодник России. 2023 (данные до 2022 г.)",
+   "authors": "Росстат",
+   "year": 2023,
+   "publisher": "Федеральная служба государственной статистики, Москва",
+   "doi": null,
+   "url": "https://rosstat.gov.ru/storage/mediabank/Demogr_ejegod_2023.pdf",
+   "local": null,
+   "kind": "статистический сборник",
+   "same_as": null,
+   "evidence": [
+    "audit/risks-lifetime-ru-2026-10-05.md:17",
+    "audit/_lit_risks/demogr2023.pdf (табл. 5.3, с. 82)"
+   ]
+  },
+  "WHO_MORTDB": {
+   "title": "WHO Mortality Database (ICD-10, Russian Federation, 2019, list 101)",
+   "title_ru": "База данных ВОЗ по смертности (МКБ-10, Российская Федерация, 2019 г., список причин 101)",
+   "authors": "World Health Organization",
+   "year": 2019,
+   "publisher": "WHO, Mortality Database, часть 5 (2017–2020), страна 4272",
+   "doi": null,
+   "url": "https://cdn.who.int/media/docs/default-source/world-health-data-platform/mortality-raw-data/morticd10_part5.zip",
+   "local": null,
+   "kind": "база данных ВОЗ",
+   "same_as": null,
+   "evidence": [
+    "audit/risks-lifetime-ru-2026-10-05.md:20",
+    "audit/_lit_risks/Morticd10_part5"
+   ]
+  },
+  "ROSSTAT_POTR2026": {
+   "title": "Consumption of basic foodstuffs in the Russian Federation (food balance), 2021–2025",
+   "title_ru": "Потребление основных продуктов питания по Российской Федерации (баланс ресурсов), 2021–2025 гг.",
+   "authors": "Росстат",
+   "year": 2026,
+   "publisher": "Федеральная служба государственной статистики (файл «Обновлено: 30.09.2026»)",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Потребление.xls",
+   "kind": "статистический сборник",
+   "same_as": null,
+   "sha256": "e2c4cae55214083f8824e0c25db876965bfcb30ca279724b72511e7d6af91ea6",
+   "evidence": [
+    "audit/test-audit-2026-10/diet-norms-fr83.md:52",
+    "Потребление.xls, лист «1-2»",
+    "sha256 e2c4cae55214083f8824e0c25db876965bfcb30ca279724b72511e7d6af91ea6"
+   ]
+  },
+  "ROSSTAT_PTR2025": {
+   "title": "Household budget survey 2025: bulletin (food consumption by decile groups)",
+   "title_ru": "Выборочное обследование бюджетов домашних хозяйств, 2025 г.: бюллетень «Потребление продуктов питания в домашних хозяйствах» (по децильным группам)",
+   "authors": "Росстат",
+   "year": 2026,
+   "publisher": "Федеральная служба государственной статистики (выпуск 07.08.2026)",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/2_БЮЛЛЕТЕНЬ.xlsx",
+   "kind": "статистический сборник",
+   "same_as": null,
+   "sha256": "ab1330a8c478e3344df3f852b2c04bd54ff4a45c225ea97d075960382d042d81",
+   "evidence": [
+    "audit/test-audit-2026-10/diet-norms-fr83.md:71",
+    "2_БЮЛЛЕТЕНЬ.xlsx, листы «1» и «1.5»",
+    "архив rosstat_arch\\PTR_2025.rar, sha256 c914bdc10c0e8b627c1507d4d8a3e26f570f2263dc496a34d8d951b6e01f5a5b",
+    "sha256 ab1330a8c478e3344df3f852b2c04bd54ff4a45c225ea97d075960382d042d81"
+   ]
+  },
+  "ROSSTAT_POTREB2023": {
+   "title": "Consumption of basic foodstuffs by the population, 2023 (Rosstat brochure with the rational norms of Order of the Ministry of Health No. 614)",
+   "title_ru": "Потребление населением основных продуктов питания, 2023 г. (брошюра Росстата; рациональные нормы приказа Минздрава № 614 от 19.08.2016 в ред. от 30.12.2022 — вторичная публикация)",
+   "authors": "Росстат",
+   "year": 2023,
+   "publisher": "Федеральная служба государственной статистики",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/rosstat_potreblenie.pdf",
+   "kind": "статистический сборник",
+   "same_as": null,
+   "sha256": "190804caf3d658658d4a73118ffbc159a5044e031c57b19b5e55cd3cdd06d838",
+   "evidence": [
+    "rosstat_potreblenie.md:80-81",
+    "sha256 190804caf3d658658d4a73118ffbc159a5044e031c57b19b5e55cd3cdd06d838"
+   ]
+  },
+  "PRIKAZ_MZ821_2022": {
+   "title": "Order of the Ministry of Health of Russia of 30.12.2022 No. 821 (amendments to Order No. 614), text from the legal aggregator pravo.ppt.ru (ConsultantPlus text)",
+   "title_ru": "Приказ Минздрава России от 30.12.2022 № 821 (изменения в приказ № 614): текст правового агрегатора pravo.ppt.ru (КонсультантПлюс); официальная публикация не найдена",
+   "authors": "Минздрав России",
+   "year": 2022,
+   "publisher": "pravo.ppt.ru (правовой агрегатор)",
+   "doi": null,
+   "url": "https://pravo.ppt.ru/prikaz/minzdrav/n-821-282780",
+   "local": "библиотека оператора/prikaz821_2022-12-30.md",
+   "kind": "нормативный акт (копия агрегатора)",
+   "same_as": null,
+   "sha256": "68013aa59409181c9838f5a4536d460b4c20bd3999c842452a89188c61fae2da",
+   "evidence": [
+    "prikaz821_2022-12-30.md:40",
+    "sha256 68013aa59409181c9838f5a4536d460b4c20bd3999c842452a89188c61fae2da"
+   ]
+  },
+  "LEGALACTS_614": {
+   "title": "Order of the Ministry of Health of Russia of 19.08.2016 No. 614, consolidated edition of 30.12.2022, legalacts.ru",
+   "title_ru": "Приказ Минздрава России от 19.08.2016 № 614, сводная редакция от 30.12.2022 (legalacts.ru, правовой агрегатор); официальная публикация не найдена",
+   "authors": "Минздрав России",
+   "year": 2022,
+   "publisher": "legalacts.ru (правовой агрегатор)",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/l_9395c.html",
+   "kind": "нормативный акт (копия агрегатора)",
+   "same_as": null,
+   "sha256": "47f6c7f45b3162548d431a75089c466df5a611dc4437c328028784bccffad8d9",
+   "evidence": [
+    "l_9395c.html:287 (приложение, пункт 10: масло растительное 12; приказами № 1276 и № 821 пункт 10 не изменялся)",
+    "sha256 47f6c7f45b3162548d431a75089c466df5a611dc4437c328028784bccffad8d9"
+   ]
+  },
+  "MU_2153_06": {
+   "title": "MU 2.6.1.2153-06 Assessment of radiation doses to the population from food consumption (methodical guidelines), table 8.6",
+   "title_ru": "МУ 2.6.1.2153-06. Оценка радиационных доз населения при потреблении продуктов питания (методические указания), табл. 8.6",
+   "authors": "Роспотребнадзор",
+   "year": 2006,
+   "publisher": "Роспотребнадзор",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/doc_4293773574.pdf",
+   "kind": "методические указания",
+   "same_as": null,
+   "sha256": "314b9f5cff91609992832b4e29d6849b561b7106f8835de20de99c5a031b85bc",
+   "evidence": [
+    "doc_4293773574.md:1847-1890",
+    "sha256 314b9f5cff91609992832b4e29d6849b561b7106f8835de20de99c5a031b85bc"
    ]
   }
  }

@@ -1,0 +1,20 @@
+[
+  {"file": "public/data/life_risks.json", "name": "любая причина, взрослый, оба пола: 34,6 -> 46,3 %", "from": "\"both\": 0.346344,", "to": "\"both\": 0.46344,"},
+  {"file": "public/data/life_risks.json", "name": "любая причина, ребёнок, оба пола: 35,34 -> 35 % (грубое округление)", "from": "\"both\": 0.353406,", "to": "\"both\": 0.35,"},
+  {"file": "public/data/life_risks.json", "name": "БСК, взрослый: цифры переставлены 13,07 -> 10,37 %", "from": "\"both\": 0.130665,", "to": "\"both\": 0.103665,"},
+  {"file": "public/data/life_risks.json", "name": "новообразования, ребёнок: 7,26 -> 8,26 %", "from": "\"both\": 0.0725894,", "to": "\"both\": 0.0825894,"},
+  {"file": "public/data/life_risks.json", "name": "рак лёгкого, женщины, взрослый: ×10", "from": "\"female\": 0.00399397", "to": "\"female\": 0.0399397"},
+  {"file": "public/data/life_risks.json", "name": "внешние причины, взрослый: 5,06 -> 55,06 % (части больше целого)", "from": "\"both\": 0.0506116,", "to": "\"both\": 0.5506116,"},
+  {"file": "public/data/life_risks.json", "name": "огонь и дым, взрослый: ×10", "from": "\"both\": 0.00105185,", "to": "\"both\": 0.0105185,"},
+  {"file": "public/data/life_risks.json", "name": "транспорт, ребёнок: 0,761 -> 0,661 %", "from": "\"both\": 0.0076127,", "to": "\"both\": 0.0066127,"},
+  {"file": "public/data/life_risks.json", "name": "самоубийства, мужчины, взрослый: оба пола вне вилки мужчины-женщины", "from": "\"male\": 0.0110009,", "to": "\"male\": 0.0010009,"},
+  {"file": "public/data/life_risks.json", "name": "убийства, взрослый: доля больше 1", "from": "\"both\": 0.00302811,", "to": "\"both\": 1.00302811,"},
+  {"file": "public/data/life_risks.json", "name": "падения, ребёнок: ноль", "from": "\"both\": 0.00214538,", "to": "\"both\": 0,"},
+  {"file": "public/data/life_risks.json", "name": "отравления, взрослый: подставлено значение ребёнка", "from": "\"both\": 0.0075442,", "to": "\"both\": 0.00767458,"},
+  {"file": "public/data/life_risks.json", "name": "любая причина, мужчины, взрослый: 47,65 -> 37,65 %", "from": "\"male\": 0.476541,", "to": "\"male\": 0.376541,"},
+  {"file": "public/data/life_risks.json", "name": "внешние причины, женщины, взрослый: 1,82 -> 4,82 %", "from": "\"female\": 0.0181825", "to": "\"female\": 0.0481825"},
+  {"file": "public/data/life_risks.json", "name": "ссылка на рак указывает на несуществующую запись", "from": "\"ref_id\": \"cancer_baseline_ru_0_69\"", "to": "\"ref_id\": \"cancer_baseline_ru_0_59\""},
+  {"file": "public/data/life_risks.json", "name": "запись падений переименована", "from": "\"id\": \"lr_falls\"", "to": "\"id\": \"lr_fall\""},
+  {"file": "public/data/life_risks.json", "name": "ссылка на рак превращена в причину", "from": "\"kind\": \"incidence_ref\"", "to": "\"kind\": \"cause\""},
+  {"file": "public/data/compare.json", "name": "compare: риск заболеть раком 0–69: 19,4 -> 1,94 %", "from": "\"value\": 0.194,", "to": "\"value\": 0.0194,"}
+]

@@ -1,0 +1,62 @@
+[
+ {
+  "name": "v04_a6_shows_risk_not_dose",
+  "file": "src/ui/summary_text.js",
+  "from": "{ E: fmtDose2(totals.doseMaxYearTech), which }",
+  "to": "{ E: fmtPerMillion(totals.riskNominal), which }"
+ },
+ {
+  "name": "v04_a2_from_risk_max_year",
+  "file": "src/ui/summary_text.js",
+  "from": "fill(T.MAIN_NUMBER, { k: fmtPerMillion(totals.riskNominal) })",
+  "to": "fill(T.MAIN_NUMBER, { k: fmtPerMillion(totals.riskMaxYear) })"
+ },
+ {
+  "name": "v04_link_norms_removed",
+  "file": "src/ui/summary_text.js",
+  "from": "    link: T.LINK_NORMS,\n    verdict: {\n      cls,",
+  "to": "    link: '',\n    verdict: {\n      cls,"
+ },
+ {
+  "name": "v04_plate_color_by_dose_class",
+  "file": "src/ui/summary_text.js",
+  "from": "[c.verdict] || '';",
+  "to": "[result.totals.doseClass === 'c1' ? 'conforms' : 'nonconforms'] || '';"
+ },
+ {
+  "name": "v04_cooked_branch_off",
+  "file": "src/ui/summary_text.js",
+  "from": "  if (state === 'cooked') {\n    verdictLines",
+  "to": "  if (false) {\n    verdictLines"
+ },
+ {
+  "name": "v04_infant_note_always",
+  "file": "src/ui/summary_text.js",
+  "from": "if (!natural && hasInfant) notes.push",
+  "to": "if (!natural && true) notes.push"
+ },
+ {
+  "name": "v04_precision_warning_off",
+  "file": "src/ui/summary_text.js",
+  "from": "if (c.precisionOk === false) {",
+  "to": "if (false) {"
+ },
+ {
+  "name": "v04_over5_branch_off",
+  "file": "src/ui/summary_text.js",
+  "from": "totals.doseMaxYearTech > 5e-3 ? T.VERBAL_C3_OVER5 : T.VERBAL_C3",
+  "to": "false ? T.VERBAL_C3_OVER5 : T.VERBAL_C3"
+ },
+ {
+  "name": "v04_a6_age_branch_off",
+  "file": "src/ui/summary_text.js",
+  "from": "} else if (totals.doseMaxYearAge != null) {\n      which =",
+  "to": "} else if (false) {\n      which ="
+ },
+ {
+  "name": "v04_group_label_lost",
+  "file": "src/calc/model.js",
+  "from": "groupRu: lim.food_group_ru, ",
+  "to": "groupRu: '', "
+ }
+]

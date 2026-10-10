@@ -32,7 +32,7 @@ def main() -> int:
     ap.add_argument("--src-dir", default=str(p.parent / "../data-src"))
     ap.add_argument("--out-dir", default=str(p.parent / "../public/data"))
     a = ap.parse_args(); src = pathlib.Path(a.src_dir).resolve(); out = pathlib.Path(a.out_dir).resolve()
-    files = sorted(src.glob("*.yaml"))
+    files = sorted(f for f in src.glob("*.yaml") if "." not in f.stem)  # #FR-85: products.draft.yaml и прочие <имя>.<метка>.yaml — не наборы данных
     if not files: print(json.dumps({"ok": False, "error": "no yaml files"})); return 1
     out.mkdir(parents=True, exist_ok=True); datasets = []; total = 0
     for f in files:

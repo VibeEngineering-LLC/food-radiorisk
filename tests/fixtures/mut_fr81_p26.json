@@ -1,0 +1,5 @@
+[
+ {"name": "p26_onlymin_not_offered", "file": "src/calc/processing.js", "from": "min: ranged || onlyMin", "to": "min: ranged"},
+ {"name": "p26_onlymin_max_offered", "file": "src/calc/processing.js", "from": "max: ranged };", "to": "max: ranged || onlyMin };"},
+ {"name": "p26_best_with_min_silent_msg", "file": "src/calc/processing.js", "from": "key === 'value_best' && pRec.value_min != null", "to": "false"}
+]

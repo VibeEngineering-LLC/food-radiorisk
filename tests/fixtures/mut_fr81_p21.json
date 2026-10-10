@@ -1,0 +1,5 @@
+[
+ {"name": "p21_water_not_in_B", "file": "src/calc/norms.js", "from": "(rec?.food_group_code === 'water' && String(rec?.id ?? '').startsWith(T044_PREFIX))", "to": "false"},
+ {"name": "p21_natural_water_nuclides_skipped", "file": "src/calc/model.js", "from": "(isWaterB && t044(r.nuclide))", "to": "(false && t044(r.nuclide))"},
+ {"name": "p21_water_required_only_cs_sr", "file": "src/calc/model.js", "from": "const required = isWaterB ?", "to": "const required = false ?"}
+]

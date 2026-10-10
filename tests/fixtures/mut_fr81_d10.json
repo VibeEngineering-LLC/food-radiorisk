@@ -1,0 +1,20 @@
+[
+ {
+  "name": "d10_max_year_is_first",
+  "file": "src/calc/model.js",
+  "from": "doseMaxYear = Math.max(...yearsAll)",
+  "to": "doseMaxYear = yearsAll[0]"
+ },
+ {
+  "name": "d10_window_last_skipped",
+  "file": "src/calc/years.js",
+  "from": "i + 5 <= doses.length",
+  "to": "i + 5 < doses.length"
+ },
+ {
+  "name": "d10_short_term_not_padded",
+  "file": "src/calc/years.js",
+  "from": "if (doses.length <= 5) return doses.reduce((s, d) => s + d, 0) / 5;",
+  "to": "if (doses.length <= 5) return doses.reduce((s, d) => s + d, 0) / doses.length;"
+ }
+]

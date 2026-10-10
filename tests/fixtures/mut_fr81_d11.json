@@ -1,0 +1,20 @@
+[
+ {
+  "name": "d11_oneyear_equiv_is_total",
+  "file": "src/calc/compare.js",
+  "from": "equivalents1 = multi ? eq(oneYearSv) : null",
+  "to": "equivalents1 = multi ? eq(scenarioSv) : null"
+ },
+ {
+  "name": "d11_equiv1_always",
+  "file": "src/calc/compare.js",
+  "from": "equivalents1 = multi ? eq(oneYearSv) : null",
+  "to": "equivalents1 = eq(oneYearSv)"
+ },
+ {
+  "name": "d11_ui_line_1year_lost",
+  "file": "src/react/Compare.jsx",
+  "from": "`За 1 год питания: `",
+  "to": "`За год: `"
+ }
+]

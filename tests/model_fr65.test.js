@@ -12,7 +12,7 @@ const { data } = await loadAll(async (u) => JSON.parse(await readFile(root + u, 
 const ch = listChoices(data);
 const e = Object.fromEntries(data.dose_coeff.filter(r => r.nuclide === 'Cs-137' && r.source === 'ICRP119_F1').map(r => [r.age, r.value]));
 const YRS = { '3m': 1, '1y': 1, '5y': 5, '10y': 5, '15y': 5, adult: 53 };
-const withLife = (start) => ({ ...presetRadGear(), lifetime: { fromAge: start, toAge: 70 }, years: 70 - start });
+const withLife = (start) => ({ ...presetRadGear(), constantActivity: true, lifetime: { fromAge: start, toAge: 70 }, years: 70 - start });
 
 test('режим до 70 лет: доза за жизнь = поступление × Σ(годы × e по группам), независимый пересчёт', () => {
   const r = computeScenario(data, withLife(0));
@@ -25,26 +25,23 @@ test('режим до 70 лет: доза за жизнь = поступлени
 });
 
 test('без режима: доза за период = за год × годы, полос нет', () => {
-  const r = computeScenario(data, { ...presetRadGear(), years: 10 });
+  const r = computeScenario(data, { ...presetRadGear(), constantActivity: true, years: 10 });
   assert.equal(r.rows[0].lifetimeBands, null);
   assert.ok(Math.abs(r.rows[0].doseSvTotal - 10 * r.rows[0].doseSvPerYear) < 1e-18);
 });
 
-test('форма: lifeMode даёт lifetime/years/age; не-ICRP119 или возраст ≥70 — режим выключен', () => {
+test('форма: lifeMode даёт lifetime/years/age; не-ICRP119 или возраст ≥70 — режим не выключается молча', () => {
   const raw = setField(setField(initialRaw(ch), ch, 'lifeMode', true), ch, 'startAge', '10');
   const inp = buildInput(raw);
   assert.deepEqual(inp.lifetime, { fromAge: 10, toAge: 70 });
   assert.equal(inp.years, 60);
   assert.equal(inp.age, '10y');
-  assert.equal(lifetimeOf({ ...raw, doseSource: 'NRB2009_App2' }), null);
-  assert.equal(lifetimeOf({ ...raw, startAge: '70' }), null);
+  assert.deepEqual(lifetimeOf({ ...raw, doseSource: 'NRB2009_App2' }), { fromAge: 10, toAge: 70, startBand: '10y' });
   assert.equal(buildInput({ ...raw, lifeMode: false }).lifetime, null);
   assert.equal(rawFromInput(inp, ch).lifeMode, true);
 });
 
-test('ПГП в режиме до 70 лет — по взрослому e(g), без режима — по e выбранного возраста', () => {
-  const life = computeScenario(data, { ...withLife(0), age: '3m' }).rows[0];
-  assert.ok(Math.abs(life.pgpBqPerYear - 1e-3 / e.adult) <= 1e-9 * life.pgpBqPerYear);
+test('ПГП без режима — по e выбранного возраста (режим «с a до b» — fr81_pgp_group.test.js)', () => {
   const plain = computeScenario(data, { ...presetRadGear(), years: 10 }).rows[0];
   assert.ok(Math.abs(plain.pgpBqPerYear - 1e-3 / plain.eSvPerBq) <= 1e-9 * plain.pgpBqPerYear);
 });

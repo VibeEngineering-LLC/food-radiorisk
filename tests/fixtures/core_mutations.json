@@ -12,7 +12,7 @@
  {"name": "b_linear_dB",        "from": "dBSumSq += Math.pow(item.da / item.h, 2);", "to": "dBSumSq += item.da / item.h;"},
  {"name": "b_strict_conforms",  "from": "if (B + dB <= 1) {", "to": "if (B + dB < 1) {"},
  {"name": "b_nonconf_ge",       "from": "} else if (B - dB > 1) {", "to": "} else if (B - dB >= 1) {"},
- {"name": "b_precision_strict", "from": "precisionOk: dB <= 0.3", "to": "precisionOk: dB < 0.3"},
+ {"name": "b_precision_strict", "from": "|| dB <= 0.3", "to": "|| dB < 0.3"},
  {"name": "b_empty_ok",         "from": "if (!Array.isArray(items) || items.length === 0) {", "to": "if (!Array.isArray(items)) {"},
  {"name": "decay_exp",          "from": "return Math.pow(2, -elapsed / halfLife);", "to": "return Math.exp(-elapsed / halfLife);"},
  {"name": "decay_hours",        "from": "(toDate - fromDate) / 86400000", "to": "(toDate - fromDate) / 3600000"},

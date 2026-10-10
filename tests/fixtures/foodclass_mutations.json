@@ -1,8 +1,8 @@
 [
- {"name": "infant_no_except",  "from": "/кроме детск|без категории для младенц/", "to": "null"},
+ {"name": "infant_no_except",  "file": "src/calc/foodclass.js", "from": "/кроме детск|без (отдельной )?категории для младенц/", "to": "null"},
  {"name": "minor_no_except",   "from": "/кроме малозначим/]", "to": "null]"},
  {"name": "water_as_liquid",   "from": "if (foodGroupCode === 'water') return ['water', 'liquid'];", "to": "if (foodGroupCode === 'water') return ['general'];"},
- {"name": "baby_general",      "from": "if (foodGroupCode === 'baby_food') return ['infant'];", "to": "if (foodGroupCode === 'baby_food') return ['general'];"},
- {"name": "applies_always",    "from": "return p.some(c => f.includes(c));", "to": "return true;"},
+ {"name": "baby_general",      "file": "src/calc/foodclass.js", "from": "if (foodGroupCode === 'baby_food') return ['infant', 'general'];", "to": "if (foodGroupCode === 'baby_food') return ['general'];"},
+ {"name": "applies_always", "file": "src/calc/foodclass.js", "from": "productClasses(foodGroupCode)) >= 0;", "to": "productClasses(foodGroupCode)) >= -1;"},
  {"name": "empty_general",     "from": "if (!t.trim()) return [];", "to": "if (!t.trim()) return ['general'];"}
 ]

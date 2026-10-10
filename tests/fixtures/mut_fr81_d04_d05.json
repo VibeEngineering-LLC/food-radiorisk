@@ -1,0 +1,20 @@
+[
+ {
+  "name": "d04_internal_code_message",
+  "file": "src/calc/model.js",
+  "from": "msg = `В НРБ-99/2009 (прил. 2) для возраста",
+  "to": "msg = `нет e(g) NRB2009_App2 для возраста"
+ },
+ {
+  "name": "d05_water_table_for_food",
+  "file": "src/calc/model.js",
+  "from": "(source === 'NRB2009_App2' && water && r.source === 'NRB2009_App2a')));\n  return",
+  "to": "(source === 'NRB2009_App2' && r.source === 'NRB2009_App2a')));\n  return"
+ },
+ {
+  "name": "d05_wrong_label",
+  "file": "src/calc/model.js",
+  "from": "dcRec.source === 'NRB2009_App2a' ? 'питьевой водой (НРБ-99/2009, прил. 2а)' : 'пищей'",
+  "to": "'пищей'"
+ }
+]

@@ -1,0 +1,8 @@
+[
+ {"name": "d08_half_life_365", "file": "src/calc/model.js", "from": "hl.half_life_days / DAYS_PER_YEAR : null", "to": "hl.half_life_days / 365 : null"},
+ {"name": "d08_provenance_lost", "file": "src/calc/model.js", "from": "if (T && input.years > 1) prov.push", "to": "if (false) prov.push"},
+ {"name": "d08_first_year_is_start", "file": "src/calc/model.js", "from": "const intakeBqPerYear = yearly[0].intakeBq;", "to": "const intakeBqPerYear = intakeStart;"},
+ {"name": "d08_note_for_one_year", "file": "src/calc/model.js", "from": "if (!input.constantActivity && period.years > 1) warnings.push", "to": "if (!input.constantActivity && period.years > 0) warnings.push"},
+ {"name": "d08_note_when_constant", "file": "src/calc/model.js", "from": "if (!input.constantActivity && period.years > 1) warnings.push", "to": "if (period.years > 1) warnings.push"},
+ {"name": "d08_flag_not_passed", "file": "src/ui/form.js", "from": "constantActivity: !!raw.constAct,", "to": "constantActivity: false,"}
+]

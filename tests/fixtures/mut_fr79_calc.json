@@ -1,0 +1,4 @@
+[
+  {"name": "период определяется только режимом жизни", "file": "src/calc/compare.js", "from": "const multi = input.years !== 1 || !!input.lifetime;", "to": "const multi = !!input.lifetime;"},
+  {"name": "горизонт зашит: 50 лет", "file": "src/calc/compare.js", "from": "horizonYears: H,", "to": "horizonYears: 50,"}
+]

@@ -4,16 +4,30 @@
   {
    "dataset": "compare",
    "file": "compare.json",
-   "record_count": 7,
-   "source_sha256": "0ad171c93405e8a25c086b27557daf3a8bc90fd311331b45b635c039717bd21f",
-   "json_sha256": "dbff7c23e450e838998f1f1e152198516475035ea8df58301ca5aa81d6757709"
+   "record_count": 16,
+   "source_sha256": "22cd7056421c7817651ae2f069f2a4f5f56f122ddd6dfb3f7c2dd410d6fb5041",
+   "json_sha256": "9cf1c4fed7d14ad3567b1eb47d1af3bf6fe05e5c3e05bbf655a971b7068a089c"
+  },
+  {
+   "dataset": "diet",
+   "file": "diet.json",
+   "record_count": 74,
+   "source_sha256": "4bdd9f626d8178732301459542b71100d06ff350ffab46449d4a012f36693f7d",
+   "json_sha256": "3a7b0eb5d15fd539c62b3663725f098367586d412e172ff13b3d2d47f3b0debd"
   },
   {
    "dataset": "dose_coeff",
    "file": "dose_coeff.json",
-   "record_count": 95,
-   "source_sha256": "fa6a1ada045bccd120ab889f68863cca1ec7ecd5905f73bd5490a881637cfc9c",
-   "json_sha256": "436a1863aeebc179b898bf828e0e8896a4007c90696cc59911de246818c715cb"
+   "record_count": 101,
+   "source_sha256": "d2772a269e566fb90586071ac9327290ab9e5a2128578eac1277b79450df3472",
+   "json_sha256": "f430dcbc798621d20632d6c5eee15707b2c0f0cdf4cbb64c62fcf1e93a5f5596"
+  },
+  {
+   "dataset": "life_risks",
+   "file": "life_risks.json",
+   "record_count": 25,
+   "source_sha256": "381633ddee88f214c93359d0f5a76770392262c5fe238241b71c2315bea03bd0",
+   "json_sha256": "f0196bae88133b712b616170c7f32505b12cb0e7d0a44ca1007b77ef092ce06f"
   },
   {
    "dataset": "limits_foreign",
@@ -25,9 +39,9 @@
   {
    "dataset": "limits_ru",
    "file": "limits_ru.json",
-   "record_count": 79,
-   "source_sha256": "bf7e721916a8362f0bc2dccfa54af2ea964a034be99e1870d7631b84f532ae5e",
-   "json_sha256": "69079dc0cb88bdcb5ba2ec845a451d504ca45fd45b4cec786c5f58ede62eff32"
+   "record_count": 86,
+   "source_sha256": "fd7c9508e13ebb0d6482238dcde6caec09df97c52a82172bb549b72aeda5417a",
+   "json_sha256": "9e8250d48f72803b04e71eac9e7dc0daed2f35d1cde33c6024f2e1db1ba43f16"
   },
   {
    "dataset": "nuclides",
@@ -37,11 +51,32 @@
    "json_sha256": "ffd37e296cb0953dc8c6227b391c7f532721e566b8493abbc4a6275d2d16937c"
   },
   {
+   "dataset": "organ_dose",
+   "file": "organ_dose.json",
+   "record_count": 78,
+   "source_sha256": "fe37020a42025683ba263babe6d1581d9ce71655047d9d4fb35d16244f899b39",
+   "json_sha256": "a93a8ef255d3c31f14592d9b7a2e331419b3a08fbf7f90df93c9506892c8ca7a"
+  },
+  {
+   "dataset": "organ_risk",
+   "file": "organ_risk.json",
+   "record_count": 65,
+   "source_sha256": "def84c5a47aac8e657b81c63cb999cf72bd8298f401fe835b23d46a10cb5f9f8",
+   "json_sha256": "504d223c2873625d17c5b69a8a20b7ff24f5e0d5b44a5c0116d84c1efaf2452e"
+  },
+  {
    "dataset": "processing",
    "file": "processing.json",
    "record_count": 437,
-   "source_sha256": "600acfeb02885f26a7c74fa1726fb17bf07e57898a01cedab7e3d018611890f7",
-   "json_sha256": "bd6efad0c31fe14d22ce3a3af55ae11ce43ecf8e018f83294b9a1f02ed766d2d"
+   "source_sha256": "82f291ad929f92c1592c5579b174a800d9b59f63fc23737db13b798d0b7d853f",
+   "json_sha256": "e24c608c296ff8b6c3bc2d872f2d3ced4f3d72d1f3c483a8856467e7c7e16b15"
+  },
+  {
+   "dataset": "products",
+   "file": "products.json",
+   "record_count": 502,
+   "source_sha256": "1304d3a4cd3c8546e6485a081067fe0a08a4f47b5bd1b504b72152c1e2b360de",
+   "json_sha256": "e9f9aa95f9b9d80644d8e9ac586ebe2fab14d634aff985fcbafa216ad67c9b9c"
   },
   {
    "dataset": "risk",

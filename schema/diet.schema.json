@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "food-radiorisk/diet.schema.json",
+  "title": "Потребление продуктов по умолчанию, если реальное неизвестно (#FR-83, D-023): значения рядов (kind: value) и группы рациона (kind: group); продукт → группа — словарь products.yaml (#FR-85)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "unit_norm", "unit_factor", "unit_inferred"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9_.\\-]+$" },
+    "kind": { "enum": ["value", "group"] },
+    "series": { "enum": ["balance", "norm614", "high_d10", "method_estimate", "child_ref", "survey_ref"] },
+    "group": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+    "value": { "type": "number", "exclusiveMinimum": 0 },
+    "src_value": { "type": "number", "exclusiveMinimum": 0 },
+    "src_factor": { "type": "number", "exclusiveMinimum": 0 },
+    "unit": { "enum": ["kg/year", "pcs/year"] },
+    "year": { "type": "integer", "minimum": 1990, "maximum": 2100 },
+    "population": { "type": "string", "minLength": 1 },
+    "age": { "enum": ["adult", "1y", "10y"] },
+    "basis": { "type": "string", "minLength": 1 },
+    "source": { "type": "string", "minLength": 1 },
+    "file": { "type": "string", "minLength": 1 },
+    "loc": { "type": "string", "minLength": 1 },
+    "cell": { "type": "string", "pattern": "^[^!]+![A-Z]{1,2}[0-9]+$" },
+    "quote": { "type": "string", "minLength": 1 },
+    "level": { "enum": ["✅", "📗"] },
+    "note": { "type": "string", "minLength": 1 },
+    "code": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+    "label_ru": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["default", "not_established", "source_required"] },
+    "value_group": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+    "default_id": { "type": "string", "minLength": 1 },
+    "high_id": { "type": "string", "minLength": 1 },
+    "ref614_id": { "type": "string", "minLength": 1 },
+    "info_id": { "type": "string", "minLength": 1 },
+    "info_label": { "type": "string", "minLength": 1 },
+    "scope_note": { "type": "string", "minLength": 1 },
+    "direction": { "enum": ["upper", "lower", "match"] },
+    "missing": { "type": "string", "minLength": 1 },
+    "unit_norm": { "type": ["string", "null"] },
+    "unit_factor": { "type": ["number", "null"] },
+    "unit_inferred": { "type": "boolean" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "value" } }, "required": ["kind"] },
+      "then": {
+        "required": ["series", "group", "value", "unit", "population", "age", "basis", "source", "loc", "quote", "level"],
+        "not": { "anyOf": [{ "required": ["code"] }, { "required": ["status"] }, { "required": ["default_id"] }] }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "value" }, "series": { "enum": ["balance", "high_d10", "survey_ref"] } }, "required": ["kind", "series"] },
+      "then": { "required": ["year"] }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "value" }, "source": { "enum": ["ROSSTAT_POTR2026", "ROSSTAT_PTR2025"] } }, "required": ["kind", "source"] },
+      "then": { "required": ["cell"] }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "group" } }, "required": ["kind"] },
+      "then": {
+        "required": ["code", "label_ru", "status"],
+        "not": { "anyOf": [{ "required": ["series"] }, { "required": ["value"] }, { "required": ["loc"] }, { "required": ["quote"] }, { "required": ["level"] }, { "required": ["cell"] }] }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "default" } }, "required": ["status"] },
+      "then": { "required": ["value_group", "default_id", "scope_note", "direction"], "not": { "required": ["missing"] } }
+    },
+    {
+      "if": { "properties": { "status": { "const": "source_required" } }, "required": ["status"] },
+      "then": { "required": ["missing"], "not": { "anyOf": [{ "required": ["default_id"] }, { "required": ["high_id"] }, { "required": ["ref614_id"] }] } }
+    },
+    {
+      "if": { "properties": { "status": { "const": "not_established" } }, "required": ["status"] },
+      "then": { "not": { "anyOf": [{ "required": ["default_id"] }, { "required": ["high_id"] }, { "required": ["ref614_id"] }, { "required": ["missing"] }] } }
+    },
+    {
+      "if": { "required": ["info_id"] },
+      "then": { "required": ["info_label"] }
+    }
+  ]
+}

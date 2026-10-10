@@ -1,0 +1,5 @@
+[
+ {"name": "p211_unknown_category_not_general", "file": "src/calc/foodclass.js", "from": "return classes.length ? classes : ['general'];", "to": "return classes;"},
+ {"name": "p211_dash_from_any_regulation", "file": "src/calc/model.js", "from": "data.limits_ru.find(x => isP4(x) && x.food_group_code === input.foodGroupCode && x.nuclide === r.nuclide && x.value == null)", "to": "data.limits_ru.find(x => x.food_group_code === input.foodGroupCode && x.nuclide === r.nuclide && x.value == null)"},
+ {"name": "p211_group_key_without_nuclides", "file": "src/calc/model.js", "from": "return `${f.jurisdiction}|${doc}|${f.nuclides.join(',')}`;", "to": "return `${f.jurisdiction}|${doc}`;"}
+]

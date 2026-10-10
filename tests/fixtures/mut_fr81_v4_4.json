@@ -1,0 +1,14 @@
+[
+ {
+  "name": "v4_4_best_back_to_bound",
+  "file": "public/data/processing.json",
+  "from": "\"value_best\": null,\n   \"value_min\": 0.01,\n   \"value_max\": null,\n   \"cumulative\": null,\n   \"quote\": \"can be up to 99%",
+  "to": "\"value_best\": 0.01,\n   \"value_min\": null,\n   \"value_max\": null,\n   \"cumulative\": null,\n   \"quote\": \"can be up to 99%"
+ },
+ {
+  "name": "v4_4_min_changed",
+  "file": "public/data/processing.json",
+  "from": "\"value_best\": null,\n   \"value_min\": 0.01,\n   \"value_max\": null,\n   \"cumulative\": null,\n   \"quote\": \"can be up to 99%",
+  "to": "\"value_best\": null,\n   \"value_min\": 0.1,\n   \"value_max\": null,\n   \"cumulative\": null,\n   \"quote\": \"can be up to 99%"
+ }
+]

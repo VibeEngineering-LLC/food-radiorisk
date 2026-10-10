@@ -496,6 +496,12 @@ body[data-view="poster"] .poster {
 /* #FR-20: риск — цвет по уровню НРБ, шкала log 10⁻⁸…10⁻³ */
 .riskbox { margin-top: .8rem; padding: .7rem; border-radius: 8px; border: 1px solid var(--line); }
 .risk .n { font-weight: 700; font-size: 1.6rem; font-family: var(--mono); }
+/* #FR-81 V04: главный экран — блок A без цвета (безопасно/опасно цветом не сообщается), цвет только у плашки B */
+.rs-number { font-weight: 700; font-size: 2rem; font-family: var(--mono); margin: .2rem 0; }
+.rs-caption, .rs-bg, .rs-eq, .rs-verbal { max-width: none; margin: .4rem 0; }
+.rs-notes { font-size: .85em; color: var(--muted); margin: .4rem 0; padding-left: 1.1rem; }
+.dose-block { margin-top: .8rem; font-size: .92em; }
+.dose-block h4 { margin: .2rem 0; }
 .risk-negligible { background: var(--ok-bg); } .risk-negligible .n, .risk-negligible b { color: var(--ok); }
 .risk-within { background: var(--warn-bg); } .risk-within .n, .risk-within b { color: var(--warn); }
 .risk-exceeds { background: var(--bad-bg); } .risk-exceeds .n, .risk-exceeds b { color: var(--bad); }
@@ -568,6 +574,10 @@ td.muted { color: var(--muted); font-style: italic; }
 .cmpbar i { display: block; height: 100%; min-width: 3px; border-radius: 5px; background: var(--muted); }
 td.cmp-me { font-weight: 600; background: color-mix(in srgb, var(--warn) 14%, transparent); }
 td.cmp-me .cmpbar i { background: var(--warn); }
+td.org-hi { font-weight: 600; background: color-mix(in srgb, var(--warn) 14%, transparent); }
+td.org-hi .cmpbar i { background: var(--warn); }
 .cmp-eq, .cmp-cancer { margin: 6px 0; max-width: 78ch; }
-.cmp-radon input { width: 6rem; }
+.cmp-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: .75rem; margin: .5rem 0 1rem; }
+.cmp-inputs label { display: flex; flex-direction: column; gap: .25rem; font-weight: 700; color: var(--ink); }
+.cmp-inputs input { font-weight: 400; width: 100%; max-width: 20rem; }
 @media (max-width: 640px) { .kgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .kgrid:not(.one) > div:first-child { display: none; } .kgrid .kr { grid-column: 1 / -1; } }

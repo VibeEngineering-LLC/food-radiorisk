@@ -1,0 +1,5 @@
+[
+ {"name": "d06a_label_range_hidden", "file": "src/ui/form.js", "from": "(середина диапазона ${fmtNum(rec.value_min)}", "to": "(диапазон ${fmtNum(rec.value_min)}"},
+ {"name": "d06b_field_name_in_message", "file": "src/calc/processing.js", "from": "для обработки «${procName(pRec)}» в источнике нет значения Fr: ни рекомендованного, ни границ диапазона", "to": "нет значения ${key}"},
+ {"name": "d06c_variants_always", "file": "src/calc/processing.js", "from": "const ranged = recs.some(r => r.value_min != null && r.value_max != null && r.value_min !== r.value_max);", "to": "const ranged = true;"}
+]

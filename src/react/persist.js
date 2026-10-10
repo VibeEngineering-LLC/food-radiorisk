@@ -47,6 +47,18 @@ export function restore(text, base, nuclideNames) {
         resultRaw[key] = storedVal;
     }
 
+    // #FR-83 W05 (D-023, В5): сохранение без режима рациона сделано до умолчаний — человек вводил свой рацион, а не «по умолчанию»
+    // D-023 В7: масса ровно 100 г — прежняя заглушка, режим «по умолчанию» с пустой массой; иная масса введена человеком — режим «знаю»
+    if (!['own', 'default', 'high'].includes(stored.dietMode)) {
+        // #FR-85 v14 п. 9 (D-025): '100', '100.0', 100, 100.0 и пустая или отсутствующая масса — прежняя заглушка
+        const pg = String(stored.portionG ?? '').trim().replace(',', '.');
+        const stub = (pg === '' && stored.dietMode === undefined) || (pg !== '' && Number(pg) === 100); // неизвестный режим с пустой массой остаётся «знаю»
+        resultRaw.dietMode = stub ? 'default' : 'own';
+        if (stub) resultRaw.portionG = '';
+    }
+
+    // #FR-81 V01: коэффициент риска не выбирается — ключа riskCoeff в base нет, сохранённый выбор отбрасывается (переносятся только ключи base)
+
     // Обработка массива procRecs
     const storedProcRecs = stored.procRecs;
     if (Array.isArray(storedProcRecs) && storedProcRecs.length <= 50) {

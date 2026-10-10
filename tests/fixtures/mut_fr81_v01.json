@@ -1,0 +1,6 @@
+[
+ {"name": "v01_input_overrides_record", "file": "src/calc/model.js", "from": "riskCoeff = riskCoeffOf(data); }", "to": "riskCoeff = input.riskCoeffPerSv ?? riskCoeffOf(data); }"},
+ {"name": "v01_constant_instead_of_record", "file": "src/calc/model.js", "from": "  return rec.value;\n}", "to": "  return 0.05;\n}"},
+ {"name": "v01_riskcoeff_back_in_base", "file": "src/react/formState.js", "from": "doseSource, portionG", "to": "doseSource, riskCoeff: '0.05', portionG"},
+ {"name": "v01_select_back_in_form", "file": "src/react/Form.jsx", "from": "<label>Возраст <select id=\"age\"", "to": "<label>Коэффициент риска, Зв⁻¹ <select id=\"riskCoeff\"></select></label><label>Возраст <select id=\"age\""}
+]

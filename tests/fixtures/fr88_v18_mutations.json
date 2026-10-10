@@ -1,0 +1,80 @@
+[
+ {
+  "name": "Z84 (v18, п. 3): срок питания без верхней границы — ряд на миллиарды лет, нехватка памяти",
+  "file": "src/calc/lifetime.js",
+  "from": "y >= 1 && y <= MAX_PERIOD_YEARS ? y : null;",
+  "to": "y >= 1 ? y : null;"
+ },
+ {
+  "name": "Z86 (v18, п. 3): масса продукта за год без разумной границы (порция 1e10 г — доза)",
+  "file": "src/calc/input_check.js",
+  "from": "massKgPerYear: 3650",
+  "to": "massKgPerYear: 1e12"
+ },
+ {
+  "name": "Z87 (v18, п. 3): активность без разумной верхней границы (1e13 Бк/кг — доза)",
+  "file": "src/calc/input_check.js",
+  "from": "activityBqPerKg: 1e12",
+  "to": "activityBqPerKg: 1e20"
+ },
+ {
+  "name": "Z88 (v18, п. 3): неопределённость в миллиарды процентов принимается",
+  "file": "src/calc/input_check.js",
+  "from": "relUncertainty: 10",
+  "to": "relUncertainty: 1e9"
+ },
+ {
+  "name": "Z89 (v18, п. 3): мусор в поле даты (-1, 0, 1,5) принимается за дату",
+  "file": "src/calc/input_check.js",
+  "from": "if (v === null || v === undefined || v === '') return true;",
+  "to": "return true;"
+ },
+ {
+  "name": "Z90 (v18, п. 3): плотность загрязнения 1e13 кБк/м² принимается",
+  "file": "src/calc/input_check.js",
+  "from": "depositionKBqPerM2: 1e9 }",
+  "to": "depositionKBqPerM2: 1e300 }"
+ },
+ {
+  "name": "Z91 (v18, п. 3): пробелы в числовом поле дают нуль (Number(' ') === 0)",
+  "file": "src/ui/form.js",
+  "from": "const s = String(v).trim().replace(',', '.');",
+  "to": "const s = String(v).replace(',', '.');"
+ },
+ {
+  "name": "Z92 (v18, п. 3): мусор в поле неопределённости молча равен нулю",
+  "file": "src/ui/form.js",
+  "from": "numOrNull(v) ?? NaN",
+  "to": "numOrNull(v) ?? 0"
+ },
+ {
+  "name": "Z93 (v18, п. 3): английский текст исключения показывается пользователю",
+  "file": "src/calc/input_check.js",
+  "from": "if (e?.plain || /[А-Яа-яЁё]/.test(msg)) return msg;",
+  "to": "return msg;"
+ },
+ {
+  "name": "Z94 (v18, п. 3): отрицательная неопределённость доходит до ядра и бросает RangeError",
+  "file": "src/calc/input_check.js",
+  "from": "(!fin(u) || u < 0)",
+  "to": "!fin(u)"
+ },
+ {
+  "name": "Z95 (v18, п. 2; v24 п. 4): в список запрещённых фрагментов снимка внесён маркер, который уже есть в файлах tests/ (нейтральная строка, внутренних имён нет)",
+  "file": "tools/make_public_snapshot.py",
+  "from": "FORBIDDEN = re.compile(r\"",
+  "to": "FORBIDDEN = re.compile(r\"ZZMARK24|"
+ },
+ {
+  "name": "Z97 (v18, п. 4): раздел справки «Известные ограничения» переименован (каркас потерян)",
+  "file": "sources.html",
+  "from": "<h2 id=\"limits\">Известные ограничения</h2>",
+  "to": "<h2 id=\"limits\">Ограничения</h2>"
+ },
+ {
+  "name": "Z96 (v18, п. 2): тест источников снова читает локальные файлы без просьбы",
+  "file": "tests/fr83_w01_files.test.js",
+  "from": "process.env.FR_CHECK_LOCAL === '1' && existsSync(",
+  "to": "existsSync("
+ }
+]

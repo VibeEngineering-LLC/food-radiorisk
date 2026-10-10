@@ -1,0 +1,6 @@
+[
+ {"name": "v18_life_row_shows_tenth_of_R", "file": "src/react/LifeRisks.jsx", "from": "f: r => fmtPerMillion(r.p)", "to": "f: r => fmtPerMillion(r.kind === 'product' ? r.p / 10 : r.p)"},
+ {"name": "v18_life_row_shows_first_year_only", "file": "src/calc/life_risks.js", "from": "p: R, code: null", "to": "p: result.totals.riskPerYear, code: null"},
+ {"name": "v18_life_tab_forbidden_phrase", "file": "src/ui/texts_v.json", "from": "считать приемлемым.\",", "to": "считать приемлемым. Это пренебрежимо малый риск.\","},
+ {"name": "v18_cmp_tab_forbidden_phrase", "file": "src/ui/texts_v.json", "from": "тот же исход — смерть.\",", "to": "тот же исход — смерть. Это ваш риск.\","}
+]

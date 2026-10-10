@@ -1,0 +1,7 @@
+[
+ {"name": "d14_period_below_one_allowed", "file": "src/calc/lifetime.js", "from": "Number.isFinite(y) && y >= 1 ? y : null", "to": "Number.isFinite(y) && y > 0 ? y : null"},
+ {"name": "d14_empty_means_one", "file": "src/ui/form.js", "from": "numOrNull(raw.years), // #FR-81 D14", "to": "(numOrNull(raw.years) ?? 1), // #FR-81 D14"},
+ {"name": "d14_error_not_raised", "file": "src/calc/model.js", "from": "if (periodYears(input) === null) errors.push(", "to": "if (false) errors.push("},
+ {"name": "d15_portion_check_lost", "file": "src/calc/model.js", "from": "if (!Number.isFinite(input.portionKg) || input.portionKg < 0) errors.push(", "to": "if (false) errors.push("},
+ {"name": "d15_frequency_check_lost", "file": "src/calc/model.js", "from": "if (!Number.isFinite(input.portionsPerYear) || input.portionsPerYear < 0) errors.push(", "to": "if (false) errors.push("}
+]

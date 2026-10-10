@@ -1,0 +1,5 @@
+[
+ {"name": "y90_never_included", "file": "src/calc/model.js", "from": "if (input.includeY90) yearly =", "to": "if (false) yearly ="},
+ {"name": "y90_ratio_inverted", "file": "src/calc/model.js", "from": "ratio: ys[0].eSvPerBq / yearly[0].eSvPerBq", "to": "ratio: yearly[0].eSvPerBq / ys[0].eSvPerBq"},
+ {"name": "y90_screen_line_lost", "file": "src/react/Result.jsx", "from": "Иттрий-90 в продукте при", "to": "Иттрий при"}
+]

@@ -1,0 +1,5 @@
+[
+ {"name": "p210_years_not_normalized", "file": "src/calc/model.js", "from": "input = { ...input, years: period.years };", "to": ""},
+ {"name": "p210_period_not_reported", "file": "src/calc/model.js", "from": "ok: true, errors, warnings, rows, period,", "to": "ok: true, errors, warnings, rows,"},
+ {"name": "p210_lifetime_span_ignored", "file": "src/calc/lifetime.js", "from": "if (input.lifetime) return input.lifetime.toAge - input.lifetime.fromAge;", "to": "if (input.lifetime) return input.years;"}
+]
