@@ -3,7 +3,14 @@
 // Название записи для сообщений: «продукт — способ», а не служебный id
 // #FR-88 v22 (D-4): название продукта записи — русское, как в списке формы (food_ru.json), а не английское из источника
 import FOOD_RU from '../ui/food_ru.json' with { type: 'json' };
-const procName = (r) => [FOOD_RU[r.food] ?? r.food, r.process_ru].filter(Boolean).join(' — ') || r.id;
+import SHORT from '../ui/source_short.json' with { type: 'json' };
+import { locRu } from '../ui/ru.js';
+// #FR-106 v46: во внешний текст — не внутренний id записи данных
+const procName = (r) => [FOOD_RU[r.food] ?? r.food, r.process_ru].filter(Boolean).join(' — ') || 'способ обработки';
+/** #FR-106 v46: пояснение к записи с аномалией источника — без внутренних пометок («текстовый слой», номера строк, пути); исходный текст остаётся только в данных */
+export const ANOMALY_NOTE = 'в источнике отмечена аномалия данных (вероятная опечатка или расхождение значений); значение использовать с осторожностью';
+/** #FR-106 v46: «источник, место» для сообщений: краткое название вместо кода, место — через locRu (без файловых путей и номеров строк) */
+export const sourceWhere = (rec) => { const loc = locRu(rec.loc); return [SHORT[rec.source] || rec.source, loc].filter(Boolean).join(', '); };
 
 export function combineFr(items) {
   const cum = items.filter(i => i.rec.cumulative === true);
@@ -45,7 +52,7 @@ export function resolveProcessing(records, processing, prov, warn, nuclide = nul
 
       // #FR-88 v19 (D-029, Q1): запись «радионуклиды (не уточнено)» к конкретному нуклиду не применяется — Fr = 1 и сообщение
       if (nuclide && isGenericNuclide(pRec)) {
-        warn(`обработка «${procName(pRec)}»: коэффициент перехода для ${nuclide} не установлен (в источнике ${pRec.source}, ${pRec.loc} значение дано для радионуклидов вообще) — Fr = 1`);
+        warn(`обработка «${procName(pRec)}»: коэффициент перехода для ${nuclide} не установлен (в источнике ${sourceWhere(pRec)} значение дано для радионуклидов вообще) — Fr = 1`);
         continue;
       }
 
@@ -105,7 +112,7 @@ export function resolveProcessing(records, processing, prov, warn, nuclide = nul
           level: pRec.level,
           value: null,
           unit: null,
-          note: pRec.source_anomaly || 'уровень не ✅'
+          note: pRec.source_anomaly ? ANOMALY_NOTE : 'уровень не ✅'
         });
       }
     }

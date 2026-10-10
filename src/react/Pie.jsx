@@ -1,4 +1,5 @@
 import { linearAngles, fmtShare } from '../calc/summary_charts.js';
+import { calloutLayout } from './pie_callout.js';
 
 // вспомогательные функции: полярные координаты и округление
 const rad = (deg) => (deg * Math.PI) / 180;
@@ -74,12 +75,16 @@ export default function Pie({ id, title, slices, valueHead = 'Значение',
             const e2 = pt(cx, cy, r + 20, mid);
             const t = pt(cx, cy, r + 26, mid);
             const anchor = t.x >= cx ? 'start' : 'end';
-            const text = `${s.callout ?? (s.label.split(' ')[0] === 'Питание' ? 'Питание' : s.label)}: ${fmtShare(s.share)}`; // выноска с названием продукта (оператор)
+            const label = s.callout ?? (s.label.split(' ')[0] === 'Питание' ? 'Питание' : s.label); // выноска с названием продукта (оператор)
+            // #FR-107: длинное название переносится на строки (и при нужде мельчает), подпись целиком внутри ширины SVG (600), значение доли — последним неразрывным куском
+            const co = calloutLayout({ label, share: fmtShare(s.share), x: r2(t.x), anchor, width: 600 });
+            const y0 = r2(t.y - (co.lines.length - 1) * co.lineHeight / 2);
             return (
               <g key={'co-' + s.id}>
                 <line className="pie-lead" x1={r2(e1.x)} y1={r2(e1.y)} x2={r2(e2.x)} y2={r2(e2.y)} />
-                <text className="pie-callout" x={r2(t.x)} y={r2(t.y)} textAnchor={anchor} dominantBaseline="middle" fontSize={15}>
-                  <title>{tip(s)}</title>{text}
+                <text className="pie-callout" x={co.x} y={y0} textAnchor={anchor} dominantBaseline="middle" fontSize={co.font}>
+                  <title>{tip(s)}</title>
+                  {co.lines.map((ln, k) => <tspan key={k} x={co.x} dy={k === 0 ? 0 : co.lineHeight}>{k < co.lines.length - 1 ? ln + ' ' : ln}</tspan>)}
                 </text>
               </g>
             );

@@ -122,7 +122,7 @@ export function depositionHtml(rows) {
         const rangeCi = `${end(rg?.ciPerKm2.lo)} – ${end(rg?.ciPerKm2.hi, kD.unbounded)}`;
 
         const kp = d.summary ? `сводная оценка по ${d.summary.used} записям КП (${d.summary.sources} ист.): медиана ${cD}; квартили (25–75 %) ${fmtNum(kD.min)} – ${fmtNum(kD.max)}; min–max ${fmtNum(d.summary.fullMin)} – ${fmtNum(d.summary.fullMax)} кБк/м². Это разброс по источникам КП, а не погрешность оценки; «диапазон D» справа — квартили, расширенные на погрешность измерения${d.summary.early ? `; записи 1986 г. не учтены — ${d.summary.early}` : ''}${d.summary.notStated ? `; основа массы по выводу — ${d.summary.notStated}` : ''}` : null;
-        html += `<tr><td>${esc(r.nuclide)}</td><td>${kp ? esc(kp) : `<code>${esc(d.transferId)}</code>`}</td><td>${esc(d.summary ? 'по записи' : basis)}</td><td class="num">${esc(act)}</td><td class="num">${esc(cD)}</td><td class="num">${esc(minD)} – ${esc(maxD)}</td><td class="num">${esc(rangeCi)}</td></tr>`;
+        html += `<tr><td>${esc(r.nuclide)}</td><td>${kp ? esc(kp) : d.itemName ? esc(d.itemName) : `<code>${esc(d.transferId)}</code>`}</td><td>${esc(d.summary ? 'по записи' : basis)}</td><td class="num">${esc(act)}</td><td class="num">${esc(cD)}</td><td class="num">${esc(minD)} – ${esc(maxD)}</td><td class="num">${esc(rangeCi)}</td></tr>`;
     }
 
     html += '</table></div>';

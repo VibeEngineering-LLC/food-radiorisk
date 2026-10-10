@@ -8,7 +8,11 @@ import { productEntry, normIdFor, matchProduct } from './products.js';
 import { normCodeFor } from './catalog.js';
 import { interventionLevels } from './intervention.js';
 import { pickNormRecord, isP4, groupLabel, T044_PREFIX } from './norms.js';
-import { resolveProcessing } from './processing.js';
+import { resolveProcessing, ANOMALY_NOTE } from './processing.js';
+// #FR-106 v46: название записи перехода для сообщений — продукт (и нуклид), не внутренний id данных
+// #FR-106 v46: сообщения sample.js — английские и с внутренним id записи; на экран — по-русски без id (прежний вывод e.message показывал «coefficient unit not established (trs472_…)»)
+const depErrRu = (e) => /unit not established/.test(e?.message || '') ? 'у выбранного коэффициента перехода единица измерения не установлена' : /no coefficient value/.test(e?.message || '') ? 'у выбранного коэффициента перехода нет значения' : 'выбранный коэффициент перехода не подходит для оценки загрязнения';
+const tName =(r) => [r.item_ru, r.nuclide].filter(Boolean).join(', ') || 'запись перехода';
 import { isNatural, LIMIT_YEAR_SV, LIMIT_LIFE_SV } from './origin.js';
 import { AGE_BANDS, periodYears } from './lifetime.js';
 import { yearPlan, DAYS_PER_YEAR, NOMINAL_AGE, avg5, sumSeries } from './years.js';
@@ -244,8 +248,8 @@ function rowFor(data, input, n, warnings, riskCoeff) {
     }
     basisNote(tRec, 'переход');
     if (tRec.level !== '✅' || tRec.source_anomaly) {
-      warn(`коэффициент ${tRec.id}: уровень проверки ${tRec.level}${tRec.source_anomaly ? ', аномалия источника' : ''}`);
-      prov.push({ step: 'переход', id: tRec.id, source: tRec.source, loc: tRec.loc, level: tRec.level, value: null, unit: null, note: tRec.source_anomaly || 'уровень не ✅' });
+      warn(`коэффициент перехода «${tName(tRec)}»: уровень проверки ${tRec.level}${tRec.source_anomaly ? ', аномалия источника' : ''}`);
+      prov.push({ step: 'переход', id: tRec.id, source: tRec.source, loc: tRec.loc, level: tRec.level, value: null, unit: null, note: tRec.source_anomaly ? ANOMALY_NOTE : 'уровень не ✅' });
     }
   }
 
@@ -257,7 +261,7 @@ function rowFor(data, input, n, warnings, riskCoeff) {
     // #FR-44: «выведена косвенно» — число надёжное, основа следует из методики источника: пояснение в провенансе простыми словами, без жёлтого предупреждения;
     // «принята» — в источнике опоры нет, предупреждение остаётся
     const basis = tRec.mass_basis === 'dry' ? 'сухую' : 'свежую';
-    if (st === 'assumed') warn(`КП ${tRec.item_ru || tRec.id}: в источнике не сказано, на какую массу он дан; принята ${basis} масса без опоры на текст источника`);
+    if (st === 'assumed') warn(`КП «${tName(tRec)}»: в источнике не сказано, на какую массу он дан; принята ${basis} масса без опоры на текст источника`);
     const what = st === 'inferred' ? `в источнике прямо не сказано, на какую массу дан КП; принята ${basis} масса по методике автора` : `в источнике не сказано, на какую массу дан КП; принята ${basis} масса без опоры на текст`;
     prov.push({ step, id: tRec.id, source: tRec.source, loc: tRec.loc, level: st === 'assumed' ? '⚠️' : null, value: null, unit: null, note: `${what}. ${tRec.mass_basis_note}` });
   }
@@ -301,13 +305,14 @@ function rowFor(data, input, n, warnings, riskCoeff) {
       try {
         depEst = depositionEstimate(atSampleBqPerKg, tRec, input.product?.state === 'dried' ? 'dried' : 'fresh', input.dryMatterPercent, input.dryingFactor);
         depEst.range = depositionBounds(depEst.kBqPerM2, relA);
+        depEst.itemName = tName(tRec); // #FR-106 v46: название вместо внутреннего id записи в таблице «Оценка плотности загрязнения»
         prov.push({ step: 'оценка загрязнения', what: tRec.item_ru, id: tRec.id, source: tRec.source, loc: tRec.loc, level: tRec.level, value: depEst.coeffM2PerKg.central ?? depEst.coeffM2PerKg.min ?? depEst.coeffM2PerKg.max, unit: 'm2/kg' });
         basisNote(tRec, 'оценка загрязнения');
-        if (tRec.level !== '✅' || tRec.source_anomaly) warn(`оценка загрязнения: КП ${tRec.id}, уровень проверки ${tRec.level}`);
+        if (tRec.level !== '✅' || tRec.source_anomaly) warn(`оценка загрязнения: КП «${tName(tRec)}», уровень проверки ${tRec.level}`);
       } catch (e) {
         // сообщения ядра — на английском; пользователю — причина по-русски
         const dried = (input.product?.state || 'fresh') === 'dried' && !Number.isFinite(input.dryingFactor);
-        warn(`оценка загрязнения не выполнена: ${dried ? 'для сушёного продукта не задан коэффициент концентрирования при сушке (вкладка «1 · Продукт и проба», поле «Коэффициент концентрирования при сушке»)' : e.message}`);
+        warn(`оценка загрязнения не выполнена: ${dried ? 'для сушёного продукта не задан коэффициент концентрирования при сушке (вкладка «1 · Продукт и проба», поле «Коэффициент концентрирования при сушке»)' : depErrRu(e)}`);
       }
     }
   }
