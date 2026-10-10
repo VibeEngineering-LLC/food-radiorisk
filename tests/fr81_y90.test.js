@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { run } from './fr81_helpers.js';
 import { screen } from './render_scenario.js';
-const SRC = ['src/react/Result.jsx', 'default', (result, input) => ({ result, input, meta: null, initialTab: 'src' })]; // #FR-81 V13: таблица по нуклидам — на вкладке «Расчёт и источники»
+const SRC = ['src/react/Result.jsx', 'default', (result, input) => ({ result, input, meta: null, initialTab: 'calc' })]; // #FR-92: таблицы по нуклидам — на вкладке «Подробный расчёт" // #FR-81 V13: таблица по нуклидам — на вкладке «Расчёт и источники»
 
 const go = (over = {}) => run(null, 'молоко', [['Sr-90', 20]], { age: '5y', lifetime: { fromAge: 3, toAge: 13 }, years: 1, constantActivity: true, portionKg: 0.3, portionsPerYear: 365, ...over }).rows[0];
 const near = (a, b) => assert.ok(Math.abs(a - b) <= 1e-12 * Math.abs(b), `${a} ≠ ${b}`);

@@ -36,6 +36,12 @@ fieldset.gbox label:not(.opt):not(.check) { display: grid; grid-template-columns
 details.prep label:not(.opt):not(.check) { display: grid; grid-template-columns: 150px 72px auto; gap: 8px; align-items: center; margin: 0; font-size: 12px; color: var(--ink); }
 fieldset.gbox label.r3:not(.opt):not(.check) { grid-template-columns: 150px 72px auto; }
 fieldset.gbox label.r132:not(.opt):not(.check) { grid-template-columns: 132px minmax(0, 1fr); }
+/* #FR-90: галочка и её текст — одна строка (галочка слева); глобальное label { flex-direction: column } из styles.css ставило галочку НАД текстом */
+fieldset.gbox label.check { display: flex; flex-direction: row; align-items: flex-start; gap: 6px; margin: 2px 0; font-size: 12px; line-height: 1.35; color: var(--ink); }
+fieldset.gbox label.check input[type=checkbox] { flex: none; margin-top: 2px; }
+/* #FR-90: поле даты вмещает «дд.мм.гггг» и значок календаря целиком (по умолчанию ширина поля — 72 px, как у чисел) */
+fieldset.gbox label.rdate:not(.opt):not(.check) { grid-template-columns: 150px minmax(11.5rem, max-content); }
+fieldset.gbox label.rdate input[type=date] { width: 100%; min-width: 11.5rem; font-family: var(--mono); }
 .grid2, .grid3, .fields { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
 .app input, .app select { height: 23px; box-sizing: border-box; padding: 0 4px; border: 1px solid var(--line); border-radius: 0; background: var(--card); color: var(--ink); font: inherit; width: 100%; }
 .app select { padding: 0 2px; }
@@ -138,6 +144,8 @@ ul.suggest li.active, ul.suggest li:hover { background: var(--sel); }
 .pane { width: auto; min-height: 420px; }
 #result.result { padding: 0 8px 8px; overflow: visible; flex: none; }
 fieldset.gbox label:not(.opt):not(.check), .lrow { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+fieldset.gbox label.rdate:not(.opt):not(.check) { grid-template-columns: minmax(0, 1fr); }
+fieldset.gbox label.rdate input[type=date] { min-width: 0; max-width: 100%; }
 .statusbar .stat { flex-basis: 100%; }
 .statusbar .stat .txt { white-space: normal; }
 }

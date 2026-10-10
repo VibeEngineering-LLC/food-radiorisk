@@ -577,7 +577,7 @@ td.cmp-me .cmpbar i { background: var(--warn); }
 td.org-hi { font-weight: 600; background: color-mix(in srgb, var(--warn) 14%, transparent); }
 td.org-hi .cmpbar i { background: var(--warn); }
 .cmp-eq, .cmp-cancer { margin: 6px 0; max-width: 78ch; }
-.cmp-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: .75rem; margin: .5rem 0 1rem; }
-.cmp-inputs label { display: flex; flex-direction: column; gap: .25rem; font-weight: 700; color: var(--ink); }
+.cmp-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .75rem; margin: .5rem 0 .5rem; align-items: end; } /* #FR-91 v33: подписи сверху, поля внизу на одной линии (align-items: end), 4 поля в ряд на десктопе, 2×2 / в столбик на узком */
+.cmp-inputs label { display: flex; flex-direction: column; justify-content: flex-end; gap: .25rem; font-weight: 700; color: var(--ink); }
 .cmp-inputs input { font-weight: 400; width: 100%; max-width: 20rem; }
 @media (max-width: 640px) { .kgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .kgrid:not(.one) > div:first-child { display: none; } .kgrid .kr { grid-column: 1 / -1; } }

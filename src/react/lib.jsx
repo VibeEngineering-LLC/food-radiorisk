@@ -1,6 +1,7 @@
 // Библиотечный вход для Claude Design (/design-sync): только самостоятельные компоненты результата, со стилями калькулятора
 import '../ui/styles.css';
 import '../ui/window.css'; // D-019: вид окна настольной программы — тот же, что в калькуляторе
+import '../ui/charts.css'; // #FR-89: круговые диаграммы вкладки «Сводка»
 import { Kpi, DataTable } from './Result.jsx';
 import { RiskSummary, VerdictBox, DoseBlock } from './Summary.jsx';
 

@@ -1,9 +1,11 @@
 // #FR-81 V08 (D-022): вкладка «Бытовые риски»: вероятность умереть от обычных причин за те же N лет, что длится питание, начиная с того же возраста a (causeProb по таблице дожития Росстата и долям причин ВОЗ, src/calc/life_table.js), и строка риска от питания R; исход везде — смерть, без отношений «во сколько раз» и «1 из»
 import { makeLifeTable, causeProb, BG_CODE } from './life_table.js';
 import { NOMINAL_AGE } from './years.js';
+import { horizonYears } from './compare.js';
+import { lifetimeRows } from './life_lifetime.js';
 
-// Порядок строк на вкладке: новообразования (рак), дорожные происшествия, падения, утопления, огонь, случайные отравления (решение В11)
-export const DOMESTIC_CODES = [BG_CODE, '1096', '1097', '1098', '1099', '1100'];
+// Порядок строк на вкладке: новообразования (рак), болезни системы кровообращения (инфаркт, инсульт; #FR-89 v27, оператор), дорожные происшествия, падения, утопления, огонь, случайные отравления (решение В11)
+export const DOMESTIC_CODES = [BG_CODE, '1064', '1096', '1097', '1098', '1099', '1100'];
 
 // Последний узел таблицы дожития; для конечного b > 85 causeProb бросает RangeError, поэтому срок за пределами 85 лет обрезается (решение исполнителя; в объекте результата флаг capped)
 export const LAST_AGE = 85;
@@ -36,7 +38,10 @@ export function lifeRisks(result, input, records) {
       rows.push({ id: 'cs_' + code, kind: 'cause', label: rec.label_ru, p: causeProb(table, code, a, b), code });
     }
 
-    return { a, b, N, n: b - a, capped, year: lt.year, rows };
+    // #FR-89: пожизненный горизонт для диаграммы «Сводки» — тот же H, что на вкладке «Сравнение с облучением» (взрослый — 50 лет, ребёнок — до 70 лет возраста); причины — от a до a+H (не дальше 85 лет)
+    const H = Math.max(0, horizonYears(input)), bL = Math.min(a + H, LAST_AGE);
+    const lifetime = { a, b: bL, H, capped: a + H > LAST_AGE, ...lifetimeRows(records, table, a, bL, R) }; // #FR-93 v31: все непересекающиеся причины + «прочие» (1000 минус показанные) + справочные строки
+    return { a, b, N, n: b - a, capped, year: lt.year, rows, lifetime };
   } catch {
     return null;
   }

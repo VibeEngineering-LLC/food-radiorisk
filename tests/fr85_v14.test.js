@@ -279,7 +279,7 @@ test('п. 7: вода колодезная', async () => {
   const r2 = computeScenario(data, inputFor('water', 'вода питьевая бутилированная', [['Cs-137', 5]]));
   assert.equal(r2.limits.intervention, null, 'вода питьевая intervention');
 
-  const html = strip(await renderJsx('src/react/Result.jsx', 'default', { result: r, input, meta: { datasets: 0, records: 0, sha: '00000000' }, initialTab: 'uv' }));
+  const html = strip(await renderJsx('src/react/Result.jsx', 'default', { result: r, input, meta: { datasets: 0, records: 0, sha: '00000000' }, initialTab: 'norms' })); // #FR-89: уровни вмешательства — вкладка «Соответствие нормам»
   assert.ok(html.includes(T.VERDICT_UV), 'VERDICT_UV');
   assert.ok(html.includes('Уровни вмешательства'), 'Уровни вмешательства');
   assert.ok(html.includes('НРБ-99/2009'), 'НРБ-99/2009');

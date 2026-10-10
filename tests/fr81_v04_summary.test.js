@@ -3,11 +3,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { data, inputFor } from './fr81_helpers.js';
 import { computeScenario } from '../src/calc/model.js';
-import { renderJsx } from './render_helper.js';
+import { renderTabs } from './fr89_render.js';
 
 const META = { datasets: 0, records: 0, sha: '00000000' };
 const norm = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&nbsp;|\s+/g, ' ');
-const draw = async (input, patch = {}) => { const result = { ...computeScenario(data, input), ...patch }; const html = await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META }); return { html, text: norm(html), result }; };
+const draw = async (input, patch = {}) => { const result = { ...computeScenario(data, input), ...patch }; const html = await renderTabs({ result, input, meta: META }); return { html, text: norm(html), result }; }; // #FR-89: блок A — вкладка «Сводка», B и C — «Соответствие нормам»; порядок A→B→C сохраняется порядком вкладок
 const main = (text) => text.slice(0, text.indexOf('Нормы РФ и ЕАЭС'));
 const at = (text, s) => { const i = text.indexOf(s); assert.ok(i >= 0, 'нет в тексте: ' + s); return i; };
 

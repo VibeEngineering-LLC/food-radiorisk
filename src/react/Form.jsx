@@ -187,7 +187,7 @@ export default function Form({ choices, raw, setRaw, tab, setTab, onPreset, onEx
         {/* #FR-81 шаг 4а: Y-90 при Sr-90 — отдельная добавка, по умолчанию не включена */}
         <label className="check"><input type="checkbox" id="includeY90" checked={!!raw.includeY90} onChange={(e) => setRaw(r => S.setField(r, choices, 'includeY90', e.target.checked))} /> Добавить Y-90 в равновесии с Sr-90 (верхняя оценка для хранившегося продукта)</label>
         {/* #FR-81 D18: распад от даты пробы до даты начала питания, затем по годам питания (D08) */}
-        <label className="r3">Дата начала питания <input id="eatDate" type="date" value={raw.eatDate} onChange={set('eatDate')} /></label>
+        <label className="r3 rdate">Дата начала питания<input id="eatDate" type="date" value={raw.eatDate} onChange={set('eatDate')} /></label>
         {/* #FR-81 D08: физический распад продукта по годам учитывается всегда, кроме явной отметки */}
         <label className="check"><input type="checkbox" id="constAct" checked={!!raw.constAct} onChange={(e) => setRaw(r => S.setField(r, choices, 'constAct', e.target.checked))} /> Активность продукта постоянна во все годы (распад не учитывать) — для лесных грибов и ягод</label>
         {/* #FR-65: питание с начального возраста до 70 лет, коэффициент e(g) меняется с возрастом (нужны все шесть групп ICRP 119) */}

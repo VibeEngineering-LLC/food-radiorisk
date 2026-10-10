@@ -7,12 +7,13 @@ import { withRadon, withDwelling, startAge, productRatios } from '../calc/compar
 import { radonRisk } from '../vendor/radon_risk/radonRisk.mjs';
 import { yearsWord, sourceFull } from '../ui/render.js';
 import { DataTable } from './Result.jsx';
+import { DEFAULT_RADON_C, DEFAULT_DWELL_U, DEFAULT_XRAY_PER_YEAR, DEFAULT_FLIGHT_PER_YEAR } from '../calc/summary_charts.js';
 
 const barPos = (sv) => sv > 0 ? Math.max(0, Math.min(100, (Math.log10(sv * 1e3) + 3) / 6 * 100)) : 0;
 const p3 = (x) => (x * 100).toLocaleString('ru-RU', { maximumSignificantDigits: 3 });
 const BASE_SOURCES = ['ICRP103_ru', 'HPS_PS010', 'UNSCEAR2008']; // #FR-81 V09: МНИОИ (заболеваемость) убран вместе с 0,1695
 
-export default function Compare({ comparison, input, radonC, setRadonC, dwellU, setDwellU }) {
+export default function Compare({ comparison, input, radonC, setRadonC, dwellU, setDwellU, xrayN, setXrayN, flightN, setFlightN }) {
   if (!comparison) return null;
   const H = comparison.horizonYears;
   const okC = Number.isFinite(radonC) && radonC >= 1 && radonC <= 10000;
@@ -32,9 +33,13 @@ export default function Compare({ comparison, input, radonC, setRadonC, dwellU, 
   return <>
     <p className="hint">{fill(T.CMP_INTRO, { H })}</p>
     <div className="cmp-inputs">
-      <label>Мощность дозы в вашем жилище, мкЗв/ч<input type="number" min="0" max="100" step="any" placeholder="показание дозиметра" value={Number.isFinite(dwellU) ? dwellU : ''} onChange={e => setDwellU(e.target.valueAsNumber)} /></label>
-      <label>Объёмная активность (ОА) радона-222 в вашем жилище, Бк/м³<input type="number" min="1" max="10000" step="any" value={Number.isFinite(radonC) ? radonC : ''} onChange={e => setRadonC(e.target.valueAsNumber)} /></label>
+      <label>Мощность дозы в жилище, мкЗв/ч<input type="number" min="0" max="100" step="any" placeholder="показание дозиметра" value={Number.isFinite(dwellU) ? dwellU : ''} onChange={e => setDwellU(e.target.valueAsNumber)} /></label>
+      <label>ОА радона-222 в жилище, Бк/м³<input type="number" min="1" max="10000" step="any" value={Number.isFinite(radonC) ? radonC : ''} onChange={e => setRadonC(e.target.valueAsNumber)} /></label>
+      {/* #FR-89 v29: частота разовых источников для диаграммы (а) «Сводки»; общее состояние в Result.jsx */}
+      <label>Снимков грудной клетки в год<input id="xrayN" type="number" min="0" max="365" step="any" value={Number.isFinite(xrayN) ? xrayN : ''} onChange={e => setXrayN(e.target.valueAsNumber)} /></label>
+      <label>Перелётов по 3 ч в год<input id="flightN" type="number" min="0" max="365" step="any" value={Number.isFinite(flightN) ? flightN : ''} onChange={e => setFlightN(e.target.valueAsNumber)} /></label>
     </div>
+    <p className="hint" id="cmpFieldsHint">{fill(T.CMP_FIELDS_HINT, { U: fmtNum(DEFAULT_DWELL_U), C: fmtNum(DEFAULT_RADON_C), x: DEFAULT_XRAY_PER_YEAR, f: DEFAULT_FLIGHT_PER_YEAR })}</p>
     {Number.isFinite(dwellU) && !okU && <p className="msg warn">Строка «фон в вашем жилище» не показана: введите мощность дозы больше 0 и не более 100 мкЗв/ч.</p>}
     {!okC && <p className="msg warn">Строка «радон в вашем жилище» не показана: введите ОА радона-222 от 1 до 10000 Бк/м³.</p>}
     {home && home.warnings.length > 0 && <p className="msg warn">{home.warnings.join(' ')}</p>}

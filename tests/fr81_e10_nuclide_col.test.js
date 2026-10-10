@@ -18,7 +18,8 @@ test('E10: отчёт — заголовок таблицы зарубежных
 });
 test('E10: экран (Result.jsx) — колонка «Нуклид» в таблице зарубежных норм', async () => {
   // #FR-81 P2-9: рендер вкладки «Нормы других стран» (продукт без группы норм РФ), а не чтение исходника .jsx
-  const { html } = await screen({ product: 'xyz' });
+  // #FR-89: таблица зарубежных норм — на вкладке «Соответствие нормам»
+  const { html } = await screen({ product: 'xyz', comp: ['src/react/Result.jsx', 'default', (result, input) => ({ result, input, meta: { datasets: 0, records: 0, sha: '00000000' }, initialTab: 'norms' })] });
   assert.match(html, /Нуклид Юрисдикция/);
   assert.match(html, /Cs-137/);
 });

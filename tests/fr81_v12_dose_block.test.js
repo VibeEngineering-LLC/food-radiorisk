@@ -4,10 +4,11 @@ import assert from 'node:assert/strict';
 import { data, inputFor } from './fr81_helpers.js';
 import { computeScenario } from '../src/calc/model.js';
 import { renderJsx } from './render_helper.js';
+import { renderTabs } from './fr89_render.js';
 
 const META = { datasets: 0, records: 0, sha: '00000000' };
 const norm = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&nbsp;|\s+/g, ' ');
-const draw = async (input) => { const result = computeScenario(data, input); const html = await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META }); return norm(html); };
+const draw = async (input) => { const result = computeScenario(data, input); const html = await renderTabs({ result, input, meta: META }); return norm(html); }; // #FR-89: блок C — на вкладке «Соответствие нормам»
 const S1 = () => inputFor('mushrooms_dried', 'грибы сушёные', [['Cs-137', 5000, 500]], { portionKg: 0.02, portionsPerYear: 25, years: 10, constantActivity: true, dryingFactor: 10, product: { name: 'грибы сушёные', state: 'dried' } });
 const S2 = () => inputFor('milk', 'молоко', [['Cs-137', 50, 5], ['Sr-90', 10, 1]], { age: '5y', portionKg: 0.5, portionsPerYear: 365, years: 10, lifetime: { fromAge: 3, toAge: 13 } });
 const S5 = () => inputFor('mushrooms_fresh', 'грибы свежие', [['Cs-137', 400, 40]], { portionKg: 0.3, portionsPerYear: 60, years: 1 });

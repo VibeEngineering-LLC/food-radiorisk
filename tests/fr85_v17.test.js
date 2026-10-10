@@ -108,7 +108,7 @@ test('B4-1: подпись масла какао — отдельное поле
     }
 
     // (e) Проверка рендера JSX
-    const html = strip(await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META, initialTab: 'ru' }));
+    const html = strip(await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META, initialTab: 'norms' })); // #FR-89: нормы РФ — вкладка «Соответствие нормам»
     assert.ok(html.includes(CAPTION));
 
     // (f) Проверка отсутствия подписи для обычного масла
@@ -175,7 +175,7 @@ test('B4-9: таблица уровней вмешательства — без 
     const result = computeScenario(data, input);
     assert.ok(result.limits.intervention);
 
-    const html = strip(await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META, initialTab: 'uv' }));
+    const html = strip(await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META, initialTab: 'norms' })); // #FR-89: уровни вмешательства — вкладка «Соответствие нормам»
     assert.ok(html.includes('НРБ-99/2009, Прил. 2а'));
     assert.ok(!html.includes('()'));
     assert.ok(!html.includes('( )'));

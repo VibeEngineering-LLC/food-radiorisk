@@ -4,13 +4,13 @@ import assert from 'node:assert/strict';
 import { fmtBpm, fmtBLine } from '../src/ui/fmt.js';
 import { data, inputFor } from './fr81_helpers.js';
 import { computeScenario } from '../src/calc/model.js';
-import { renderJsx } from './render_helper.js';
+import { renderTabs } from './fr89_render.js';
 import { buildReport } from '../src/ui/report.js';
 
 const META = { datasets: 0, records: 0, sha: '00000000' };
 const norm = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&nbsp;|\s+/g, ' ');
 const mk = (da) => inputFor('mushrooms_fresh', 'грибы свежие', [['Cs-137', 400, da]], { portionKg: 0.3, portionsPerYear: 60, years: 1 });
-const draw = async (input) => { const result = computeScenario(data, input); const html = await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META }); return { text: norm(html), result, input }; };
+const draw = async (input) => { const result = computeScenario(data, input); const html = await renderTabs({ result, input, meta: META }); return { text: norm(html), result, input }; };
 const REP = (fmt, input, result) => buildReport(fmt, { input, result }, META, '2026-10-06T00:00:00.000Z').text;
 
 test('V3-1: помощники — ΔB = 0 без «±»', () => {

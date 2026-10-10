@@ -1,0 +1,44 @@
+/* #FR-89: круговые диаграммы вкладки «Сводка»: цвета не зависят от темы, сектор питания (pie-me) выделен цветом и обводкой */
+.sum-charts { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.pie { margin: 0; }
+.pie-title { margin: 6px 0; font: inherit; font-weight: 600; color: var(--head); }
+.pie-body { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px 16px; }
+.pie-svg { flex: 1 1 360px; width: 100%; max-width: 520px; height: auto; min-width: 0; overflow: visible; }
+.pie-hit { stroke: transparent; stroke-width: 18px; }
+.pie-sl:focus { outline: 2px solid var(--accent); }
+.pie-legend th:first-child, .pie-legend td:first-child, .pie-legend th.num, .pie-legend td.num { width: 1%; white-space: nowrap; }
+.pie-sl.pie-s7 { fill: #86bc86; } .pie-sw.pie-s7 { background: #86bc86; }
+.pie-sl.pie-s8 { fill: #499894; } .pie-sw.pie-s8 { background: #499894; }
+.pie-sl.pie-s9 { fill: #d37295; } .pie-sw.pie-s9 { background: #d37295; }
+.pie-sl.pie-s10 { fill: #8cd17d; } .pie-sw.pie-s10 { background: #8cd17d; }
+.pie-sl.pie-s11 { fill: #a0a0a0; } .pie-sw.pie-s11 { background: #a0a0a0; }
+.pie-sl { stroke: var(--card); stroke-width: 1; }
+.pie-sl.pie-me { stroke: var(--ink); stroke-width: 2; }
+.pie-lead { stroke: var(--ink); stroke-width: 1; }
+.pie-callout { fill: var(--ink); font-weight: 600; }
+.pie-legend { flex: 0 1 auto; width: auto; max-width: 30rem; min-width: 0; border-collapse: collapse; font-size: 12px; }
+.pie-legend th, .pie-legend td { padding: 2px 6px; border-bottom: 1px solid var(--hline); text-align: left; vertical-align: top; }
+.pie-legend .num { text-align: right; white-space: nowrap; }
+.pie-sw { display: inline-block; width: 10px; height: 10px; }
+.pie-sl.pie-s0 { fill: #4e79a7; } .pie-sw.pie-s0 { background: #4e79a7; }
+.pie-sl.pie-s1 { fill: #f28e2b; } .pie-sw.pie-s1 { background: #f28e2b; }
+.pie-sl.pie-s2 { fill: #59a14f; } .pie-sw.pie-s2 { background: #59a14f; }
+.pie-sl.pie-s3 { fill: #b07aa1; } .pie-sw.pie-s3 { background: #b07aa1; }
+.pie-sl.pie-s4 { fill: #9c755f; } .pie-sw.pie-s4 { background: #9c755f; }
+.pie-sl.pie-s5 { fill: #76b7b2; } .pie-sw.pie-s5 { background: #76b7b2; }
+.pie-sl.pie-s6 { fill: #edc948; } .pie-sw.pie-s6 { background: #edc948; }
+.pie-sl.pie-me { fill: #e15759; } .pie-sw.pie-me { background: #e15759; }
+.detail-years .tablewrap { max-height: 360px; overflow: auto; }
+/* длинные заголовки колонок — в 2–3 строки (оператор); числа не переносятся */
+.pie-legend th, .rtabs .tablewrap th { white-space: normal; max-width: 10rem; vertical-align: bottom; line-height: 1.25; }
+.pie-legend td.num, .rtabs .tablewrap td.num { white-space: nowrap; }
+/* вкладка «Бытовые риски»: шкала забирает остаток ширины, причина и число — компактно (оператор) */
+.life-table { width: 100%; table-layout: auto; }
+.life-table td.life-cause { max-width: 22rem; }
+.life-table td.num, .life-table th.num { width: 1%; white-space: nowrap; }
+.life-table td.life-bar { width: 55%; min-width: 8rem; }
+.life-refs td { color: var(--muted); }
+@media print {
+  .pie { break-inside: avoid; }
+  .detail-years .tablewrap { max-height: none; overflow: visible; }
+}

@@ -1,7 +1,29 @@
+import { DEFAULT_RADON_C, DEFAULT_DWELL_U } from '../calc/summary_charts.js';
+
 // Константы конфигурации хранилища
 export const STORAGE_KEY = 'food-radiorisk:state';
 export const SCHEMA_VERSION = 1;
 export const MAX_NUCLIDES = 20;
+
+// #FR-89 v29: поля вкладки «Сравнение с облучением» (ОА радона, мощность дозы в жилище, снимки и перелёты в год) — общее состояние со «Сводкой»; хранятся отдельным ключом, старое сохранённое состояние без них не ломается
+export const EXT_KEY = 'food-radiorisk:ext';
+export const EXT_DEFAULTS = { radonC: DEFAULT_RADON_C, dwellU: DEFAULT_DWELL_U, xrayN: 1, flightN: 2 };
+export const EXT_VERSION = 2; // v2: хранится только ввод пользователя; без v (старое состояние) прежнее умолчание 100 Бк/м³ и пустое поле дозиметра переводятся на новые умолчания
+const extNum = (v, d) => (typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 1e6 ? v : d);
+export function parseExt(text) {
+  let o = null;
+  try { o = JSON.parse(text); } catch (e) { return { ...EXT_DEFAULTS }; }
+  if (!isPlainObject(o)) return { ...EXT_DEFAULTS };
+  const old = o.v !== EXT_VERSION;
+  const radonC = extNum(o.radonC, EXT_DEFAULTS.radonC);
+  return { radonC: old && radonC === 100 ? EXT_DEFAULTS.radonC : radonC, dwellU: extNum(o.dwellU, old ? EXT_DEFAULTS.dwellU : NaN), xrayN: extNum(o.xrayN, EXT_DEFAULTS.xrayN), flightN: extNum(o.flightN, EXT_DEFAULTS.flightN) };
+}
+export function loadExt() {
+  try { return parseExt(globalThis.localStorage?.getItem(EXT_KEY)); } catch (e) { return { ...EXT_DEFAULTS }; }
+}
+export function saveExt(ext) {
+  try { globalThis.localStorage?.setItem(EXT_KEY, JSON.stringify({ v: EXT_VERSION, radonC: ext.radonC, dwellU: Number.isFinite(ext.dwellU) ? ext.dwellU : null, xrayN: ext.xrayN, flightN: ext.flightN })); } catch (e) { /* хранилище недоступно — состояние не сохраняется */ }
+}
 
 // Проверка на "чистый" объект (не null, не массив)
 function isPlainObject(x) {

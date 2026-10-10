@@ -78,7 +78,7 @@ export function buildScenario(scn) {
 
 const META = { datasets: 3, records: 9, sha: 'abcdef0123456789' };
 const ISO = '2026-10-10T12:00:00.000Z';
-const TABS = ['', 'ru', 'uv', 'foreign', 'cmp', 'life', 'ref', 'src'];
+const TABS = ['sum', 'norms', 'calc', 'cmp', 'life', 'src']; // #FR-89: все вкладки результата, экран = их объединение
 
 // Собирает список ожидаемых сниппетов для одного сценария.
 function collectExpectations(input, result) {

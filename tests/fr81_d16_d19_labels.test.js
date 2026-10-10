@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { screen } from './render_scenario.js';
-const SRC = ['src/react/Result.jsx', 'default', (result, input) => ({ result, input, meta: null, initialTab: 'src' })]; // #FR-81 V13: таблица по нуклидам — на вкладке «Расчёт и источники»
+const SRC = ['src/react/Result.jsx', 'default', (result, input) => ({ result, input, meta: null, initialTab: 'calc' })]; // #FR-92: таблицы по нуклидам — на вкладке «Подробный расчёт" // #FR-81 V13: таблица по нуклидам — на вкладке «Расчёт и источники»
 
 // #FR-81 P2-9: проверяется показанный текст (серверный рендер компонентов), а не исходник .jsx
 const ORGANS = ['src/react/Organs.jsx', 'default', (r, i) => ({ organs: r.organs, input: i })];

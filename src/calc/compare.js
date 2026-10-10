@@ -70,5 +70,12 @@ export function buildComparison(records, totals, input, riskCoeff) {
   const oneYearSv = totals.doseSvPerYear, equivalents = eq(scenarioSv), equivalents1 = multi ? eq(oneYearSv) : null;
   const hrs = rec('dwell_hours'), conv = rec('dwell_h10_to_e');
   const dwell = hrs && conv ? { hours: hrs.value, h10ToE: conv.value, source: conv.source, loc: conv.loc } : null;
-  return { riskCoeff: r, horizonYears: H, scenarioSv, multi, bgSvPerYear, bgHorizonSv, rows, equivalents, equivalents1, oneYearSv, dwell, natural: Array.isArray(totals.naturalNuclides) ? totals.naturalNuclides : [] };
+  // #FR-89 v27: радон-222 и торон мирового среднего фона — из данных (UNSCEAR 2008, Annex B, Table 12), для вычитания из 2,4 мЗв/год на «Сводке»; нет обеих записей — null
+  const rn = rec('bg_radon_world'), tn = rec('bg_thoron_world');
+  const worldRadon = rn && tn ? { radonSvPerYear: rn.value * 1e-3, thoronSvPerYear: tn.value * 1e-3, source: rn.source, loc: rn.loc } : null;
+  // #FR-89 v29: составляющие среднего мирового фона (UNSCEAR 2008, Annex B, Table 12), медицина (Annex A, Table 5), разовые дозы — все из записей данных, мЗв; нет любой природной составляющей — null
+  const pv = (id) => { const x = rec(id); return x ? { msv: x.value, source: x.source, loc: x.loc } : null; };
+  const nat = { cosmic: pv('bg_cosmic_world'), terrIndoor: pv('bg_terr_indoor_world'), terrOutdoor: pv('street_external'), ingest: pv('bg_ingest_world'), inhalUT: pv('bg_inhal_ut_world') };
+  const parts = Object.values(nat).every(Boolean) ? { ...nat, medicine: pv('med_percaput_world'), xray: pv('med_chest_xray'), flight: pv('flight_3h'), naturalTotal: pv('bg_natural_world') } : null;
+  return { parts, worldRadon, riskCoeff: r, horizonYears: H, scenarioSv, multi, bgSvPerYear, bgHorizonSv, rows, equivalents, equivalents1, oneYearSv, dwell, natural: Array.isArray(totals.naturalNuclides) ? totals.naturalNuclides : [] };
 }

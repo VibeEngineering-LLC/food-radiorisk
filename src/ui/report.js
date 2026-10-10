@@ -16,7 +16,7 @@ export const FORMATS = [
 const plain = (html) => String(html).replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
 
 // #FR-83 W08: откуда взята масса продукта — из данных (по умолчанию) или введена пользователем
-function dietReportText(input, result) {
+export function dietReportText(input, result) {
   const d = result.diet;
   if (d) return fill(T.DIET_REPORT_DEFAULT, { value: fmtNum(d.value), series: seriesLabel(d.series) + (d.year ? `, ${d.year} г.` : ''), source: shortSource(d.source), loc: locRu(d.loc) }) + (d.manual ? ` Группа рациона: ${d.label}.` : ''); // #FR-85: продукт не распознан — ручной выбор помечен
   const mass = input.portionKg * input.portionsPerYear;

@@ -15,7 +15,7 @@ export const SCENARIOS = {
   S5: () => inputFor('mushrooms_fresh', 'грибы свежие', [['Cs-137', 400, 40]], { portionKg: 0.3, portionsPerYear: 60, years: 1 }),
 };
 
-export const TABS = ['', 'ru', 'foreign', 'cmp', 'life', 'ref', 'src'];
+export const TABS = ['sum', 'norms', 'calc', 'cmp', 'life', 'src']; // #FR-89: «Сводка», «Соответствие нормам», «Подробный расчёт», затем прежние
 
 export const FORBIDDEN = [
   /ваш риск/i,
@@ -55,11 +55,9 @@ export async function renderAll() {
 }
 
 export function split(text) {
-  const LABELS = ['Нормы РФ и ЕАЭС', 'Нормы других стран', 'Сравнение с облучением', 'Бытовые риски за', 'Подробно (для специалиста)', 'Расчёт и источники'];
-  const first = Math.min(...LABELS.map(l => text.indexOf(l)).filter(i => i >= 0));
-  const main = text.slice(0, first);
-  const body = text.slice(text.indexOf('Расчёт и источники') + 'Расчёт и источники'.length);
-  return { main, body };
+  // #FR-89: полосы вкладок идут сверху, тело выбранной вкладки — после последней подписи «Расчёт и источники»; прежнего «главного экрана» над вкладками нет
+  const body = text.slice(text.indexOf('Источники') + 'Источники'.length);
+  return { main: body, body };
 }
 
 export function analyse(rendered) {
@@ -70,8 +68,8 @@ export function analyse(rendered) {
 
   const areas = (entry) => {
     const list = [];
-    list.push({ name: 'main', text: split(entry.texts['']).main });
-    for (const tab of ['ru', 'foreign', 'cmp', 'life']) {
+    list.push({ name: 'main', text: split(entry.texts['sum']).main });
+    for (const tab of ['norms', 'cmp', 'life']) {
       list.push({ name: tab, text: split(entry.texts[tab]).body });
     }
     return list;
@@ -98,7 +96,8 @@ export function analyse(rendered) {
       }
     }
 
-    const mainText = split(entry.texts['']).main;
+    const mainText = split(entry.texts['sum']).main;
+    const mainAndNorms = mainText + ' ' + split(entry.texts['norms']).body; // блок C («Доза за самый нагруженный год») теперь на вкладке «Соответствие нормам»
     const fm = mainText.match(/добавило бы к ним около (\d[\d ]*(?:,\d+)?)\./);
     if (fm) {
       const number = fm[1];
@@ -112,7 +111,7 @@ export function analyse(rendered) {
     }
 
     const lifeText = split(entry.texts['life']).body;
-    const lm = lifeText.match(/\(номинальный, за весь срок питания\)\s+(\d[\d ]*(?:,\d+)?)(?=\s+Умереть)/);
+    const lm = lifeText.match(/\(номинальный, за весь срок питания\)\s+(\d[\d ]*(?:,\d+)?)(?=\s+[А-ЯЁ])/); // #FR-93: строки по возрастанию, после строки питания может идти любая причина
     if (lm) {
       const number = lm[1];
       table.push({
@@ -158,8 +157,8 @@ export function analyse(rendered) {
     }
 
     if (entry.result.totals.doseMaxYearTech !== null) {
-      const verbal = mainText.match(/Оценка по дозе самого нагруженного года \((\d[\d ,]*\s?(?:мкЗв|мЗв|Зв))/);
-      const dose = mainText.match(/Доза за самый нагруженный год: (\d[\d ,]*\s?(?:мкЗв|мЗв|Зв))/);
+      const verbal = mainAndNorms.match(/Оценка по дозе самого нагруженного года \((\d[\d ,]*\s?(?:мкЗв|мЗв|Зв))/);
+      const dose = mainAndNorms.match(/Доза за самый нагруженный год: (\d[\d ,]*\s?(?:мкЗв|мЗв|Зв))/);
       if (!verbal || !dose || verbal[1].replace(/ /g, '') !== dose[1].replace(/ /g, '')) {
         doseMismatch.push({
           scenario: name,

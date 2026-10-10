@@ -107,6 +107,21 @@
     "audit/bg-no-radon-literature-2026-10-04.md:38"
    ]
   },
+  "UNSCEAR2008_A": {
+   "title": "Sources and Effects of Ionizing Radiation. UNSCEAR 2008 Report, Vol. I, Annex A: Medical radiation exposures",
+   "title_ru": "Источники и эффекты ионизирующего излучения. Доклад НКДАР ООН 2008 г., т. I, прил. A: медицинское облучение",
+   "authors": "United Nations Scientific Committee on the Effects of Atomic Radiation",
+   "year": 2008,
+   "publisher": "United Nations, New York, 2010",
+   "doi": null,
+   "url": null,
+   "local": "audit/_lit_bg/UNSCEAR_2008_Annex-A.pdf",
+   "kind": "прочее",
+   "same_as": null,
+   "evidence": [
+    "audit/_lit_bg/UNSCEAR_2008_Annex-A.pdf, Table 5 и п. 28"
+   ]
+  },
   "RESRAD_DCH1993": {
    "title": "Data Collection Handbook to Support Modeling Impacts of Radioactive Material in Soil",
    "title_ru": "Справочник по сбору данных для моделирования воздействия радиоактивного материала в почве",

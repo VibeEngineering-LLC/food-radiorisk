@@ -3,14 +3,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { data, inputFor } from './fr81_helpers.js';
 import { computeScenario } from '../src/calc/model.js';
-import { renderJsx } from './render_helper.js';
+import { renderTabs } from './fr89_render.js';
 import { fmtCount, fmtPerMillion } from '../src/ui/fmt.js';
 
 const META = { datasets: 0, records: 0, sha: '00000000' };
 const norm = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&nbsp;|\s+/g, ' ');
 const S1 = () => inputFor('mushrooms_dried', 'грибы сушёные', [['Cs-137', 5000, 500]], { portionKg: 0.02, portionsPerYear: 25, years: 10, constantActivity: true, dryingFactor: 10, product: { name: 'грибы сушёные', state: 'dried' } });
 const S2 = () => inputFor('milk', 'молоко', [['Cs-137', 50, 5], ['Sr-90', 10, 1]], { age: '5y', portionKg: 0.5, portionsPerYear: 365, years: 10, lifetime: { fromAge: 3, toAge: 13 } });
-const draw = async (dataX, input) => { const result = computeScenario(dataX, input); const html = await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META }); const text = norm(html); return { result, main: text.slice(0, text.indexOf('Нормы РФ и ЕАЭС')) }; };
+const draw = async (dataX, input) => { const result = computeScenario(dataX, input); const html = await renderTabs({ result, input, meta: META }); const text = norm(html); return { result, main: text.slice(0, text.indexOf('Нормы РФ и ЕАЭС')) }; };
 const NO_TABLE = { ...data, life_risks: data.life_risks.filter(r => r.kind !== 'life_table' && r.kind !== 'cause_shares') };
 
 test('V07: S1 — строка фона на экране из расчёта', async () => {

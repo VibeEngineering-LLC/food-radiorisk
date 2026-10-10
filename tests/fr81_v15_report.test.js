@@ -5,7 +5,7 @@ import { data, inputFor } from './fr81_helpers.js';
 import { computeScenario } from '../src/calc/model.js';
 import { buildReport } from '../src/ui/report.js';
 import { summaryParts } from '../src/ui/summary_text.js';
-import { renderJsx } from './render_helper.js';
+import { renderTabs } from './fr89_render.js';
 
 const META = { datasets: 0, records: 0, sha: '00000000' };
 const ISO = '2026-10-06T00:00:00.000Z';
@@ -29,7 +29,7 @@ test('V15: в «Итоге» нет Ē₅, риска «с учётом вред
 test('V15: строки «Итога» совпадают со строками главного экрана (md и html, S1, S2, S5)', async () => {
   for (const input of [S1(), S2(), S5()]) {
     const result = computeScenario(data, input);
-    const screen = norm(await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META }));
+    const screen = norm(await renderTabs({ result, input, meta: META, }, ['sum', 'norms', 'calc']));
     const md = norm(report(input, 'md'));
     const html = norm(report(input, 'html'));
     for (const s of lines(input)) {

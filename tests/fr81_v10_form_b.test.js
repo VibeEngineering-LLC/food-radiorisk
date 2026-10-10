@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { data, inputFor } from './fr81_helpers.js';
 import { computeScenario } from '../src/calc/model.js';
 import { renderJsx } from './render_helper.js';
+import { renderTabs } from './fr89_render.js'; // #FR-89: главный экран = вкладки «Сводка» и «Соответствие нормам»
 
 const META = { datasets: 0, records: 0, sha: '00000000' };
 const norm = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&nbsp;|\s+/g, ' ');
@@ -11,7 +12,7 @@ const near = (a, e, msg) => assert.ok(Math.abs(a - e) < 1e-9, `${msg}: ${a} != $
 // продукт одного нуклида Cs-137: группа, название, A, ΔA, вид, K и добавки к входу
 const mk = (group, name, a, da, state, K, over = {}) => inputFor(group, name, [['Cs-137', a, da]], { product: { name, state }, dryingFactor: K, ...over });
 const calc = (input) => computeScenario(data, input);
-const draw = async (input, tab) => { const result = calc(input); const html = await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META, initialTab: tab }); const text = norm(html); return text.slice(0, tab ? text.length : text.indexOf('Нормы РФ и ЕАЭС')); };
+const draw = async (input, tab) => { const result = calc(input); const html = tab ? await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META, initialTab: tab }) : await renderTabs({ result, input, meta: META }); const text = norm(html); return text.slice(0, tab ? text.length : text.indexOf('Нормы РФ и ЕАЭС')); };
 
 test('V10: свой норматив для сухого — активность как есть, K не применяется', () => {
   const s1 = calc(mk('mushrooms_dried', 'грибы сушёные', 5000, 500, 'dried', 10));
@@ -54,7 +55,7 @@ test('V10: у сушёного нет своего норматива — пер
 
   const main = await draw(input, '');
   assert.ok(main.includes('Норматив задан для исходного сырья (ТР ТС 021/2011, ст. 7 п. 4), поэтому активность сушёного продукта пересчитана на сырьё, K = 5: цезий-137 — 1 500 / 5 = 300 Бк/кг.'), 'экран: пояснение о пересчёте');
-  const ru = await draw(input, 'ru');
+  const ru = await draw(input, 'norms');
   assert.ok(ru.includes('1 500 / 5: пересчёт на сырьё'), 'вкладка норм: пометка пересчёта');
 });
 
@@ -89,8 +90,8 @@ test('V10: готовое блюдо — вердикта нет, строки �
   const fresh = calc(mk('meat', 'борщ', 1500, 150, 'fresh', undefined));
   assert.ok(fresh.limits.foreign.length > 0, 'свежий продукт: зарубежные нормы на месте');
 
-  const ru = await draw(input, 'ru');
-  const body = ru.slice(ru.indexOf('Расчёт и источники')); // тело вкладки, без главного экрана (его текст проверяет V04)
+  const ru = await draw(input, 'norms');
+  const body = ru.slice(ru.indexOf('Источники')); // тело вкладки, без главного экрана (его текст проверяет V04)
   assert.ok((body.match(/для готового блюда не установлен/g) || []).length >= 2, 'вкладка норм: пояснение под таблицей и пометка в ячейке норматива');
   assert.ok(!ru.includes('Показатель B ='), 'вкладка норм: нет вердикта B');
 });
