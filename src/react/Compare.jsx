@@ -26,7 +26,7 @@ export default function Compare({ comparison, input, radonC: radonRaw, setRadonC
   const radonC = ei.radonC; // действующие значения
   const dwellU = ei.dwellU ?? NaN;
   const num = (v) => (Number.isFinite(v) ? v : ''); // поле показывает только введённое пользователем, умолчание — в подсказке поля (placeholder)
-  const ph = (v) => (v == null ? '' : String(Number(v.toPrecision(4))));
+  const ph = (v) => (v == null ? '' : fmtNum(v, 4)); // #FR-104: подсказка поля — общим форматтером (десятичная запятая)
   const okC = Number.isFinite(radonC) && radonC >= 1 && radonC <= 10000;
   const okU = Number.isFinite(dwellU) && dwellU > 0 && dwellU <= 100;
   const rcs = Number.isFinite(radonC) ? String(radonC).replace('.', ',') : ''; // #FR-102: десятичная запятая в тексте (56,2, не 56.2)
@@ -43,7 +43,7 @@ export default function Compare({ comparison, input, radonC: radonRaw, setRadonC
   const label = (r) => r.id === 'product' ? `Эффект за ${H} лет от питания этим продуктом` : r.label;
   const exposure = (r) => r.kind === 'single' ? 'разовое' : r.kind === 'horizon' ? `постоянно, ${H} лет` : `питание ${multi ? span : '1 год'}`;
   const me = (r) => r.kind === 'product' ? 'cmp-me' : '';
-  const srcIds = [...new Set([...BASE_SOURCES, ...(home ? ['DARBY2005'] : []), ...rows.filter(r => r.source).map(r => r.source), ...['naturalTotal', 'cosmic', 'terrestrial', 'radon', 'ingest', 'medicine', 'terrOutdoorSrc'].map(k => comparison.parts[k]?.source).filter(Boolean)])];
+  const srcIds = [...new Set([...BASE_SOURCES, ...(home ? ['DARBY2005'] : []), ...rows.filter(r => r.source).map(r => r.source), ...['naturalTotal', 'cosmic', 'terrestrial', 'radon', 'ingest', 'medicine', 'terrOutdoorSrc'].map(k => comparison.parts[k]?.source).filter(Boolean), ...(comparison.dwell?.hoursSrc?.source ? [comparison.dwell.hoursSrc.source] : [])])];
   const p = comparison.parts, fm = (x) => `${fmtNum(x.msv)} мЗв`; // #FR-101: описание природного фона — из данных региона
   const bgText = `Природный фон — среднее региона «${regionName(region)}» (${doseCaption(region)}), ${fmtNum(p.naturalTotal.msv)} мЗв в год: космическое излучение (${fm(p.cosmic)}), внешнее облучение от земли и стройматериалов (${fm(p.terrestrial)}), радон и торон (${fm(p.radon)}), пища и вода (${fm(p.ingest)}) — это среднее по населению, а не уровень на улице.`;
   const hasStreet = rows.some(r => r.id === 'bg_street');

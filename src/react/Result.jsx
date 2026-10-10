@@ -159,6 +159,7 @@ export default function Result({ result, input, meta, initialTab = '', onRegion 
         <h4 className="subhead">Нормы других стран</h4>
         <p className="hint">Цезий и стронций{cls ? ` — категория: ${cls}` : ''}.</p>
         {limits.foreign.some(l => l.emergency) && <p className="hint">Аварийные уровни (Codex, Euratom 2016/52, FDA) действуют только после радиационной аварии; уровень FDA — ориентир для решения, не допустимый уровень и не предел для продукта на рынке. Сила каждого документа указана в колонке.</p>}
+        {(() => { const K = limits.foreign.find(l => l.reconstitution > 1)?.reconstitution; return K ? <p className="hint">{fill(T.NORMS_FOREIGN_DRIED, { K: fmtNum(K) })}</p> : null; })()}
         {!input.foodGroupCode && <p className="hint">Группа продукта не выбрана — показаны нормы для прочих пищевых продуктов.</p>}
         <DataTable rows={limits.foreign} cols={[
           { h: 'Нуклид', f: l => l.nuclides.join(' + ') }, // #FR-81 E10

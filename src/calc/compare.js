@@ -76,7 +76,7 @@ export function buildComparison(allRecords, totals, input, riskCoeff) {
   const eq = (sv) => ({ bgDays: sv / bgSvPerYear * 365, chestXrays: xray ? sv / (xray.value * 1e-3) : null, flightHours: flight ? sv / (flight.value * 1e-3) * 3 : null });
   const oneYearSv = totals.doseSvPerYear, equivalents = eq(scenarioSv), equivalents1 = multi ? eq(oneYearSv) : null;
   const hrs = rec('dwell_hours'), conv = rec('dwell_h10_to_e');
-  const dwell = hrs && conv ? { hours: hrs.value, h10ToE: conv.value, source: conv.source, loc: conv.loc } : null;
+  const dwell = hrs && conv ? { hours: hrs.value, h10ToE: conv.value, source: conv.source, loc: conv.loc, hoursSrc: { source: hrs.source, loc: hrs.loc } } : null; // #FR-104: источник времени в помещении (НКДАР 2000) — попадает в «Источники»
   // #FR-101: составляющие фона и медицины выбранного региона — из записей данных (см. region_parts.js); mSv/год на жителя
   return { region, parts, flightMsv: flight ? flight.value : null, riskCoeff: r, horizonYears: H, scenarioSv, multi, bgSvPerYear, bgHorizonSv, rows, equivalents, equivalents1, oneYearSv, dwell, natural: Array.isArray(totals.naturalNuclides) ? totals.naturalNuclides : [] };
 }

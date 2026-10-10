@@ -288,7 +288,7 @@ test('FR-101: поля «Сравнения» — умолчания в подс
     assert.ok(hr.includes('id="' + id + '"'));
   }
   assert.ok(hw.includes('placeholder="40"'));
-  assert.ok(hr.includes('placeholder="56.2"'));
+  assert.ok(hr.includes('placeholder="56,2"'));
   const hintMatch = hr.match(/id="cmpFieldsHint"[^]*?<\/p>/);
   assert.ok(hintMatch);
   const hint = norm(hintMatch[0]);
