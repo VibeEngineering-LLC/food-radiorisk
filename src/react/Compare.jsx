@@ -6,6 +6,7 @@ import { T, fill } from '../ui/texts_v.js';
 import { withRadon, withDwelling, startAge, productRatios } from '../calc/compare.js';
 import { radonRisk } from '../vendor/radon_risk/radonRisk.mjs';
 import { yearsWord, sourceFull } from '../ui/render.js';
+import { locRu } from '../ui/ru.js';
 import { DataTable } from './Result.jsx';
 import { DEFAULT_FLIGHT_PER_YEAR } from '../calc/summary_charts.js';
 import { effectiveInputs } from '../calc/ext_inputs.js';
@@ -66,7 +67,7 @@ export default function Compare({ comparison, input, radonC: radonRaw, setRadonC
     {scenarioSv > 0 && [multi && [`За 1 год питания: `, oneYearSv, q1], [multi ? `За ${span} питания: ` : '', scenarioSv, q]].filter(Boolean).map(([t, sv, e]) => <p className="cmp-eq" key={t}>{t}<b>{fmtDose(sv)}</b> ≈ {fmtNum(e.bgDays, 2)} дн. природного фона{e.chestXrays != null && <> ≈ {fmtNum(e.chestXrays, 2)} рентгеновского снимка грудной клетки</>}{e.flightHours != null && <> ≈ {fmtNum(e.flightHours, 2)} ч полёта на самолёте</>}</p>)}
     {natural.length > 0 && <p className="hint">В продукте есть природные нуклиды ({natural.join(', ')}): они уже входят в природный фон, поэтому дозу продукта читайте как верхнюю оценку.</p>}
     <DataTable rows={rows} cols={[
-      { h: 'Источник облучения', f: r => r.source ? <span title={r.loc || undefined}>{label(r)}</span> : <b>{label(r)}</b>, c: me },
+      { h: 'Источник облучения', f: r => r.source ? <span title={locRu(r.loc) || undefined}>{label(r)}</span> : <b>{label(r)}</b>, c: me },
       { h: 'Облучение', f: exposure, c: me },
       { h: 'Доза', f: r => fmtDose(r.doseSv), c: r => 'num ' + me(r) },
       ...(ratios ? [{ h: 'Во сколько раз больше дозы от продукта', f: r => r.kind === 'product' ? '—' : fmtTimes(ratios[r.id]), c: r => 'num ' + me(r) }] : []),
