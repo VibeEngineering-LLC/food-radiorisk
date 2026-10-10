@@ -111,7 +111,7 @@ test('FR-99 Б-2: курящий — строкой текста, для реб�
     const text = norm(html);
     assert.ok(text.includes('примерно в'), 'Текст должен содержать "примерно в"');
     assert.ok(text.includes(ratioStr), `Текст должен содержать "${ratioStr}"`);
-    assert.ok(text.includes('раз выше'), 'Текст должен содержать "раз выше"');
+    assert.ok(/ раза? выше/.test(text), 'Текст должен содержать "раз выше" или "раза выше" (#FR-102: склонение по числу)');
     assert.ok(text.includes('Darby'), 'Текст должен содержать "Darby"');
     
     const c = run(child());

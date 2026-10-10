@@ -2,12 +2,18 @@ import { esc, fmtNum } from './fmt.js';
 import { SOURCE_SHORT } from './form.js';
 import SOURCES from '../../public/data/sources.json' with { type: 'json' };
 // полное описание источника из реестра (#FR-24): авторы. Название. Выходные данные, год — текстом; одна ссылка на страницу документов стоит над таблицей
+// #FR-102: в части записей title_ru уже начинается с авторов («Барковский А.Н., … Дозы облучения …») — поле authors тогда не добавляется второй раз
+export function citeParts(r) {
+  const authorsStem = String(r.authors ?? '').replace(/\s*(и др\.?|et al\.?)\s*$/i, '').replace(/[.,\s]+$/, '').trim();
+  const authorsInTitle = authorsStem !== '' && String(r.title_ru ?? '').trim().startsWith(authorsStem);
+  return [authorsInTitle ? null : r.authors, r.title_ru, r.publisher, r.year];
+}
 export function sourceFull(code) {
   if (!code) return '';
   let r = SOURCES.sources[code];
   if (r?.same_as) r = SOURCES.sources[r.same_as] || r;
   if (!r || !r.title_ru) return esc(SOURCE_SHORT[code] || code);
-  const parts = [r.authors, r.title_ru, r.publisher, r.year].filter(Boolean).map(x => String(x).replace(/\.\s*$/, '')); // без «et al..»
+  const parts = citeParts(r).filter(Boolean).map(x => String(x).replace(/\.\s*$/, '')); // без «et al..»
   return esc(parts.join('. '));
 }
 export const JUR_RU = { Codex: 'Кодекс Алиментариус', EU: 'ЕС', Japan: 'Япония', USA: 'США', IAEA: 'МАГАТЭ' };

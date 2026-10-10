@@ -1,5 +1,6 @@
 import SOURCES from '../../public/data/sources.json' with { type: 'json' };
 import { SOURCE_SHORT } from './form.js';
+import { citeParts } from './render.js';
 
 export const RISK_COEFF_SOURCE = 'NRB2009';
 export const LIFE_SOURCES = ['ROSSTAT_DEMOG2023', 'WHO_MORTDB'];
@@ -114,7 +115,7 @@ export function plainSource(id) {
     if (!entry) return SOURCE_SHORT[cid] || cid;
     if (!entry.title_ru) return SOURCE_SHORT[cid] || cid;
 
-    const parts = [entry.authors, entry.title_ru, entry.publisher, entry.year]
+    const parts = citeParts(entry)
         .filter(v => v != null && String(v).trim() !== '')
         .map(v => String(v).replace(/\.\s*$/, '').trim());
 

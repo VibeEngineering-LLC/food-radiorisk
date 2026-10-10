@@ -3,13 +3,14 @@ import Pie from './Pie.jsx';
 import { radonLungSub, radonSubShares } from '../calc/cancer_sub.js';
 import { doseSlices, riskSlices, homeRadonDoseSv, homeDwellingDoseSv, fmtShare, DEFAULT_FLIGHT_PER_YEAR } from '../calc/summary_charts.js';
 import { effectiveInputs } from '../calc/ext_inputs.js';
+import { DEFAULT_COEFFS } from '../vendor/radon_risk/radonRisk.mjs';
 import { normRegion } from '../calc/region.js';
 import { regionName, doseCaption, riskCaption, lifeTableName, ctNote } from '../ui/region_notes.js';
 import RegionSwitch from './RegionSwitch.jsx';
 import { fmtNum, fmtDose, fmtPerMillion, esc } from '../ui/fmt.js';
 import { yearsWord, sourceFull } from '../ui/render.js';
 import { locRu } from '../ui/ru.js';
-import { T, fill } from '../ui/texts_v.js';
+import { T, fill, timesVars } from '../ui/texts_v.js';
 
 // #FR-100 v39: легенда показывает полные однозначные названия (без сокращений «внутр.», «ОА»); пояснения и коды МКБ — в подсказке (hint)
 // Вкладка «Сводка» (#FR-89): общий риск, дозы и две круговые диаграммы на одном пожизненном горизонте
@@ -111,6 +112,7 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
             </p>
             {!ds.parts.techno ? <p className="hint" id="sumTechnoNone">{T.SUM_TECHNO_NONE}</p> : null}
             {ds.medicineBad ?<p className="msg warn" id="sumMedBad">{T.SUM_MED_BAD}</p> : null}
+            {ds.radonFromInput ? <p className="hint" id="sumRadonDiff">{fill(T.SUM_RADON_DIFF, { k: fmtNum(DEFAULT_COEFFS.dose.mSv_per_WLM_dwelling.value), h: fmtNum(DEFAULT_COEFFS.exposure.default_hours_per_year_indoors.value), F: fmtNum(ds.parts.radonF ?? DEFAULT_COEFFS.exposure.default_equilibrium_factor_F.value), a: fmtNum(ds.slices.find(s => s.id === 'radon').doseSv / ds.H * 1e3), r: fmtNum(ds.radonBgMsvPerYear) })}</p> : null}
             {ds.medicine && !ds.medicineBad ? <p className="hint" id="sumMedNote">{fill(T.SUM_MED_NOTE, { region: regionName(region), med: fmtNum(ds.parts.medicine.msv), ctNote: ctNote(ds.parts) })}</p> : null}
             <p className="hint" id="sumRadonSrc">
               {fill(T.SUM_RADON_SRC, { r: fmtNum(ds.radonBgMsvPerYear), region: regionName(region), src: '' })}
@@ -152,7 +154,7 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
             {airBad ? <p className="msg warn" id="sumAirBad">{T.LIFE_AIR_BAD}</p> : null}
             {air && !airBad ? <p className="hint" id="sumAirNote">{fill(T.LIFE_AIR_NOTE, { year: air.year, a: fmtNum(rs.a), b: fmtNum(rs.b) })}</p> : null}
             {subSh && subSh.bad ? <p className="msg warn" id="sumSubBad">{T.LIFE_SUB_BAD}</p> : null}
-            {subOk && adultStart && Number.isFinite(radonSub.ratio) ? <p className="hint" id="sumSubSmoke">{fill(T.LIFE_SUB_SMOKE_NOTE, { N: fmtNum(Math.round(radonSub.ratio)) })}</p> : null}
+            {subOk && adultStart && Number.isFinite(radonSub.ratio) ? <p className="hint" id="sumSubSmoke">{fill(T.LIFE_SUB_SMOKE_NOTE, timesVars(fmtNum(Math.round(radonSub.ratio))))}</p> : null}
             <p className="hint" id="sumSubNote">{fill(T.LIFE_SUB_NOTE, { H: rs.H, years: yearsWord(rs.H), b: fmtNum(rs.b), overlap: air ? 'радона, курения и загрязнения воздуха' : 'радона и курения' })}</p>
             {!hasProductRisk ? <p className="hint">{T.SUM_CHART_B_NO_PRODUCT}</p> : null}
           </>

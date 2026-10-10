@@ -146,6 +146,7 @@ test('FR-101: подпись КТ называет, что доли грудно
   const dsWorld = buildDoseSlices(cmpWorld, null, {});
   const medWorld = byId(dsWorld, 'med_ct');
   assert.ok(medWorld.label.startsWith('Компьютерная томография грудной клетки'), 'подпись КТ для мира');
-  assert.ok(medWorld.hint.includes('средняя на одну КТ'), 'подсказка для мира');
+  assert.ok(medWorld.hint.includes('доза процедуры 7 мЗв'), 'подсказка для мира: доза КТ грудной клетки (#FR-102, та же, что на «Сравнении»)');
+  assert.ok(!medWorld.hint.includes('средняя на одну КТ'), 'в мире доза не среднее по всем КТ (#FR-102)');
   assert.ok(!medRu.hint.includes('средняя на одну КТ'), 'подсказка для России');
 });

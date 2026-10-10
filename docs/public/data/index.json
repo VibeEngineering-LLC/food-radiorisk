@@ -5,8 +5,8 @@
    "dataset": "compare",
    "file": "compare.json",
    "record_count": 56,
-   "source_sha256": "d4b93dd0258aad8531f1a4fb6084b208ad4395a547df228f88099a5e26e911fb",
-   "json_sha256": "e9d98df911f548e1727488f4f4c6dd2fddc4444ad52a98d66d94f5149d88cc7d"
+   "source_sha256": "17c3f1badab9b245577ce714db66a394eafa46a625fa7944a02efc272581f882",
+   "json_sha256": "d311d272299755589e97006994328624a47e960d7ada8547d1691abfe10e4e3d"
   },
   {
    "dataset": "diet",
@@ -89,8 +89,8 @@
    "dataset": "transfer",
    "file": "transfer.json",
    "record_count": 846,
-   "source_sha256": "d30eb0ca6d2993e95b99ec9528ba8343fa6ab50d59891dac25fa089e4cb14568",
-   "json_sha256": "130e0e44bb48000fbae685ee7a4325d08ab83dccf88081ab467436333fd3477e"
+   "source_sha256": "4d2ff7fcf3f56a88a37ae1b7855ba60e203b7c8fac541e69c5ceb293ff3ca873",
+   "json_sha256": "72ff9252b9f5a54215a22c27899831cc6061417b20b88f94c6ced291153ee540"
   }
  ]
 }

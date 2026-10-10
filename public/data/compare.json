@@ -6,7 +6,7 @@
   "compare.yaml",
   "compare.d/fr101_regions.yaml"
  ],
- "source_sha256": "d4b93dd0258aad8531f1a4fb6084b208ad4395a547df228f88099a5e26e911fb",
+ "source_sha256": "17c3f1badab9b245577ce714db66a394eafa46a625fa7944a02efc272581f882",
  "record_count": 56,
  "records": [
   {
@@ -289,6 +289,7 @@
   {
    "id": "med_ct_chest",
    "region": "world",
+   "role": "ct_dose_proc",
    "kind": "single",
    "label_ru": "Компьютерная томография грудной клетки",
    "value": 7,
@@ -782,7 +783,6 @@
   {
    "id": "ru17_ct_dose",
    "region": "ru",
-   "role": "ct_dose_proc",
    "year": 2017,
    "kind": "param",
    "label_ru": "Эффективная доза КТ грудной клетки, Россия (форма 3-ДОЗ, 2017)",
@@ -835,6 +835,7 @@
   {
    "id": "med_ct_chest_ru",
    "region": "ru",
+   "role": "ct_dose_proc",
    "kind": "single",
    "label_ru": "Компьютерная томография грудной клетки (Россия, 3-ДОЗ 2017)",
    "value": 5.0,

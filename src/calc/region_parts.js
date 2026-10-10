@@ -96,15 +96,18 @@ export function regionParts(records, region) {
 
   // Годовая внешняя доза от земли (mSv)
   let terrOutdoorMsv = null;
+  let terrOutdoorSrc = null; // #FR-102: источник значения (НКДАР 2008 в режиме «Мир») — попадает в список «Источники»
   const terrOutdoor = roleOne(records, 'terr_outdoor');
   if (terrOutdoor) {
     terrOutdoorMsv = terrOutdoor.value;
+    terrOutdoorSrc = { source: terrOutdoor.source, loc: terrOutdoor.loc };
   } else {
     const terrOutdoorRate = roleOne(records, 'terr_outdoor_rate');
     if (terrOutdoorRate) {
       const dwellHours = records.find(r => r.id === 'dwell_hours');
       if (dwellHours && Number.isFinite(dwellHours.value)) {
         terrOutdoorMsv = terrOutdoorRate.value * (8760 - dwellHours.value) / 1000;
+        terrOutdoorSrc = { source: terrOutdoorRate.source, loc: terrOutdoorRate.loc };
       }
     }
   }
@@ -149,6 +152,7 @@ export function regionParts(records, region) {
     radonF,
     radonFSrc,
     terrOutdoorMsv,
+    terrOutdoorSrc,
     radonDefaultC,
     radonEec,
     radonDefaultSrc,

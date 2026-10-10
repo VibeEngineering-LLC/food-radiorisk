@@ -1,6 +1,6 @@
 import { fmtPerMillion, fmtNum } from '../ui/fmt.js';
 import { yearsWord } from '../ui/render.js';
-import { T, fill, ageWord } from '../ui/texts_v.js';
+import { T, fill, ageWord, timesVars } from '../ui/texts_v.js';
 import { radonLungSub, radonSubShares } from '../calc/cancer_sub.js';
 import { RISK_LABEL, riskLabel } from '../calc/summary_charts.js';
 import { normRegion } from '../calc/region.js';
@@ -137,7 +137,7 @@ export default function LifeRisks({ life, input, radonC = NaN, radonIsDefault = 
       {/* пояснения */}
       {lt.air ? <p className="hint" id="lifeAirNote">{fill(T.LIFE_AIR_NOTE, { year: lt.air.year, a: lt.a, b: lt.b })}</p> : null}
       {shr && shr.bad ? <p className="msg warn" id="lifeSubBad">{T.LIFE_SUB_BAD}</p> : null}
-      {sub && sub.s >= 18 && Number.isFinite(sub.ratio) ? <p className="hint" id="lifeSubSmoke">{fill(T.LIFE_SUB_SMOKE_NOTE, { N: fmtNum(Math.round(sub.ratio)) })}</p> : null}
+      {sub && sub.s >= 18 && Number.isFinite(sub.ratio) ? <p className="hint" id="lifeSubSmoke">{fill(T.LIFE_SUB_SMOKE_NOTE, timesVars(fmtNum(Math.round(sub.ratio))))}</p> : null}
       <p className="hint" id="lifeSubNote">{fill(T.LIFE_SUB_NOTE, { H: lt.H, years: yearsWord(lt.H), b: lt.b, overlap: lt.air ? 'радона, курения и загрязнения воздуха' : 'радона и курения' })}</p>
       <p className="hint">{T.LIFE_TIMING}</p>
       <p className="hint">{T.LIFE_PURPOSE}</p>
