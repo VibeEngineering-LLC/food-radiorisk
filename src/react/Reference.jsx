@@ -1,7 +1,8 @@
 // #FR-81 V13 (D-022): вкладка «Подробно (для специалиста)» — справочные величины, не главное число
 import { T, fill } from '../ui/texts_v.js';
-import { fmtPerMillion, fmtDose2 } from '../ui/fmt.js';
+import { fmtPerMillion, fmtDose } from '../ui/fmt.js'; // #FR-99: единое округление дозы на экране
 import { KpiGrid } from './Result.jsx';
+import { regionName, radonFNote } from '../ui/region_notes.js';
 import OrganRisk from './OrganRisk.jsx';
 import Organs from './Organs.jsx';
 
@@ -17,11 +18,14 @@ export default function Reference({ result, input }) {
 
       <p className="hint">{T.REF_COEFF}</p>
 
+      {/* #FR-101 v41: коэффициент равновесия радона региона в расчёте дозы радона (вкладки «Сводка» и «Сравнение с облучением») */}
+      {result.comparison?.parts?.radonF != null && <p className="hint" id="refRadonF">Доза радона в жилище на «Сводке» и в «Сравнении» считается с коэффициентом равновесия региона «{regionName(input.region)}»: {radonFNote(result.comparison.parts)}.</p>}
+
       {totals.naturalNuclides.length > 0 && (
         <p className="hint">
           {fill(T.REF_NATURAL, {
             list: totals.naturalNuclides.join(', '),
-            E: fmtDose2(nat),
+            E: fmtDose(nat),
             k: fmtPerMillion(0.05 * nat),
           })}
         </p>
@@ -37,14 +41,14 @@ export default function Reference({ result, input }) {
           </p>
           <p className="hint">
             {fill(T.REF_NRB23, {
-              E_max: fmtDose2(totals.doseMaxYearTech),
+              E_max: fmtDose(totals.doseMaxYearTech),
               k_max: fmtPerMillion(totals.riskMaxYear),
               label: T.NRB23_LABEL,
             })}
           </p>
           <p className="hint">
             {fill(T.REF_AVG5, {
-              E: fmtDose2(totals.doseTechAvg5),
+              E: fmtDose(totals.doseTechAvg5),
             })}
           </p>
         </>

@@ -12,7 +12,7 @@ export default function Pie({ id, title, slices, valueHead = 'Значение',
   // защита от пустых/некорректных данных
   if (!Array.isArray(slices) || slices.length === 0) return null;
 
-  const tip = (s) => `${s.label}: ${fmtShare(s.share)}; ${s.valueText}`; // полная подсказка сектора
+  const tip = (s) => `${s.label}: ${fmtShare(s.share)}; ${s.valueText}${s.hint ? ' — ' + s.hint : ''}`; // полная подсказка сектора
   const cx = 300, cy = 200, r = 170; // #FR-89: крупная диаграмма (оператор); поля слева/справа 130 px — под текст выноски
   // углы в градусах, сумма 360, каждый ненулевой срез не меньше 3°
   const angles = linearAngles(slices.map((s) => s.share)); // линейный масштаб: угол = доля × 360°
@@ -37,7 +37,7 @@ export default function Pie({ id, title, slices, valueHead = 'Значение',
     <figure className="pie" data-chart={id}>
       <h4 className="pie-title">{title}</h4>
       <div className="pie-body">
-        <svg viewBox="0 0 600 400" className="pie-svg" role="img" aria-label={title}>
+        <svg viewBox="0 -28 600 428" className="pie-svg" role="img" aria-label={title}>
           <title>{title}</title>
           {shapes.map(({ s, i, a, start, end, mid, full, cls }) => {
             if (a <= 0) return null;
@@ -57,13 +57,14 @@ export default function Pie({ id, title, slices, valueHead = 'Значение',
             </g>;
           })}
           {/* #FR-97: подсектора внутри сектора (радон у некурящего — сплошной, добавка у курящего — штриховка); углы линейны (доля × 360°) от начала родительского сектора, круг не меняется */}
-          {inner.length > 0 && <defs><pattern id={`${id}-hatch`} patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)"><rect width="8" height="8" className="pie-hatch-bg" /><line x1="0" y1="0" x2="0" y2="8" className="pie-hatch-line" strokeWidth="3" /></pattern></defs>}
+          {/* #FR-98: подсектора «от загрязнения воздуха» — цвет родителя с точками (иная текстура, чем сплошной подсектор радона) */}
+          {[...new Set(inner.filter(x => x.u.dots).map(x => x.u.ci))].map(ci => <defs key={'d' + ci}><pattern id={`${id}-dots-${ci}`} patternUnits="userSpaceOnUse" width="7" height="7"><rect width="7" height="7" className={`pie-dots-bg pie-s${ci}`} /><circle cx="3.5" cy="3.5" r="1.6" className="pie-dots-dot" /></pattern></defs>)}
           {inner.map(({ u, a0, a1 }) => {
             const q1 = pt(cx, cy, r, a0), q2 = pt(cx, cy, r, a1), md = (a0 + a1) / 2;
             const d = `M ${cx} ${cy} L ${r2(q1.x)} ${r2(q1.y)} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${r2(q2.x)} ${r2(q2.y)} Z`;
             const h1 = pt(cx, cy, r, md);
             return <g key={'in-' + u.id} data-inner={u.id} data-a0={r2(a0)} data-a1={r2(a1)}>
-              <path className={'pie-sl pie-sub ' + (u.hatch ? 'pie-sub-hatch' : 'pie-sub-solid')} d={d} fill={u.hatch ? `url(#${id}-hatch)` : undefined} tabIndex={0} aria-label={tip(u)}><title>{tip(u)}</title></path>
+              <path className={'pie-sl pie-sub ' + (u.dots ? 'pie-air' : 'pie-sub-solid')} fill={u.dots ? `url(#${id}-dots-${u.ci})` : undefined} d={d} tabIndex={0} aria-label={tip(u)}><title>{tip(u)}</title></path>
               {a1 - a0 < 4 && <line className="pie-hit" x1={cx} y1={cy} x2={r2(h1.x)} y2={r2(h1.y)}><title>{tip(u)}</title></line>}
             </g>;
           })}
@@ -99,14 +100,14 @@ export default function Pie({ id, title, slices, valueHead = 'Значение',
                 <td>
                   <span className={`pie-sw pie-s${(s.ci ?? i) % 12}` + (s.me ? ' pie-me' : '')} aria-hidden="true" />
                 </td>
-                <td title={s.label}>{s.short || s.label}</td>
+                <td title={s.hint ? `${s.label} — ${s.hint}` : s.label}>{s.short || s.label}</td>
                 <td className="num">{fmtShare(s.share)}</td>
                 <td className="num">{s.valueText}</td>
               </tr>,
               // подстроки «в т. ч.»: без сектора, без доли, в сумму не входят (они часть строки выше)
               ...(s.subs || []).map((u) => (
                 <tr key={s.id + '-' + u.id} className="pie-sub" data-sub={u.id}>
-                  <td>{u.sw ? <span className={'pie-sw ' + (u.hatch ? 'pie-sub-hatch' : 'pie-sub-solid')} aria-hidden="true" /> : null}</td>
+                  <td>{u.sw ? <span className={u.dots ? `pie-sw pie-s${u.ci} pie-air` : 'pie-sw pie-sub-solid'} aria-hidden="true" /> : null}</td>
                   <td title={u.label}>{u.short || u.label}</td>
                   <td className="num">{u.shareText ?? '—'}</td>
                   <td className="num">{u.valueText}</td>

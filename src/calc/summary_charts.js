@@ -5,11 +5,7 @@ import { radonRisk } from '../vendor/radon_risk/radonRisk.mjs';
 import { startAge } from './compare.js';
 import { fmtNum } from '../ui/fmt.js';
 
-// #FR-89 v27: радон и торон мирового фона берутся из данных (comparison.worldRadon; записи bg_radon_world, bg_thoron_world — UNSCEAR 2008, Annex B, Table 12), в коде числа нет.
-// ОА радона по умолчанию — то же значение, что начальное состояние поля на вкладке «Сравнение с облучением».
-// #FR-91 v33: умолчания — решение оператора (до ввода пользователем): ОА радона-222 200 Бк/м³, мощность дозы в жилище 0,15 мкЗв/ч. Источник «принято по умолчанию»: цитаты норматива в библиотеке под это число не искали и не подставляли.
-export const DEFAULT_RADON_C = 200;
-export const DEFAULT_DWELL_U = 0.15;
+// #FR-101 (D-031): умолчания полей «Сравнения» (радон, гамма-фон жилища, КТ, рентгенография) зависят от региона и берутся из данных: region_parts.js → regionDefaults, ext_inputs.js → effectiveInputs. Чисел в коде нет.
 
 // Доза «фона в жилище» (без радона) по введённому показанию дозиметра, мкЗв/ч, за горизонт H (Зв) — тем же расчётом, что withDwelling во вкладке «Сравнение»; null, если не введено/вне 0–100.
 export function homeDwellingDoseSv(comparison, dwellU) {
@@ -22,17 +18,36 @@ export function homeRadonDoseSv(input, comparison, radonC) {
   if (!comparison) return null;
   const H = comparison.horizonYears;
   if (typeof radonC !== 'number' || !Number.isFinite(radonC) || radonC < 1 || radonC > 10000) return null;
-  const res = radonRisk({ C: radonC, years: H, ageStart: startAge(input), smoking: 'never' });
+  const F = comparison.parts?.radonF; // #FR-101 v41: коэффициент равновесия региона (мир 0,4, Россия 0,5); модуль принимает F во входе, его коэффициенты не меняются
+  const res = radonRisk({ C: radonC, years: H, ageStart: startAge(input), smoking: 'never', ...(Number.isFinite(F) ? { F } : {}) });
   const mSv = res && res.totalDose_mSv;
   if (typeof mSv !== 'number' || !Number.isFinite(mSv)) return null;
   return mSv * 1e-3;
 }
 
 // Срезы диаграммы «доза за жизнь по источникам» (#FR-89 v29): все составляющие из данных, строки по возрастанию дозы — см. dose_sources.js
-export { buildDoseSlices as doseSlices, DEFAULT_XRAY_PER_YEAR, DEFAULT_FLIGHT_PER_YEAR } from './dose_sources.js';
+export { buildDoseSlices as doseSlices, DEFAULT_FLIGHT_PER_YEAR } from './dose_sources.js';
 
 // Цвет сектора диаграммы (б) закреплён за причиной (код ВОЗ), а не за позицией в отсортированном списке
 const CAUSE_COLOR = { product: 0, cs_1026: 1, cs_1064: 2, cs_1096: 3, cs_1097: 4, cs_1098: 5, cs_1099: 6, cs_1100: 7, cs_1101: 8, cs_1102: 9, cs_other: 11 }; // «прочие» — нейтральный серый
+
+// #FR-100 v39: названия причин для населения (полное название в легенде; коды МКБ/ВОЗ — только в подсказке); единый стиль: с прописной, без точки
+export const RISK_LABEL = {
+  cs_1026: ['Злокачественные и другие новообразования (рак)', 'коды МКБ-10 C00–D48'],
+  cs_1064: ['Болезни системы кровообращения (инфаркт, инсульт)', 'коды МКБ-10 I00–I99'],
+  cs_1096: ['Дорожно-транспортные происшествия', 'код ВОЗ 1096'],
+  cs_1097: ['Падения', 'код ВОЗ 1097'],
+  cs_1098: ['Утопления', 'код ВОЗ 1098'],
+  cs_1099: ['Пожары', 'код ВОЗ 1099'],
+  cs_1100: ['Случайные отравления', 'код ВОЗ 1100'],
+  cs_1101: ['Самоубийства', 'код ВОЗ 1101'],
+  cs_1102: ['Убийства', 'код ВОЗ 1102'],
+  cs_other: ['Прочие причины смерти', 'все остальные причины: код ВОЗ 1000 минус показанные'],
+  ref_1000: ['Все причины смерти', 'код ВОЗ 1000'],
+  ref_1034: ['рак трахеи, бронхов и лёгкого', 'код ВОЗ 1034; входит в «Злокачественные и другие новообразования»'],
+  ref_1095: ['Внешние причины смерти (всего)', 'код ВОЗ 1095; включает дорожные происшествия, падения, утопления, пожары, отравления, самоубийства, убийства и прочие'],
+};
+export const riskLabel = (id, fallback) => RISK_LABEL[id]?.[0] ?? fallback;
 
 // Срезы диаграммы «риск смерти за жизнь по причинам»; по ВОЗРАСТАНИЮ риска (решение оператора), питание встаёт на своё место по величине.
 export function riskSlices(life) {
@@ -42,7 +57,8 @@ export function riskSlices(life) {
   const total = rows.reduce((sum, row) => sum + row.p, 0);
   const slices = rows.map(row => ({
     id: row.id,
-    label: row.kind === 'product' ? 'Питание этим продуктом' : row.label,
+    label: row.kind === 'product' ? 'Этот продукт — рак от облучения' : riskLabel(row.id, row.label),
+    hint: RISK_LABEL[row.id]?.[1],
     p: row.p,
     share: total > 0 ? row.p / total : 0,
     ci: CAUSE_COLOR[row.id] ?? 11,

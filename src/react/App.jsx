@@ -3,7 +3,7 @@ import { loadAll, browserFetch } from '../data/loader.js';
 import { computeScenario, listChoices } from '../calc/model.js';
 import { presetRadGear } from '../ui/form.js';
 import * as S from './formState.js';
-import { loadSaved, save } from './persist.js';
+import { loadSaved, save, loadRegion, saveRegion } from './persist.js';
 import { FORMATS, buildReport } from '../ui/report.js';
 import Form from './Form.jsx';
 import Result from './Result.jsx';
@@ -19,6 +19,9 @@ export default function App() {
   const [tab, setTab] = useState(0);
   // Формат файла отчёта
   const [format, setFormat] = useState('md');
+  // #FR-101 (D-031): регион данных — «Мир» по умолчанию, «Россия» по переключателю; один на всё приложение, сохраняется отдельным ключом
+  const [region, setRegion] = useState(loadRegion);
+  useEffect(() => { saveRegion(region); }, [region]);
 
   // Инициализация при монтировании
   useEffect(() => {
@@ -53,13 +56,13 @@ export default function App() {
   const calc = useMemo(() => {
     if (!boot?.data || !deferred) return null;
     try {
-      const input = S.toInput(deferred, boot.choices);
+      const input = { ...S.toInput(deferred, boot.choices), region }; // #FR-101: регион данных входит во вход расчёта
       const result = computeScenario(boot.data, input);
       return { input, result };
     } catch (e) {
       return { error: userMessage(e) }; // #FR-88 v18: английский текст исключения пользователю не показываем
     }
-  }, [boot, deferred]);
+  }, [boot, deferred, region]);
 
   // Экспорт в глобальную переменную для отладки
   useEffect(() => {
@@ -105,7 +108,7 @@ export default function App() {
         {boot?.error
           ? <section id="result" className="result"><div className="msg err">Не удалось загрузить данные: {boot.error}</div></section>
           : calc
-            ? <section id="result" className="result" aria-live="polite">{calc.error ? <div className="msg err">Внутренняя ошибка: {calc.error}</div> : <Result result={calc.result} input={calc.input} meta={boot.metaInfo} />}</section>
+            ? <section id="result" className="result" aria-live="polite">{calc.error ? <div className="msg err">Внутренняя ошибка: {calc.error}</div> : <Result result={calc.result} input={calc.input} meta={boot.metaInfo} onRegion={setRegion} />}</section>
             : <section id="result" className="result" aria-live="polite"><p className="empty">Загрузка данных…</p></section>}
       </main>
       {/* D-019: строка состояния окна — итог расчёта и команды всегда на виду */}

@@ -8,7 +8,8 @@ import { causeProb, makeLifeTable } from '../src/calc/life_table.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const { data } = await loadAll(async (u) => JSON.parse(await readFile(root + u, 'utf8')));
-const T = makeLifeTable(data.life_risks);
+const RU = data.life_risks.filter(x => x.region === 'ru' || x.region == null); // #FR-101: российский набор
+const T = makeLifeTable(RU);
 const near = (a, e, tol) => Math.abs(a - e) <= tol;
 
 const CODE = {
@@ -63,7 +64,7 @@ test('causeProb: (1) 22 значения набора, (2) до конца жи�
   }
   
   // Check raw array vs table for code '1026', a = 20
-  const rawGot = causeProb(data.life_risks, '1026', 20, 70);
+  const rawGot = causeProb(RU, '1026', 20, 70);
   const tableGot = causeProb(T, '1026', 20, 70);
   if (rawGot !== tableGot) {
     bad.push('(1) array');

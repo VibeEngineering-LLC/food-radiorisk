@@ -8,6 +8,11 @@
   "properties": {
     "id": { "type": "string", "pattern": "^[A-Za-z0-9_.\\-]+$" },
     "kind": { "enum": ["single", "annual", "coeff", "baseline", "param"] },
+    "region": { "enum": ["world", "ru"] },
+    "role": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+    "year": { "type": "integer", "minimum": 1990, "maximum": 2100 },
+    "superseded": { "const": true },
+    "note": { "type": "string", "minLength": 1 },
     "label_ru": { "type": "string", "minLength": 1 },
     "value": { "type": "number", "exclusiveMinimum": 0 },
     "unit": { "type": "string", "minLength": 1 },

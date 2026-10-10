@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { data, inputFor } from './fr81_helpers.js';
 import { computeScenario } from '../src/calc/model.js';
 import { renderJsx } from './render_helper.js';
-import { doseSlices, riskSlices, homeRadonDoseSv, homeDwellingDoseSv, DEFAULT_RADON_C } from '../src/calc/summary_charts.js';
+import { doseSlices, riskSlices, homeRadonDoseSv, homeDwellingDoseSv } from '../src/calc/summary_charts.js';
 import { horizonYears, startAge } from '../src/calc/compare.js';
 import { makeLifeTable, causeProb } from '../src/calc/life_table.js';
 import { NOMINAL_AGE } from '../src/calc/years.js';
@@ -24,23 +24,15 @@ const summary = async (dataX, input, radonC, dwellU) => {
     return { result, html, text: norm(html) };
 };
 
-test('FR-89 v27: радон и торон мирового фона — записи данных с источником UNSCEAR 2008, из первоисточника', () => {
-    const rn = rec('bg_radon_world');
-    const tn = rec('bg_thoron_world');
-    assert.ok(rn && tn, 'Записи должны существовать');
-    assert.equal(rn.kind, 'param');
-    assert.equal(tn.kind, 'param');
-    assert.equal(rn.source, 'UNSCEAR2008');
-    assert.equal(tn.source, 'UNSCEAR2008');
-    assert.equal(rn.unit, 'мЗв/год');
-    assert.equal(tn.unit, 'мЗв/год');
-    assert.equal(rn.value, 1.15);
-    assert.equal(tn.value, 0.1);
-    assert.ok(rn.quote.includes('Radon (222Rn) 1.15'));
-    assert.ok(tn.quote.includes('Thoron (220Rn) 0.1'));
-    assert.ok(rn.loc.includes('Table 12'));
-    assert.equal(rn.level, '✅');
-    
+test('FR-89 v27: радон и торон фона — записи данных обоих регионов с источником и цитатой; НКДАР 2008 оставлен как superseded', () => {
+    const old = [rec('bg_radon_world'), rec('bg_thoron_world')];
+    assert.ok(old.every(r => r.superseded === true && r.region === 'world' && r.source === 'UNSCEAR2008'), 'НКДАР 2008 — история, в расчёт не входит');
+    const w = rec('w26_radon'), r = rec('ru20_radon');
+    assert.equal(w.region, 'world'); assert.equal(r.region, 'ru');
+    assert.equal(w.value, 1.8); assert.equal(r.value, 2.0);
+    assert.equal(w.source, 'UNSCEAR2026_PR'); assert.equal(r.source, 'BARKOVSKY2021');
+    assert.ok([w, r].every(x => x.unit === 'мЗв/год' && x.role === 'radon' && x.quote && x.loc));
+
     // Проверка отсутствия хардкода в коде
     const src = readFileSync('src/calc/summary_charts.js', 'utf8');
     assert.ok(!src.includes('1.25'), 'Не должно быть хардкода 1.25');
@@ -51,32 +43,29 @@ test('FR-89 v27: вычитаемое из фона на экране равно
     const input = ADULT();
     const { result, text } = await summary(data, input, 100, NaN);
     const H = horizonYears(input);
-    const bgPerYear = rec('bg_natural_world').value * 1e-3;
-    const sumRT = (rec('bg_radon_world').value + rec('bg_thoron_world').value);
-    
-    // #FR-91 v29: фон разложен на составляющие из данных; радон и торон — записи bg_radon_world, bg_thoron_world
+    const bgPerYear = rec('ru20_natural_total').value * 1e-3;
+    const sumRT = rec('ru20_radon').value;
+
+    // #FR-101: фон разложен на составляющие из данных региона; радон и торон — одна запись ru20_radon (сценарий задан с region: 'ru')
     assert.ok(text.includes('разложен на составляющие'), 'Текст говорит о разложении фона');
-    assert.ok(text.includes('НКДАР ООН'), 'Текст должен содержать источник');
-    assert.ok(text.includes(String(sumRT).replace('.', ',')) || text.includes('1,15'), 'Текст содержит значение радона из данных');
+    assert.ok(text.includes('Барковский'), 'Текст должен содержать источник региона');
+    assert.ok(text.includes(String(sumRT).replace('.', ',')), 'Текст содержит значение радона из данных');
 
     const ds = doseSlices(result.comparison, null, { radonC: 100, radonIsDefault: true });
     const radonW = ds.slices.find(s => s.id === 'radon');
     assert.ok(close(radonW.doseSv, sumRT * 1e-3 * H, 1e-9), 'Радон и торон мирового фона = сумма записей данных × H');
 
     // Мутация данных
-    const dataX = dataWith('bg_radon_world', { value: 0.5 });
+    const dataX = dataWith('ru20_radon', { value: 0.5 });
     const resultX = computeScenario(dataX, input);
     const dsX = doseSlices(resultX.comparison, null, {});
     const radonSliceX0 = dsX.slices.find(s => s.id === 'radon');
-    assert.ok(close(radonSliceX0.doseSv, (0.5 + rec('bg_thoron_world').value) * 1e-3 * H, 1e-9), 'Радон мирового фона после подмены записи изменился');
+    assert.ok(close(radonSliceX0.doseSv, 0.5 * 1e-3 * H, 1e-9), 'Радон фона региона после подмены записи изменился');
     assert.ok(!close(radonSliceX0.doseSv, radonW.doseSv, 1e-9), 'Значения должны отличаться');
-    assert.ok(close(dsX.naturalSumMsv, ds.naturalSumMsv - (rec('bg_radon_world').value - 0.5), 1e-9), 'Сумма природных составляющих следует за записью');
-
-    const radonSliceX = dsX.slices.find(s => s.id === 'radon');
-    assert.ok(close(radonSliceX.doseSv, (0.5 + 0.1) * 1e-3 * H, 1e-9), 'Доза радона должна соответствовать новым данным');
+    assert.ok(close(dsX.naturalSumMsv, ds.naturalSumMsv - (rec('ru20_radon').value - 0.5), 1e-9), 'Сумма природных составляющих следует за записью');
 
     // Без записей
-    const dsN = doseSlices(computeScenario(dataWithout(['bg_radon_world', 'bg_thoron_world']), input).comparison, null);
+    const dsN = doseSlices(computeScenario(dataWithout(['ru20_radon']), input).comparison, null);
     assert.equal(dsN, null, 'Должно быть null без записей');
 });
 
@@ -88,7 +77,7 @@ test('FR-89 v27: ОА радона из поля вкладки «Сравнен
         const result = computeScenario(data, input);
         const cmp = result.comparison;
         const rad = homeRadonDoseSv(input, cmp, C);
-        const expected = radonRisk({ C, years: horizonYears(input), ageStart: startAge(input), smoking: 'never' }).totalDose_mSv * 1e-3;
+        const expected = radonRisk({ C, years: horizonYears(input), ageStart: startAge(input), smoking: 'never', F: 0.5 }) /* #FR-101 v41: Россия */.totalDose_mSv * 1e-3;
         assert.ok(close(rad, expected, 1e-12), 'Доза радона должна совпадать с расчётом');
         
         const ds = doseSlices(cmp, rad, { radonC: C, radonIsDefault: false });
@@ -105,11 +94,10 @@ test('FR-89 v27: ОА радона из поля вкладки «Сравнен
     assert.ok(textA.includes('по вашему вводу'), 'Текст должен указывать на ввод пользователя');
     assert.ok(textA.includes('50 Бк/м³'), 'Текст должен содержать значение 50');
     
-    const textD = (await summary(data, input, DEFAULT_RADON_C, NaN)).text;
+    const textD = (await summary(data, input, NaN, NaN)).text; // #FR-101: NaN = «не введено» → умолчание региона
     assert.ok(textD.includes('значение по умолчанию'), 'Текст должен указывать на значение по умолчанию');
     assert.ok(textD.includes('по умолчанию'), 'Текст должен указывать на значение по умолчанию');
     assert.ok(!textD.includes('по вашему вводу'), 'Текст не должен указывать на ввод пользователя');
-    assert.equal(DEFAULT_RADON_C, 200, 'умолчание оператора (FR-91 v33): 200 Бк/м³');
 });
 
 test('FR-89 v27: показание дозиметра в жилище заменяет остальной фон на диаграмме', async () => {
@@ -126,7 +114,7 @@ test('FR-89 v27: показание дозиметра в жилище заме�
     
     const ds = doseSlices(cmp, null, { dwellingSv: expectedSv });
     const terr = ds.slices.find(s => s.id === 'terrestrial');
-    assert.ok(close(terr.doseSv, rec('street_external').value * 1e-3 * horizonYears(input) + expectedSv, 1e-9), 'Излучение в помещении заменяется дозой от дозиметра (улица остаётся средней)');
+    assert.ok(close(terr.doseSv, rec('ru_outdoor_rate').value * (8760 - rec('dwell_hours').value) / 1000 * 1e-3 * horizonYears(input) + expectedSv, 1e-9), 'Излучение в помещении заменяется дозой от дозиметра (улица остаётся средней)');
     assert.ok(terr.label.includes('по вашему дозиметру'), 'Метка должна указывать на дозиметр');
     
     const textU = (await summary(data, input, 100, U)).text;
@@ -144,9 +132,9 @@ test('FR-89 v27: на вкладке «Сравнение» оба поля вв
     const text = norm(html);
     
     assert.ok(text.includes('Мощность дозы в жилище, мкЗв/ч'), 'Текст должен содержать поле дозиметра');
-    assert.ok(text.includes('ОА радона-222 в жилище, Бк/м³'), 'Текст должен содержать поле радона');
+    assert.ok(text.includes('Объёмная активность радона-222 в жилище, Бк/м³'), 'Текст должен содержать поле радона');
     
-    const inputCount = (html.match(/<input type="number"/g) || []).length;
+    const inputCount = (html.match(/<input[^>]*type="number"/g) || []).length;
     assert.ok(inputCount >= 2, 'Должно быть минимум 2 числовых поля ввода');
     
     const src = readFileSync('src/react/Result.jsx', 'utf8');
@@ -175,7 +163,7 @@ test('FR-89 v27: болезни системы кровообращения — 
         const result = computeScenario(data, input);
         const life = result.lifeRisks;
         const a = input.lifetime ? input.lifetime.fromAge : NOMINAL_AGE[input.age];
-        const table = makeLifeTable(data.life_risks);
+        const table = makeLifeTable(data.life_risks.filter(x => x.region !== 'world')); // #FR-101: сценарии заданы с region: 'ru'
         
         assert.equal(life.rows[2].id, 'cs_1064', 'Вторая строка должна быть cs_1064');
         assert.ok(close(life.rows[2].p, causeProb(table, '1064', a, life.b), 1e-12), 'Вероятность должна совпадать');
@@ -202,7 +190,7 @@ test('FR-89 v27: на экране «Сводки» доля радона рав
   for (const C of [50, 400]) {
     const { result, text } = await summary(data, input, C, NaN);
     const cmp = result.comparison;
-    const rad = radonRisk({ C, years: horizonYears(input), ageStart: startAge(input), smoking: 'never' }).totalDose_mSv * 1e-3;
+    const rad = radonRisk({ C, years: horizonYears(input), ageStart: startAge(input), smoking: 'never', F: 0.5 }) /* #FR-101 v41: Россия */.totalDose_mSv * 1e-3;
     const ds = doseSlices(cmp, rad, { radonC: C, radonIsDefault: false });
     const share = ds.slices.find(s => s.id === 'radon').share;
     const printed = (share * 100).toLocaleString('ru-RU', { maximumSignificantDigits: 2 });

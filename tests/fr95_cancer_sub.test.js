@@ -16,7 +16,7 @@ const H = result.lifeRisks.lifetime.H;
 const norm = h => h.replace(/<[^>]+>/g, ' ').replace(/&nbsp;|\s+/g, ' ');
 const mod = (C, s) => radonRisk({ C, years: H, ageStart: startAge(input), smoking: s }).darby.excess;
 
-const life = (C) => renderJsx('src/react/LifeRisks.jsx', 'default', { life: result.lifeRisks, input, radonC: C });
+const life = (C) => renderJsx('src/react/LifeRisks.jsx', 'default', { life: result.lifeRisks, input, radonC: C, radonIsDefault: C === 200 }); // #FR-101: признак «по умолчанию» передаёт родитель (действующие значения — effectiveInputs)
 const sum = (C) => renderJsx('src/react/SummaryTab.jsx', 'default', { result, input, radonC: C });
 
 test('radonLungSub values and edge cases', async () => {
@@ -36,8 +36,9 @@ test('LifeRisks tab renders radon sub-row with correct values and labels', async
   assert.ok(match200, 'radon sub-row not found for C=200');
   const subHtml200 = match200[0];
 
-  assert.ok(subHtml200.includes(fmtPerMillion(mod(200, 'never'))), 'missing never value for C=200');
-  assert.ok(subHtml200.includes(fmtPerMillion(mod(200, 'smoker'))), 'missing smoker value for C=200');
+  const bB = result.lifeRisks.lifetime.b; // #FR-99: значение строки — радон некурящего на горизонт таблицы (до b лет), не «к 75»
+  assert.ok(subHtml200.includes(fmtPerMillion(radonLungSub(input, H, 200, bB).neverB)), 'missing never value for C=200');
+  assert.ok(!/(^|[^а-яё])курящ/i.test(subHtml200), 'курящий — не в строке таблицы (текстом под таблицей)');
   assert.ok(norm(html200).includes('по умолчанию'), 'missing "по умолчанию" text');
   assert.ok(norm(html200).includes('200'), 'missing "200" text');
 
@@ -46,15 +47,14 @@ test('LifeRisks tab renders radon sub-row with correct values and labels', async
   assert.ok(match400, 'radon sub-row not found for C=400');
   const subHtml400 = match400[0];
 
-  assert.ok(subHtml400.includes(fmtPerMillion(mod(400, 'never'))), 'missing never value for C=400');
-  assert.ok(subHtml400.includes(fmtPerMillion(mod(400, 'smoker'))), 'missing smoker value for C=400');
+  assert.ok(subHtml400.includes(fmtPerMillion(radonLungSub(input, H, 400, bB).neverB)), 'missing never value for C=400');
   assert.ok(norm(html400).includes('по вашему вводу'), 'missing "по вашему вводу" text');
   assert.notEqual(subHtml400, subHtml200, 'sub-row HTML should differ between C=200 and C=400');
 });
 
 test('radon sub-row is immediately after "Новообразования" row', async () => {
   const html = (await life(200));
-  const idxNovo = html.indexOf('Умереть от новообразований');
+  const idxNovo = html.indexOf('Злокачественные и другие новообразования (рак)');
   assert.ok(idxNovo !== -1, 'строка новообразований не найдена');
   const idxRadon = html.indexOf('data-sub="radon"');
   assert.ok(idxRadon !== -1, 'data-sub="radon" not found');
@@ -78,7 +78,7 @@ test('Summary chart (b) does not include radon sub-row in pie slices', async () 
   assert.equal(piePathCount, slices.length, 'pie slice count should match riskSlices length');
 
   const legendRadonCount = (figHtml.match(/<tr class="pie-sub" data-sub="radon_/g) || []).length;
-  assert.equal(legendRadonCount, 2, '#FR-97: две подстроки «в т. ч.» в легенде (некурящий, добавка у курящего)');
+  assert.equal(legendRadonCount, 1, '#FR-99: одна подстрока «в т. ч.» в легенде (радон, некурящий); курящий — текстом');
 
   const totalShare = slices.reduce((acc, s) => acc + s.share, 0);
   assert.ok(Math.abs(totalShare - 1) < 1e-9, 'sum of shares should be 1');
@@ -92,16 +92,16 @@ test('Text mentions non-additivity and excludes smoking sub-row', async () => {
   const sumText = norm((await sum(200)));
 
   assert.ok(lifeText.includes('не складываются'), 'LifeRisks text missing "не складываются"');
-  assert.ok(lifeText.includes('входят в «Новообразования»'), 'LifeRisks text missing "входят в «Новообразования»"');
+  assert.ok(lifeText.includes('входит в «Новообразования»'), 'LifeRisks text missing "входит в «Новообразования»"');
   assert.ok(sumText.includes('не складываются'), 'Summary text missing "не складываются"');
-  assert.ok(sumText.includes('входят в «Новообразования»'), 'Summary text missing "входят в «Новообразования»"');
+  assert.ok(sumText.includes('входит в «Новообразования»'), 'Summary text missing "входит в «Новообразования»"');
 
   const lifeHtml = (await life(200));
   const sumHtml = (await sum(200));
   assert.ok(!/data-sub="smok/.test(lifeHtml), 'data-sub="smok" should not be present in LifeRisks');
   assert.ok(!/data-sub="smok/.test(sumHtml), 'data-sub="smok" should not be present in Summary');
 
-  const lifeSubCount = (lifeHtml.match(/data-sub="/g) || []).length;
+  const lifeSubCount = (lifeHtml.match(/data-sub="radon/g) || []).length; // #FR-98: подстроки воздуха (air_*) считаются отдельно
   assert.equal(lifeSubCount, 1, 'exactly one data-sub in LifeRisks tab');
 });
 

@@ -2,8 +2,7 @@ import { esc, fmtNum, fmtSci, fmtNear, fmtBLine, fmtDose, fmtPct, verdictText } 
 import { AGE_LABEL, SOURCE_LABEL } from './form.js';
 import { locRu, unitRu } from './ru.js';
 import { sourceFull, yearsWord, JUR_RU } from './render.js';
-import { buildBibliography } from './bibliography.js';
-import { summaryParts } from './summary_text.js';
+import { buildBibliography } from './bibliography.js';import { summaryParts } from './summary_text.js';
 import { T, fill } from './texts_v.js';
 import { seriesLabel, shortSource } from '../calc/diet.js';
 

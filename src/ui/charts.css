@@ -16,7 +16,7 @@
 .pie-sl.pie-me { stroke: var(--ink); stroke-width: 2; }
 .pie-lead { stroke: var(--ink); stroke-width: 1; }
 .pie-callout { fill: var(--ink); font-weight: 600; }
-.pie-legend { flex: 0 1 auto; width: auto; max-width: 30rem; min-width: 0; border-collapse: collapse; font-size: 12px; }
+.pie-legend { flex: 0 1 auto; width: auto; max-width: min(30rem, 100%); min-width: 0; border-collapse: collapse; font-size: 12px; }
 .pie-legend th, .pie-legend td { padding: 2px 6px; border-bottom: 1px solid var(--hline); text-align: left; vertical-align: top; }
 .pie-legend .num { text-align: right; white-space: nowrap; }
 .pie-sw { display: inline-block; width: 10px; height: 10px; }
@@ -38,16 +38,16 @@
 .life-table td.num, .life-table th.num { width: 1%; white-space: nowrap; }
 .life-table td.life-bar { width: 55%; min-width: 8rem; }
 .life-refs td { color: var(--muted); }
-/* #FR-97: подсектора радона внутри «новообразований» (оранжевый pie-s1): сплошной — тёмный оттенок, добавка у курящего — диагональная штриховка; цвета не зависят от темы */
+/* #FR-97/#FR-99: подсектор радона у НЕкурящего внутри «новообразований» (оранжевый pie-s1): сплошной тёмный оттенок; цвета не зависят от темы */
 .pie-sl.pie-sub-solid { fill: #9a4d00; stroke: #fff; stroke-width: 1; }
-.pie-sl.pie-sub-hatch { stroke: #fff; stroke-width: 1; }
-.pie-hatch-bg { fill: #f28e2b; } .pie-hatch-line { stroke: #4a2400; }
 .pie-sw.pie-sub-solid { background: #9a4d00; }
-.pie-sw.pie-sub-hatch { background: repeating-linear-gradient(45deg, #f28e2b 0 3px, #4a2400 3px 5px); }
 .pie-sub td { color: var(--muted); }
+/* #FR-98: подсектор «от загрязнения воздуха» — цвет родительской причины с тёмными точками; не перекрывает подсектор радона */
+.pie-dots-bg.pie-s1 { fill: #f28e2b; } .pie-dots-bg.pie-s2 { fill: #59a14f; } .pie-dots-bg.pie-s11 { fill: #a0a0a0; } .pie-dots-dot { fill: #1b1b1b; }
+.pie-sl.pie-air { stroke: #fff; stroke-width: 1; }
+.pie-sw.pie-air { background-image: radial-gradient(circle, #1b1b1b 1.2px, transparent 1.5px); background-size: 4px 4px; }
 @media print {
   .pie, .pie-svg, .pie-sw { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .pie-hatch-line { stroke: #000; } .pie-sw.pie-sub-hatch { background: repeating-linear-gradient(45deg, #f28e2b 0 3px, #000 3px 5px); }
   .pie { break-inside: avoid; }
   .detail-years .tablewrap { max-height: none; overflow: visible; }
 }

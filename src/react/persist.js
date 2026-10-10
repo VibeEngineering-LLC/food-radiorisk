@@ -1,4 +1,5 @@
-import { DEFAULT_RADON_C, DEFAULT_DWELL_U } from '../calc/summary_charts.js';
+import { DEFAULT_FLIGHT_PER_YEAR } from '../calc/ext_inputs.js';
+import { normRegion, DEFAULT_REGION } from '../calc/region.js';
 
 // Константы конфигурации хранилища
 export const STORAGE_KEY = 'food-radiorisk:state';
@@ -7,22 +8,31 @@ export const MAX_NUCLIDES = 20;
 
 // #FR-89 v29: поля вкладки «Сравнение с облучением» (ОА радона, мощность дозы в жилище, снимки и перелёты в год) — общее состояние со «Сводкой»; хранятся отдельным ключом, старое сохранённое состояние без них не ломается
 export const EXT_KEY = 'food-radiorisk:ext';
-export const EXT_DEFAULTS = { radonC: DEFAULT_RADON_C, dwellU: DEFAULT_DWELL_U, xrayN: 1, flightN: 2 };
-export const EXT_VERSION = 2; // v2: хранится только ввод пользователя; без v (старое состояние) прежнее умолчание 100 Бк/м³ и пустое поле дозиметра переводятся на новые умолчания
+// #FR-101 (D-031): v3 — радон, гамма-фон жилища, КТ и рентгенографии хранятся ТОЛЬКО если введены пользователем (NaN/null — «не введено», берётся умолчание региона); прежнее поле «дополнительных снимков грудной клетки» (xrayN, v ≤ 2) заменено полем «рентгенографий в год» — старое значение отбрасывается (иной смысл), как и сохранённые умолчания 200 Бк/м³ и 0,15 мкЗв/ч
+export const EXT_DEFAULTS = { radonC: NaN, dwellU: NaN, ctN: NaN, xrayN: NaN, flightN: DEFAULT_FLIGHT_PER_YEAR };
+export const EXT_VERSION = 3;
 const extNum = (v, d) => (typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 1e6 ? v : d);
 export function parseExt(text) {
   let o = null;
   try { o = JSON.parse(text); } catch (e) { return { ...EXT_DEFAULTS }; }
   if (!isPlainObject(o)) return { ...EXT_DEFAULTS };
-  const old = o.v !== EXT_VERSION;
-  const radonC = extNum(o.radonC, EXT_DEFAULTS.radonC);
-  return { radonC: old && radonC === 100 ? EXT_DEFAULTS.radonC : radonC, dwellU: extNum(o.dwellU, old ? EXT_DEFAULTS.dwellU : NaN), xrayN: extNum(o.xrayN, EXT_DEFAULTS.xrayN), flightN: extNum(o.flightN, EXT_DEFAULTS.flightN) };
+  if (o.v !== EXT_VERSION) return { ...EXT_DEFAULTS, flightN: extNum(o.flightN, EXT_DEFAULTS.flightN) };
+  return { radonC: extNum(o.radonC, NaN), dwellU: extNum(o.dwellU, NaN), ctN: extNum(o.ctN, NaN), xrayN: extNum(o.xrayN, NaN), flightN: extNum(o.flightN, EXT_DEFAULTS.flightN) };
 }
 export function loadExt() {
   try { return parseExt(globalThis.localStorage?.getItem(EXT_KEY)); } catch (e) { return { ...EXT_DEFAULTS }; }
 }
+const fin = (x) => (Number.isFinite(x) ? x : null);
 export function saveExt(ext) {
-  try { globalThis.localStorage?.setItem(EXT_KEY, JSON.stringify({ v: EXT_VERSION, radonC: ext.radonC, dwellU: Number.isFinite(ext.dwellU) ? ext.dwellU : null, xrayN: ext.xrayN, flightN: ext.flightN })); } catch (e) { /* хранилище недоступно — состояние не сохраняется */ }
+  try { globalThis.localStorage?.setItem(EXT_KEY, JSON.stringify({ v: EXT_VERSION, radonC: fin(ext.radonC), dwellU: fin(ext.dwellU), ctN: fin(ext.ctN), xrayN: fin(ext.xrayN), flightN: ext.flightN })); } catch (e) { /* хранилище недоступно — состояние не сохраняется */ }
+}
+// #FR-101: регион данных — один на всё приложение, отдельный ключ; по умолчанию «Мир»
+export const REGION_KEY = 'food-radiorisk:region';
+export function loadRegion() {
+  try { return normRegion(globalThis.localStorage?.getItem(REGION_KEY)); } catch (e) { return DEFAULT_REGION; }
+}
+export function saveRegion(region) {
+  try { globalThis.localStorage?.setItem(REGION_KEY, normRegion(region)); } catch (e) { /* хранилище недоступно */ }
 }
 
 // Проверка на "чистый" объект (не null, не массив)

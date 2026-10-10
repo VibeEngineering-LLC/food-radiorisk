@@ -7,11 +7,15 @@
   "required": ["id", "kind", "label_ru", "year", "source", "loc", "level", "unit_norm", "unit_factor", "unit_inferred"],
   "properties": {
     "id": { "type": "string", "pattern": "^[A-Za-z0-9_.\\-]+$" },
-    "kind": { "enum": ["cause", "incidence_ref", "life_table", "cause_shares"] },
+    "kind": { "enum": ["cause", "incidence_ref", "life_table", "cause_shares", "air_attrib"] },
+    "region": { "enum": ["ru", "world"] },
+    "ex_open": { "$ref": "#/$defs/exOpen" },
+    "value": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+    "unit": { "type": "string", "minLength": 1 },
     "label_ru": { "type": "string", "minLength": 1 },
     "adult": { "$ref": "#/$defs/bySex" },
     "child": { "$ref": "#/$defs/bySex" },
-    "code": { "type": "string", "pattern": "^[0-9]{4}$" },
+    "code": { "type": ["string", "null"], "pattern": "^[0-9]{4}$" },
     "nodes": { "type": "array", "minItems": 2, "items": { "type": "integer", "minimum": 0 } },
     "lx": { "$ref": "#/$defs/lxBySex" },
     "births": { "$ref": "#/$defs/birthsBySex" },
@@ -51,11 +55,16 @@
       "then": { "required": ["code", "deaths", "share"], "not": { "anyOf": [{ "required": ["adult"] }, { "required": ["child"] }, { "required": ["lx"] }, { "required": ["nodes"] }] } }
     },
     {
+      "if": { "properties": { "kind": { "const": "air_attrib" } }, "required": ["kind"] },
+      "then": { "required": ["region", "value", "unit", "code", "quote"], "not": { "anyOf": [{ "required": ["adult"] }, { "required": ["child"] }, { "required": ["deaths"] }, { "required": ["lx"] }] } }
+    },
+    {
       "if": { "properties": { "kind": { "const": "incidence_ref" } }, "required": ["kind"] },
       "then": { "required": ["ref_dataset", "ref_id"], "not": { "anyOf": [{ "required": ["adult"] }, { "required": ["child"] }] } }
     }
   ],
   "$defs": {
+    "exOpen": { "type": "object", "additionalProperties": false, "required": ["male", "female"], "properties": { "male": { "type": "number", "exclusiveMinimum": 0 }, "female": { "type": "number", "exclusiveMinimum": 0 } } },
     "prob": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
     "lxBySex": { "type": "object", "additionalProperties": false, "required": ["male", "female"], "properties": { "male": { "type": "array", "items": { "type": "integer", "minimum": 0 } }, "female": { "type": "array", "items": { "type": "integer", "minimum": 0 } } } },
     "birthsBySex": { "type": "object", "additionalProperties": false, "required": ["male", "female"], "properties": { "male": { "type": "integer", "minimum": 1 }, "female": { "type": "integer", "minimum": 1 } } },

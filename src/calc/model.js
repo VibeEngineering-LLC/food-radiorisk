@@ -14,6 +14,7 @@ import { AGE_BANDS, periodYears } from './lifetime.js';
 import { yearPlan, DAYS_PER_YEAR, NOMINAL_AGE, avg5, sumSeries } from './years.js';
 import { yearlySeries, bandsOf } from './series.js';
 import { buildComparison } from './compare.js';
+import { recordsFor } from './region.js';
 import { organDoses } from './organ.js';
 import { organRisk } from './organ_risk.js';
 import { lifeRisks } from './life_risks.js';
@@ -172,7 +173,7 @@ export function computeScenario(data, input) {
   // #FR-79: добавочный риск от продукта рядом с обычными рисками жизни (data-src/life_risks.yaml); считается по готовому результату
   result.lifeRisks = rows.length ? lifeRisks(result, input, data.life_risks) : null;
   // #FR-81 V07: строка A4 главного экрана
-  result.background = tech.length ? backgroundOf(data.life_risks, input) : null;
+  result.background = tech.length ? backgroundOf(recordsFor(data.life_risks, input.region), input) : null; // #FR-101: фон рака — по таблице выбранного региона
   return result;
 }
 
@@ -291,7 +292,7 @@ function rowFor(data, input, n, warnings, riskCoeff) {
       depEst.range = depositionBounds(depEst.kBqPerM2, relA);
       // КП — из оценки (уже в м²/кг с учётом unit_factor), не сырое поле записи
       ests.forEach(e => { const r = used.find(x => x.id === e.transferId), c = e.coeffM2PerKg;
-        prov.push({ step: 'оценка загрязнения (сводная)', what: r.item_ru, id: r.id, source: r.source, loc: r.loc, level: r.level, value: c.central ?? c.min ?? c.max, unit: 'm2/kg' }); });
+        prov.push({ step: 'оценка загрязнения (сводная)', what: r.item_ru, id: r.id, source: r.source, loc: r.loc, level: r.level, value: c.central ?? (Number.isFinite(c.min) && Number.isFinite(c.max) ? Math.sqrt(c.min * c.max) : c.max), unit: 'm2/kg' }); }); // #FR-99 v38a: показана та же точка КП, что взял расчёт (центр; при двух границах — среднее геометрическое; запись только с верхней границей КП — она)
     }
   } else if (n.source === 'measured' && n.transferId) {
     const tRec = data.transfer.find(r => r.id === n.transferId);

@@ -38,12 +38,12 @@ test('V08: значения — S1 (20→30), S2 (3→13), срок за 85 ле
   assert.deepEqual(life.rows.slice(1).map(r => r.label), LABELS, '(1) labels');
   // #FR-93 v31: вкладка считает на пожизненном горизонте H (20→70 лет, 50 лет), числа — causeProb(a, a+H) независимо от экрана
   assert.ok(a.text.includes('За 50 лет, на 1 млн'), '(1) header');
-  assert.ok(a.text.includes('Умереть в дорожно-транспортном происшествии 6900'), '(1) road text');
-  assert.ok(a.text.includes('Умереть от новообразований (рака и других опухолей, C00–D48) 73 000'), '(1) cancer text');
-  assert.ok(a.text.includes('Утонуть 1400'), '(1) drown text');
-  assert.ok(a.text.includes('Умереть от огня (пожара) 1100'), '(1) fire text');
-  assert.ok(a.text.includes('Умереть от случайного отравления 7500'), '(1) poison text');
-  assert.ok(a.text.includes('Умереть от падения 2000'), '(1) fall text');
+  assert.ok(a.text.includes('Дорожно-транспортные происшествия 6900'), '(1) road text'); // #FR-100: названия причин для населения
+  assert.ok(a.text.includes('Злокачественные и другие новообразования (рак) 73 000'), '(1) cancer text');
+  assert.ok(a.text.includes('Утопления 1400'), '(1) drown text');
+  assert.ok(a.text.includes('Пожары 1100'), '(1) fire text');
+  assert.ok(a.text.includes('Случайные отравления 7500'), '(1) poison text');
+  assert.ok(a.text.includes('Падения 2000'), '(1) fall text');
   assert.ok(a.text.includes('за 50 лет — от 20 лет до 70 лет'), '(1) caption');
   assert.ok(a.text.includes('а не за срок питания'), '(1) подпись честно говорит о горизонте');
 
@@ -53,8 +53,8 @@ test('V08: значения — S1 (20→30), S2 (3→13), срок за 85 ле
   assert.equal(b.result.lifeRisks.b, 13, '(2) life.b');
   close(pick(b.result.lifeRisks), REF.s2, '(2) values');
   assert.ok(b.text.includes('от 3 лет до 70 лет'), '(2) caption');
-  assert.ok(b.text.includes('Утонуть 1700'), '(2) drown text');
-  assert.ok(b.text.includes('Умереть в дорожно-транспортном происшествии 7600'), '(2) road text');
+  assert.ok(b.text.includes('Утопления 1700'), '(2) drown text');
+  assert.ok(b.text.includes('Дорожно-транспортные происшествия 7600'), '(2) road text');
 
   // (3) срок за 85 лет
   const c = await draw(CAP());
@@ -68,7 +68,7 @@ test('V08: значения — S1 (20→30), S2 (3→13), срок за 85 ле
   // срок питания 70 лет заходит за 85, но пожизненный горизонт (20→70) — нет: заметки об обрезке в таблице больше нет (обрезка осталась в life.capped для срока питания)
   assert.ok(c.text.includes('За 50 лет, на 1 млн'), '(3) header');
   assert.ok(!c.text.includes('таблица дожития определена до 85 лет'), '(3) no cap note on lifetime table');
-  assert.ok(c.text.includes('Умереть от новообразований (рака и других опухолей, C00–D48) 73 000'), '(3) cancer text');
+  assert.ok(c.text.includes('Злокачественные и другие новообразования (рак) 73 000'), '(3) cancer text');
 });
 
 test('V08: тексты вкладки и запрещённые слова', async () => {

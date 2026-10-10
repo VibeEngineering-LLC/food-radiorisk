@@ -44,7 +44,7 @@ test('провенанс сводной: КП в м²/кг, как в одино
   const r = run({ transferId: 'ALL', transferIds: good }).rows[0];
   for (const p of r.provenance.filter(q => q.step === 'оценка загрязнения (сводная)')) {
     const c = run({ transferId: p.id }).rows[0].depositionEstimate.coeffM2PerKg;
-    assert.equal(p.value, c.central ?? c.min ?? c.max, p.id);
+    assert.equal(p.value, c.central ?? (Number.isFinite(c.min) && Number.isFinite(c.max) ? Math.sqrt(c.min * c.max) : c.max), p.id); // #FR-99 v38a: показана точка, взятая в расчёт
   }
 });
 

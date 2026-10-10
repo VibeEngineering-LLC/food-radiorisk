@@ -96,7 +96,7 @@ test('FR-89: нет логарифмического сжатия', async () => 
   const angles = sectorAngles(dose);
 
   // Находим долю продукта (питание)
-  const foodSlice = slices.find(s => s.label && s.label.includes('Питание'));
+  const foodSlice = slices.find(s => s.label && s.label.includes('Этот продукт'));
   assert.ok(foodSlice, 'Food slice must exist');
   assert.ok(foodSlice.share < 1e-2, `доля питания ${foodSlice.share} мала (< 1 %)`);
 
@@ -104,6 +104,6 @@ test('FR-89: нет логарифмического сжатия', async () => 
   assert.ok(Math.abs(foodAngle - foodSlice.share * 360) < 0.02, `угол питания ${foodAngle}° = доля × 360° = ${foodSlice.share * 360}° (линейно, без раздувания)`);
 
   // Легенда/выноska должна содержать текст
-  assert.ok(dose.includes('Питание (молоко): '), 'выноска с названием продукта');
-  assert.ok(/<text class="pie-callout"[^>]*>[\s\S]*?Питание \(молоко\): /.test(dose), 'Callout text must be in pie-callout element');
+  assert.ok(dose.includes('Этот продукт (молоко): '), 'выноска с названием продукта');
+  assert.ok(/<text class="pie-callout"[^>]*>[\s\S]*?Этот продукт \(молоко\): /.test(dose), 'Callout text must be in pie-callout element');
 });

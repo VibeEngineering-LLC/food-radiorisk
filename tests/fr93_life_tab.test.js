@@ -14,7 +14,7 @@ const norm = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&nbsp;|\s+/g, ' ');
 const close = (x, y, rel) => Math.abs(x - y) <= rel * Math.max(Math.abs(x), Math.abs(y), 1e-300);
 const ADULT = () => inputFor('milk', 'молоко', [['Cs-137', 100, 10]], { portionKg: 0.5, portionsPerYear: 365, years: 1 });
 const CHILD = () => inputFor('milk', 'молоко', [['Cs-137', 50, 5], ['Sr-90', 10, 1]], { age: '5y', portionKg: 0.5, portionsPerYear: 365, years: 10, lifetime: { fromAge: 3, toAge: 13 } });
-const TABLE = makeLifeTable(data.life_risks);
+const TABLE = makeLifeTable(data.life_risks.filter(x => x.region === 'ru')); // #FR-101: российский набор
 const startOf = (input) => input.lifetime ? input.lifetime.fromAge : NOMINAL_AGE[input.age];
 const lifeTab = async (input) => { const result = computeScenario(data, input); const html = await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META, initialTab: 'life' }); return { result, html, text: norm(html) }; };
 const summary = async (input) => { const result = computeScenario(data, input); const html = await renderJsx('src/react/SummaryTab.jsx', 'default', { result, input, radonC: 100 }); return { result, html }; };
@@ -42,7 +42,8 @@ test('FR-93: горизонт вкладки и диаграммы — H, а н�
 });
 
 test('FR-93: набор строк = все записи cause_shares из данных, без пересечений', async () => {
-    const codes = data.life_risks.filter(r => r.kind === 'cause_shares').map(r => r.code);
+    const AIR_ONLY = ['1067', '1069', '1076']; // #FR-98: коды ИБС / цереброваскулярные / ХОБЛ нужны только для долей загрязнения воздуха (подсектора), отдельных строк «Бытовых рисков» у них нет
+    const codes = data.life_risks.filter(r => r.kind === 'cause_shares' && r.region === 'ru' && !AIR_ONLY.includes(r.code)).map(r => r.code);
     const { result } = await lifeTab(ADULT());
     const lt = result.lifeRisks.lifetime;
     const shownCodes = lt.rows.filter(r => r.kind === 'cause').map(r => r.code);

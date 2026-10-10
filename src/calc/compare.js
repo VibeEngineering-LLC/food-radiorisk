@@ -2,6 +2,9 @@
 // Среди источников облучения сравниваются ДОЗЫ: риск = доза × один и тот же r, коэффициент сокращается (МКРЗ 147, табл. 10; HPA-CRCE-028).
 // #FR-74: постоянные источники (природный фон, фон в жилище, радон в жилище) идут после разовых, в этом порядке; источники — audit/bg-no-radon-literature-2026-10-04.md.
 
+import { normRegion, recordsFor } from './region.js';
+import { regionParts } from './region_parts.js';
+
 const END_AGE = 70;
 const ADULT_HORIZON = 50;
 const REP_AGE = { '3m': 0, '1y': 1, '1-2y': 1, '5y': 5, '10y': 10, '12-17y': 12, '15y': 15 };
@@ -44,10 +47,13 @@ export function productRatios(cmp) {
   return out;
 }
 
-export function buildComparison(records, totals, input, riskCoeff) {
-  if (!Array.isArray(records) || records.length === 0 || !totals || !Number.isFinite(totals.doseSvPerYear)) return null;
+export function buildComparison(allRecords, totals, input, riskCoeff) {
+  if (!Array.isArray(allRecords) || allRecords.length === 0 || !totals || !Number.isFinite(totals.doseSvPerYear)) return null;
+  const region = normRegion(input.region); // #FR-101 (D-031): только записи выбранного региона (и нейтральные), прежние НКДАР 2008 — superseded и не входят
+  const records = recordsFor(allRecords, region);
   const rec = (id) => records.find(x => x.id === id && Number.isFinite(x.value));
-  const bg = rec('bg_natural_world');
+  const parts = regionParts(records, region);
+  const bg = parts ? { value: parts.naturalTotal.msv } : null;
   if (!bg) return null;
   const H = horizonYears(input);
   const r = riskCoeff; // #FR-81 V01: коэффициент из данных, передаётся вызывающим
@@ -63,19 +69,14 @@ export function buildComparison(records, totals, input, riskCoeff) {
     else if (x.kind === 'annual') steady.push({ id: x.id, kind: 'horizon', label: x.label_ru, doseSv: x.value * 1e-3 * H, source: x.source, loc: x.loc });
   }
   main.sort((a, b) => a.doseSv - b.doseSv);
+  steady.sort((a, b) => (b.id === parts.naturalTotal.id) - (a.id === parts.naturalTotal.id)); // природный фон региона — первым среди постоянных (прежний порядок)
   const rows = [...main, ...steady];
-  const xray = rec('med_chest_xray'), flight = rec('flight_3h');
+  const xray = parts.chestXray ? { value: parts.chestXray.msv } : null, flight = rec('flight_3h'); // снимок грудной клетки — по региону (мир 0,08; Россия 0,12 мЗв)
   // #FR-81 D11: эквиваленты и добавка к риску — за 1 год питания и за весь срок (при сроке больше года)
   const eq = (sv) => ({ bgDays: sv / bgSvPerYear * 365, chestXrays: xray ? sv / (xray.value * 1e-3) : null, flightHours: flight ? sv / (flight.value * 1e-3) * 3 : null });
   const oneYearSv = totals.doseSvPerYear, equivalents = eq(scenarioSv), equivalents1 = multi ? eq(oneYearSv) : null;
   const hrs = rec('dwell_hours'), conv = rec('dwell_h10_to_e');
   const dwell = hrs && conv ? { hours: hrs.value, h10ToE: conv.value, source: conv.source, loc: conv.loc } : null;
-  // #FR-89 v27: радон-222 и торон мирового среднего фона — из данных (UNSCEAR 2008, Annex B, Table 12), для вычитания из 2,4 мЗв/год на «Сводке»; нет обеих записей — null
-  const rn = rec('bg_radon_world'), tn = rec('bg_thoron_world');
-  const worldRadon = rn && tn ? { radonSvPerYear: rn.value * 1e-3, thoronSvPerYear: tn.value * 1e-3, source: rn.source, loc: rn.loc } : null;
-  // #FR-89 v29: составляющие среднего мирового фона (UNSCEAR 2008, Annex B, Table 12), медицина (Annex A, Table 5), разовые дозы — все из записей данных, мЗв; нет любой природной составляющей — null
-  const pv = (id) => { const x = rec(id); return x ? { msv: x.value, source: x.source, loc: x.loc } : null; };
-  const nat = { cosmic: pv('bg_cosmic_world'), terrIndoor: pv('bg_terr_indoor_world'), terrOutdoor: pv('street_external'), ingest: pv('bg_ingest_world'), inhalUT: pv('bg_inhal_ut_world') };
-  const parts = Object.values(nat).every(Boolean) ? { ...nat, medicine: pv('med_percaput_world'), xray: pv('med_chest_xray'), flight: pv('flight_3h'), naturalTotal: pv('bg_natural_world') } : null;
-  return { parts, worldRadon, riskCoeff: r, horizonYears: H, scenarioSv, multi, bgSvPerYear, bgHorizonSv, rows, equivalents, equivalents1, oneYearSv, dwell, natural: Array.isArray(totals.naturalNuclides) ? totals.naturalNuclides : [] };
+  // #FR-101: составляющие фона и медицины выбранного региона — из записей данных (см. region_parts.js); mSv/год на жителя
+  return { region, parts, flightMsv: flight ? flight.value : null, riskCoeff: r, horizonYears: H, scenarioSv, multi, bgSvPerYear, bgHorizonSv, rows, equivalents, equivalents1, oneYearSv, dwell, natural: Array.isArray(totals.naturalNuclides) ? totals.naturalNuclides : [] };
 }

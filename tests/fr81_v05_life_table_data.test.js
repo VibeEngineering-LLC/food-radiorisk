@@ -7,8 +7,8 @@ import { loadAll } from '../src/data/loader.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const { data } = await loadAll(async (u) => JSON.parse(await readFile(root + u, 'utf8')));
-const lts = data.life_risks.filter(x => x.kind === 'life_table');
-const cs = data.life_risks.filter(x => x.kind === 'cause_shares');
+const lts = data.life_risks.filter(x => x.kind === 'life_table' && x.region === 'ru'); // #FR-101: проверяется российский набор; мировой — tests/fr101_world_life.test.js
+const cs = data.life_risks.filter(x => x.kind === 'cause_shares' && x.region === 'ru');
 const byCode = (c) => cs.find(x => x.code === c);
 
 test('одна запись lx: узлы, 22 значения на пол, рождение 100 000, нет роста, 19 групп с открытой 85+', () => {
@@ -28,9 +28,9 @@ test('одна запись lx: узлы, 22 значения на пол, ро�
   assert.deepEqual(t.groups[18], [85, null]);
 });
 
-test('доли причин: 12 кодов, доля = умершие от причины / умершие от всех причин, 1026 с пометкой, 1098 со сверкой', () => {
+test('доли причин: 15 кодов (12 + ИБС, цереброваскулярные, ХОБЛ для долей воздуха #FR-98), доля = умершие от причины / умершие от всех причин, 1026 с пометкой, 1098 со сверкой', () => {
   const codes = cs.map(x => x.code).sort();
-  assert.deepEqual(codes, ['1000','1026','1034','1064','1095','1096','1097','1098','1099','1100','1101','1102']);
+  assert.deepEqual(codes, ['1000','1026','1034','1064','1067','1069','1076','1095','1096','1097','1098','1099','1100','1101','1102']);
   const all = byCode('1000');
   for (const x of cs) {
     for (const s of ['male', 'female']) {

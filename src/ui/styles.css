@@ -581,3 +581,9 @@ td.org-hi .cmpbar i { background: var(--warn); }
 .cmp-inputs label { display: flex; flex-direction: column; justify-content: flex-end; gap: .25rem; font-weight: 700; color: var(--ink); }
 .cmp-inputs input { font-weight: 400; width: 100%; max-width: 20rem; }
 @media (max-width: 640px) { .kgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .kgrid:not(.one) > div:first-child { display: none; } .kgrid .kr { grid-column: 1 / -1; } }
+/* #FR-101: переключатель региона данных */
+.region-switch { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: .4rem 0; }
+.region-switch .region-label { font-weight: 700; }
+.region-switch button { padding: 2px 12px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+.region-switch button.on { background: var(--muted); color: var(--bg, #fff); font-weight: 700; }
+.region-switch .region-hint { margin: 0; }

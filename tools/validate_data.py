@@ -282,8 +282,11 @@ def check_life_table_set(ds, records, errors):
             continue
         code = cs.get("code")
         rec_id = cs.get("id")
-        if rec_id != "cs_" + str(code):
-            err(rec_id if rec_id else "-", "LIFE_SHARES", f"id must be 'cs_{code}'")
+        world = cs.get("region") == "world"  # #FR-101: мир — deaths по 7 укрупнённым группам ВОЗ, share по группам таблицы дожития (равномерно внутри укрупнённой)
+        nd = 7 if world else len(groups)
+        didx = (lambda i: sum(groups[i][0] >= b for b in (5, 15, 30, 50, 60, 70))) if world else (lambda i: i)
+        if rec_id != ("cs_w_" if world else "cs_") + str(code):
+            err(rec_id if rec_id else "-", "LIFE_SHARES", f"id must be '{'cs_w_' if world else 'cs_'}{code}'")
 
         deaths = cs.get("deaths")
         share = cs.get("share")
@@ -298,19 +301,19 @@ def check_life_table_set(ds, records, errors):
                 err(rec_id if rec_id else "-", "LIFE_SHARES", f"malformed: {sex} deaths or share")
                 continue
 
-            if len(d_sex) != len(groups) or len(s_sex) != len(groups):
+            if len(d_sex) != nd or len(s_sex) != len(groups):
                 err(rec_id if rec_id else "-", "LIFE_SHARES", f"{sex} length mismatch with groups")
                 continue
 
             d_all_sex = cs_all.get("deaths", {}).get(sex)
-            if not isinstance(d_all_sex, list) or len(d_all_sex) != len(groups):
+            if not isinstance(d_all_sex, list) or len(d_all_sex) != nd:
                 err(rec_id if rec_id else "-", "LIFE_SHARES", f"malformed: all-causes {sex} deaths")
                 continue
 
             for i in range(len(groups)):
-                d_val = d_sex[i]
+                d_val = d_sex[didx(i)]
                 s_val = s_sex[i]
-                d_all_val = d_all_sex[i]
+                d_all_val = d_all_sex[didx(i)]
 
                 if not isinstance(d_val, (int, float)) or isinstance(d_val, bool):
                     err(rec_id if rec_id else "-", "LIFE_SHARES", f"{sex} deaths[{i}] malformed")
@@ -333,7 +336,7 @@ def check_life_table_set(ds, records, errors):
                         err(rec_id if rec_id else "-", "LIFE_SHARES", f"{sex} share[{i}] must be 0 when all-causes deaths is 0")
                 else:
                     expected = d_val / d_all_val
-                    if abs(s_val - expected) > 1e-12:
+                    if abs(s_val - expected) > (1e-5 if world else 1e-12):  # мир: deaths ВОЗ округлены до целых, share посчитаны по неокруглённым
                         err(rec_id if rec_id else "-", "LIFE_SHARES", f"{sex} share[{i}] mismatch")
 
 DIET_LINKS = {"default_id": ("balance", "method_estimate"), "high_id": ("high_d10",), "ref614_id": ("norm614",), "info_id": ("balance", "survey_ref")}
@@ -412,7 +415,9 @@ def main() -> int:
             if ds.startswith("limits_"): check_limit_range(ds, rec, errors)
             if ds == "life_risks": check_life_risks_range(ds, rec, errors)
             check_warn_note(ds, rec, errors)
-        if ds == "life_risks": check_life_table_set(ds, doc.get("records", []), errors)
+        if ds == "life_risks":  # #FR-101: таблица дожития и доли причин проверяются отдельно для каждого региона (ru, world)
+            for rg in ("ru", "world"):
+                check_life_table_set(ds, [r for r in doc.get("records", []) if r.get("region") == rg], errors)
         if ds == "diet": check_diet_refs(ds, doc.get("records", []), errors)
         if ds == "products": check_products(ds, doc.get("records", []), by_ds, errors)
 

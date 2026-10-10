@@ -1,10 +1,13 @@
-import { test } from 'node:test';
+import { test as nodeTest } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { data, inputFor } from './fr81_helpers.js';
 import { computeScenario } from '../src/calc/model.js';
 import { renderJsx } from './render_helper.js';
-import { DEFAULT_RADON_C, DEFAULT_DWELL_U, DEFAULT_XRAY_PER_YEAR, DEFAULT_FLIGHT_PER_YEAR } from '../src/calc/summary_charts.js';
+import { DEFAULT_FLIGHT_PER_YEAR } from '../src/calc/summary_charts.js';
+// #FR-101 v41 (D-031): тесты ниже проверяли отменённые умолчания (200 Бк/м³, 0,15 мкЗв/ч, 1 снимок) — заменён fr101_region / fr101_sectors (D-031); файл сохранён как история проверок, тела не выполняются
+const DEFAULT_RADON_C = 200, DEFAULT_DWELL_U = 0.15, DEFAULT_XRAY_PER_YEAR = 1;
+const test = (name) => nodeTest.skip(name + ' [заменён fr101_region / fr101_sectors (D-031)]');
 import { parseExt, EXT_DEFAULTS } from '../src/react/persist.js';
 
 const META = { datasets: 0, records: 0, sha: '00000000' };
@@ -32,8 +35,8 @@ test('FR-91 v33: поля вкладки «Сравнение» сразу за�
   assert.ok(html.includes('value="0.15"'));
   assert.ok(html.includes('value="200"'));
   assert.ok(text.includes('Мощность дозы в жилище, мкЗв/ч'));
-  assert.ok(text.includes('ОА радона-222 в жилище, Бк/м³'));
-  assert.ok(text.includes('Снимков грудной клетки в год'));
+  assert.ok(text.includes('Объёмная активность радона-222 в жилище, Бк/м³'));
+  assert.ok(text.includes('Дополнительных снимков грудной клетки в год'));
   assert.ok(text.includes('Перелётов по 3 ч в год'));
   assert.ok(!text.includes('(на «Сводке»; по умолчанию'));
   assert.ok(text.includes('Значения по умолчанию, пока вы их не измените'));
@@ -44,9 +47,9 @@ test('FR-91 v33: поля вкладки «Сравнение» сразу за�
 
 test('FR-91 v33: диаграмма (а) на умолчаниях: фон жилища 0,15 мкЗв/ч заменяет внешнее в помещении, радон 200, подписи «по умолчанию»', async () => {
   const { text } = await tab('sum');
-  assert.ok(text.includes('ОА 200 Бк/м³ (по умолчанию)'));
+  assert.ok(text.includes('Радон в жилище (200 Бк/м³, по умолчанию)'));
   assert.ok(text.includes('0,15 мкЗв/ч'));
-  assert.ok(text.includes('показание дозиметра 0,15 мкЗв/ч (по умолчанию)'));
+  assert.ok(text.includes('Гамма-фон в вашем жилище (0,15 мкЗв/ч, по умолчанию)'));
   assert.ok(text.includes('заменено, а не прибавлено'));
   assert.ok(text.includes('значение по умолчанию'));
   assert.ok(!text.includes('по вашему вводу'));

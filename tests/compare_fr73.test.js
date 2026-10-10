@@ -19,18 +19,18 @@ const row = (c, id) => c.rows.find(x => x.id === id);
 test('взрослый, 1 год: горизонт 50 лет, разовые по возрастанию дозы, фон после них, риск', () => {
   const c = buildComparison(data.compare, totals(), inp(), 0.05);
   assert.equal(c.horizonYears, 50);
-  assert.deepEqual(c.rows.map(x => x.id), ['flight_3h', 'product', 'med_chest_xray', 'med_mammogram', 'med_ct_chest', 'med_ct_whole_body', 'bg_natural_world', 'bg_street']);
+  assert.deepEqual(c.rows.map(x => x.id), ['flight_3h', 'product', 'med_chest_xray', 'med_mammogram', 'med_ct_chest', 'med_ct_whole_body', 'w26_natural_total', 'bg_street']);
   close(row(c, 'product').doseSv, E);
   assert.equal('shareOfBackground' in row(c, 'product'), false);
   close(row(c, 'med_ct_chest').doseSv, 7e-3);
-  close(row(c, 'bg_natural_world').doseSv, 2.4e-3 * 50);
-  assert.equal(row(c, 'bg_natural_world').kind, 'horizon');
+  close(row(c, 'w26_natural_total').doseSv, 3.0e-3 * 50);
+  assert.equal(row(c, 'w26_natural_total').kind, 'horizon');
   close(row(c, 'med_ct_whole_body').doseSv, 12e-3);
 });
 
 test('эквиваленты: дни фона, снимки грудной клетки, часы полёта', () => {
   const q = buildComparison(data.compare, totals(), inp(), 0.05).equivalents;
-  close(q.bgDays, E / 2.4e-3 * 365);
+  close(q.bgDays, E / 3.0e-3 * 365);
   close(q.chestXrays, E / 0.08e-3);
   close(q.flightHours, E / 0.01e-3 * 3);
 });
@@ -38,7 +38,7 @@ test('эквиваленты: дни фона, снимки грудной кл�
 test('ребёнок 5 лет: горизонт до 70 лет возраста', () => {
   const c = buildComparison(data.compare, totals(), inp({ age: '5y' }), 0.05);
   assert.equal(c.horizonYears, 65);
-  close(row(c, 'bg_natural_world').doseSv, 2.4e-3 * 65);
+  close(row(c, 'w26_natural_total').doseSv, 3.0e-3 * 65);
   assert.equal(horizonYears(inp({ age: '3m' })), 70);
   assert.equal(horizonYears(inp({ lifetime: { fromAge: 10, toAge: 70 } })), 60);
 });
@@ -47,7 +47,7 @@ test('несколько лет: сценарий — доза за весь п�
   const c = buildComparison(data.compare, totals(10), inp({ years: 10 }), 0.05);
   close(c.scenarioSv, E * 10);
   close(row(c, 'product').doseSv, E * 10);
-  close(c.equivalents.bgDays, E * 10 / 2.4e-3 * 365);
+  close(c.equivalents.bgDays, E * 10 / 3.0e-3 * 365);
 });
 
 test('нет данных — null; расчёт сценария отдаёт сравнение', () => {
@@ -105,7 +105,7 @@ test('фон в жилище: мкЗв/ч × 7000 ч × 1 × горизонт; �
   close(dw.doseSv, 0.15e-6 * 7000 * 50);
   assert.equal(dw.kind, 'horizon');
   const w = withRadon(d, { totalDose_mSv: 1 }, 0.05, 'радон');
-  assert.deepEqual(w.rows.slice(-4).map(x => x.id), ['bg_natural_world', 'bg_street', 'dwelling', 'radon_home']);
+  assert.deepEqual(w.rows.slice(-4).map(x => x.id), ['w26_natural_total', 'bg_street', 'dwelling', 'radon_home']);
   const k = buildComparison(data.compare, totals(), inp({ age: '5y' }), 0.05);
   close(row(withDwelling(k, 0.15, 0.05, 'x'), 'dwelling').doseSv, 0.15e-6 * 7000 * 65);
 });
@@ -121,7 +121,7 @@ test('фон в жилище: пустой, нулевой или отрицат
 
 test('большая доза продукта: продукт среди разовых, природный фон всё равно после них', () => {
   const c = buildComparison(data.compare, { doseSvPerYear: 1, doseSvTotal: 1 }, inp(), 0.05);
-  assert.deepEqual(c.rows.slice(-3).map(x => x.id), ['product', 'bg_natural_world', 'bg_street']);
+  assert.deepEqual(c.rows.slice(-3).map(x => x.id), ['product', 'w26_natural_total', 'bg_street']);
 });
 
 test('фон в жилище: параметры берутся из записей, риск — по переданному r', () => {
@@ -132,7 +132,7 @@ test('фон в жилище: параметры берутся из запис�
 });
 
 test('постоянные источники не сортируются по дозе: порядок записей', () => {
-  const extra = { ...data.compare.find(x => x.id === 'bg_natural_world'), id: 'zz_small', value: 0.1 };
+  const extra = { ...data.compare.find(x => x.id === 'w26_natural_total'), id: 'zz_small', value: 0.1 };
   const c = buildComparison([...data.compare, extra], totals(), inp(), 0.05);
-  assert.deepEqual(c.rows.slice(-3).map(x => x.id), ['bg_natural_world', 'bg_street', 'zz_small']);
+  assert.deepEqual(c.rows.slice(-3).map(x => x.id), ['w26_natural_total', 'bg_street', 'zz_small']);
 });

@@ -1,7 +1,8 @@
 // #FR-81 V15 (D-022): строки главного экрана одной функцией — для экрана (Summary.jsx) и отчёта (report.js)
 import { T, fill, plural, WORDS, nuclideRu, ageWord } from './texts_v.js';
-import { fmtNum, fmtNear, fmtBpm, fmtPerMillion, riskOverOne, fmtCount, fmtDose2, fmtPct2, verdictText } from './fmt.js';
+import { fmtNum, fmtNear, fmtBpm, fmtPerMillion, riskOverOne, fmtCount, fmtDose, fmtPct2, verdictText } from './fmt.js'; // #FR-99: одна величина — одно округление на экране (fmtDose, 3 значащие), не fmtDose2
 import { unitRu } from './ru.js';
+import { regionName } from './region_notes.js';
 import { dietSummaryText } from '../calc/diet.js';
 import { yearsWord } from './render.js';
 
@@ -46,7 +47,7 @@ export function summaryParts(result, input) {
     } else {
       which = fill(T.VERBAL_WHICH_YEAR, { i: totals.doseMaxYearIndex });
     }
-    const prefix = fill(T.VERBAL_PREFIX, { E: fmtDose2(totals.doseMaxYearTech), which });
+    const prefix = fill(T.VERBAL_PREFIX, { E: fmtDose(totals.doseMaxYearTech), which });
     let clsText;
     if (totals.doseClass === 'c1') clsText = T.VERBAL_C1;
     else if (totals.doseClass === 'c2') clsText = T.VERBAL_C2;
@@ -68,9 +69,9 @@ export function summaryParts(result, input) {
       who: a >= 18 ? 'человек' : 'детей',
       age: a,
       yearsWord: ageWord(a),
-      horizon: a > 0 ? 'оставшуюся жизнь' : 'всю жизнь',
+      horizon: a > 0 ? 'всю оставшуюся жизнь (до конца жизни, без границы по возрасту)' : 'всю жизнь', // #FR-99 (Б-3): срок назван явно — не путать с диаграммой «с a до 70 лет»
       F: fmtCount(1e6 * F),
-      src: ` (Россия, ${year} г.)`,
+      src: ` (${regionName(input.region)}, ${year} г.)`, // #FR-101: фон — по таблице дожития выбранного региона
       k: (kk => /^меньше/.test(kk) ? kk : 'около ' + kk)(fmtPerMillion(totals.riskNominal)), // #FR-85 v17 (B4-11): «около меньше 0,01» -> «меньше 0,01»
     });
   }
@@ -132,9 +133,9 @@ export function summaryParts(result, input) {
       note = ` (${totals.doseMaxYearIndex}-й год)`;
     }
 
-    doseLines.push(fill(T.DOSE_MAXYEAR, { E: fmtDose2(totals.doseMaxYearTech), note, p: fmtPct2(totals.budgetShareMaxYear) }));
-    doseLines.push(fill(T.DOSE_NEGL, { E: fmtDose2(totals.doseMaxYearTech) }));
-    doseLines.push(fill(T.DOSE_TOTAL, { E_N: fmtDose2(totals.techDoseSvTotal), w: fmtPct2(totals.lifeShare70mSv) }));
+    doseLines.push(fill(T.DOSE_MAXYEAR, { E: fmtDose(totals.doseMaxYearTech), note, p: fmtPct2(totals.budgetShareMaxYear) }));
+    doseLines.push(fill(T.DOSE_NEGL, { E: fmtDose(totals.doseMaxYearTech) }));
+    doseLines.push(fill(T.DOSE_TOTAL, { E_N: fmtDose(totals.techDoseSvTotal), w: fmtPct2(totals.lifeShare70mSv) }));
   }
 
   return {

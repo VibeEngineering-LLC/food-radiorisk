@@ -44,18 +44,18 @@ test('значение bg_street = внешнее облучение + радо�
 
 test('строка в таблице: после природного фона, постоянная за горизонт, риск = доза × r', () => {
   const c = buildComparison(data.compare, totals, inp(), 0.05);
-  assert.deepEqual(c.rows.slice(-2).map(x => x.id), ['bg_natural_world', 'bg_street']);
+  assert.deepEqual(c.rows.slice(-2).map(x => x.id), ['w26_natural_total', 'bg_street']);
   const s = row(c, 'bg_street');
   assert.equal(s.kind, 'horizon');
   close(s.doseSv, 0.16504e-3 * 50);
   assert.ok(s.label.includes('Фон на улице') && s.label.includes('20 %') && s.label.includes('1760 ч/год') && s.label.includes('ОА 10 Бк/м³'));
-  close(row(c, 'bg_natural_world').doseSv / s.doseSv, 2.4 / 0.16504);
+  close(row(c, 'w26_natural_total').doseSv / s.doseSv, 3.0 / 0.16504);
   const k = buildComparison(data.compare, totals, inp({ age: '5y' }), 0.05);
   close(row(k, 'bg_street').doseSv, 0.16504e-3 * 65);
   const w = withRadon(withDwelling(c, 0.15, 0.05, 'x'), { totalDose_mSv: 1 }, 0.05, 'радон');
-  assert.deepEqual(w.rows.slice(-4).map(x => x.id), ['bg_natural_world', 'bg_street', 'dwelling', 'radon_home']);
+  assert.deepEqual(w.rows.slice(-4).map(x => x.id), ['w26_natural_total', 'bg_street', 'dwelling', 'radon_home']);
   assert.equal(c.rows.filter(x => x.kind === 'single').some(x => x.id === 'bg_street'), false);
-  close(c.equivalents.bgDays, 60.5e-6 / 2.4e-3 * 365);
+  close(c.equivalents.bgDays, 60.5e-6 / 3.0e-3 * 365);
 });
 
 test('подпись природного фона: три части — среднее по миру, дом/улица с ОА радона, космическое и внутреннее', () => {

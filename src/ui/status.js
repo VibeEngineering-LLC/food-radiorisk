@@ -1,6 +1,6 @@
 // #FR-81 V14 (D-022): строка состояния окна — итог расчёта и цвет значка; вынесено из App.jsx для проверки тестом
 import { T, fill } from './texts_v.js';
-import { fmtPerMillion, riskOverOne, fmtDose2, verdictText } from './fmt.js';
+import { fmtPerMillion, riskOverOne, fmtDose, verdictText } from './fmt.js';
 import { yearsWord } from './render.js';
 
 export function statusText(calc) {
@@ -29,7 +29,7 @@ export function statusText(calc) {
     nuclides,
     k: fmtPerMillion(result.totals.riskNominal),
     span,
-    E: fmtDose2(result.totals.doseMaxYearTech),
+    E: fmtDose(result.totals.doseMaxYearTech),
     verdict: v ? fill(T.STATUS_VERDICT, { verdict: verdictText(v) }) : ''
   });
 }

@@ -18,11 +18,11 @@ test('отношение к дозе продукта: доза строки / �
     const c = buildComparison(data.compare, totals, inp(), 0.05);
     const q = productRatios(c);
     assert.equal('product' in q, false);
-    close(q.bg_natural_world, (2.4e-3 * 50) / E);
+    close(q.w26_natural_total, (3.0e-3 * 50) / E);
     close(q.bg_street, (0.16504e-3 * 50) / E);
     close(q.med_ct_chest, 7e-3 / E);
     close(q.flight_3h, 0.01e-3 / E);
-    assert.ok(q.flight_3h < 1 && q.bg_natural_world > 1);
+    assert.ok(q.flight_3h < 1 && q.w26_natural_total > 1);
     assert.equal(Object.keys(q).length, c.rows.length - 1);
     const w = withRadon(withDwelling(c, 0.15, 0.05, 'x'), { totalDose_mSv: 1 }, 0.05, 'радон');
     close(productRatios(w).radon_home, 1e-3 / E);

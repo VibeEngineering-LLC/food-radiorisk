@@ -1,4 +1,4 @@
-// Автор — контур «Радоновый риск». radon_risk v0.1, 2026-10-04. Публикуется целиком вместе с README.md и coefficients.json.
+// Автор — VibeEngineering-LLC. radon_risk v0.1, 2026-10-04. Публикуется целиком вместе с README.md и coefficients.json.
 // radonRisk: расчёт радонового риска (канал Дарби 2005 и канал МКРЗ 115) и дозы по SPEC.md (ред. 2).
 // Чистый модуль: без I/O, DOM и зависимостей; вход и coeffs не мутируются.
 // DEFAULT_COEFFS — копия coefficients.json (литерал сгенерирован из json скриптом; синхронность — тест S).

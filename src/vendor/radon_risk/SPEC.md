@@ -59,7 +59,7 @@ B. Доза: `C=300, hoursPerYear=7000, F=0.4` -> `annualDose_mSv` 13.3545 (до
 C. Канал МКРЗ 115: `C=100, hoursPerYear=7000, F=0.4, years=10, ageStart=0` -> `totalWLM` 4.45151, `icrp115.excess` 2.22576e-3 (допуск относит. 1e-4).
 D. Частичный период, Дарби: `smoking=never, C=100, years=10, hoursPerYear=7000` -> `darby.excess` 8.7283e-5 (относит. допуск 1e-3); `smoking=smoker, C=200, hoursPerYear=3500, years=20` -> `darby.excess` 4.0747e-3 (относит. 1e-3).
 E. Обрезка (только Дарби): `ageStart=70, years=10, C=100, F=0.4, hoursPerYear=7000` -> `yearsEff=5, truncated=true`, `totalWLM` 4.45151 (за все 10 лет, без обрезки), `totalDose_mSv` 44.5151; `ageStart=75, years=10` -> `darby.excess` 0, непустой `warnings`, а `icrp115.excess` и `totalDose_mSv` НЕ нулевые (2.22576e-3 и 44.5151).
-E2. Горизонты калькулятора: `ageStart=18, years=50, C=100` -> `totalDose_mSv` 222.576 (допуск 0.01), `yearsEff=50`, `truncated=false`; `ageStart=0, years=70, C=100` -> `totalDose_mSv` 311.606 (допуск 0.01), `yearsEff=70`.
+E2. Горизонты 50 и 70 лет: `ageStart=18, years=50, C=100` -> `totalDose_mSv` 222.576 (допуск 0.01), `yearsEff=50`, `truncated=false`; `ageStart=0, years=70, C=100` -> `totalDose_mSv` 311.606 (допуск 0.01), `yearsEff=70`.
 F. Ошибки: `smoking="ex"`, `years=0`, `C=-1`, `F=1.5`, `C=NaN` -> `RangeError`.
 G. Детерминизм: `JSON.stringify(radonRisk(x))` одинаков при повторе; вход не мутируется (`Object.freeze(x)` не ломает).
 H. Структура возврата: поля по разделу «Возврат»; у `darby` НЕТ `excessLow`/`excessHigh`, у `icrp115` они есть.

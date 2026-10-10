@@ -11,7 +11,8 @@ export function run(group, name, nuc, over = {}) { return runWith(data, group, n
 export function runWith(dataX, group, name, nuc, over = {}) { return computeScenario(dataX, inputFor(group, name, nuc, over)); }
 /** вход расчёта (как в runWith) — для рендера экрана с тем же входом */
 export function inputFor(group, name, nuc, over = {}) {
-  return { age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.05, portionKg: 0.1, portionsPerYear: 10, years: 1, eatDate: null,
+  // #FR-101: прежние тесты (FR-79…FR-100) проверяют российский набор данных — им явно задан region: 'ru'; режим «Мир» (по умолчанию в приложении) проверяют tests/fr101_*.test.js
+  return { region: 'ru', age: 'adult', doseSource: 'ICRP119_F1', riskCoeffPerSv: 0.05, portionKg: 0.1, portionsPerYear: 10, years: 1, eatDate: null,
     dryMatterPercent: null, product: { name, state: 'fresh' }, processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' }, foodGroupCode: group,
     nuclides: nuc.map(([nuclide, a, da = 0]) => ({ nuclide, source: 'measured', measuredBqPerKg: a, measuredUncertaintyBqPerKg: da, variant: 'central', samplePrep: { mode: 'as_is', concentrationFactor: 1 } })),
     ...over };

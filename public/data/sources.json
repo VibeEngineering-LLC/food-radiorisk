@@ -97,7 +97,7 @@
    "title_ru": "Источники и эффекты ионизирующего излучения. Доклад НКДАР ООН 2008 г., т. I, прил. B: облучение населения и работников от различных источников",
    "authors": "United Nations Scientific Committee on the Effects of Atomic Radiation",
    "year": 2008,
-   "publisher": "United Nations, New York, 2010",
+   "publisher": "United Nations, New York (изд. 2010)",
    "doi": null,
    "url": null,
    "local": "audit/_lit_bg/UNSCEAR_2008_Annex-B-CORR2.pdf",
@@ -112,7 +112,7 @@
    "title_ru": "Источники и эффекты ионизирующего излучения. Доклад НКДАР ООН 2008 г., т. I, прил. A: медицинское облучение",
    "authors": "United Nations Scientific Committee on the Effects of Atomic Radiation",
    "year": 2008,
-   "publisher": "United Nations, New York, 2010",
+   "publisher": "United Nations, New York (изд. 2010)",
    "doi": null,
    "url": null,
    "local": "audit/_lit_bg/UNSCEAR_2008_Annex-A.pdf",
@@ -863,6 +863,84 @@
     "audit/risk-comparison-literature-2026-10-04.md:106"
    ]
   },
+  "HEI_SOGA2019": {
+   "title": "State of Global Air 2019: Russian Federation (country profile)",
+   "title_ru": "Состояние глобального воздуха, 2019: Российская Федерация (страновой листок)",
+   "authors": "Health Effects Institute",
+   "year": 2019,
+   "publisher": "Health Effects Institute, Boston (оценки IHME, Global Burden of Disease 2017)",
+   "doi": null,
+   "url": "https://www.stateofglobalair.org/sites/default/files/soga_2019_russia.pdf",
+   "local": null,
+   "kind": "страновой листок",
+   "same_as": null,
+   "evidence": [
+    "листок прочитан 2026-10-10, sha256 c77ae71ee32e8cc673e44c944402133507f92df64385a8170d9d1edf70a352b4, 682 551 байт",
+    "доли по причинам читаются с графика: изображение страницы + OCR (tesseract) + текстовый слой (99 400; 96 200; 3 460 смертей) — расхождений нет"
+   ]
+  },
+  "ICRP147": {
+   "title": "Use of Dose Quantities in Radiological Protection",
+   "title_ru": "Использование дозовых величин в радиационной защите",
+   "authors": "ICRP",
+   "year": 2021,
+   "publisher": "ICRP Publication 147. Ann. ICRP 50(1)",
+   "doi": null,
+   "url": null,
+   "local": null,
+   "kind": "рекомендации МКРЗ",
+   "same_as": null,
+   "evidence": [
+    "src/ui/texts_v.json (AGE_CAVEAT, REF_AGE_TABLE): МКРЗ, Публикация 147 (2021), с. 6, 15, табл. 2.4 (с. 28)",
+    "audit/organ-risk-literature-2026-10-04.md:79-82 (чтение рукописи, разд. 2.1, 4.4, 5)"
+   ]
+  },
+  "DDEP": {
+   "title": "Table de Radionucléides (Decay Data Evaluation Project)",
+   "title_ru": "Таблицы радионуклидов (проект оценки данных о распаде, DDEP)",
+   "authors": "LNE-LNHB/CEA",
+   "year": null,
+   "publisher": "LNE-LNHB/CEA",
+   "doi": null,
+   "url": null,
+   "local": null,
+   "kind": "база ядерных данных",
+   "same_as": null,
+   "evidence": [
+    "public/data/nuclides.json: «DDEP / LNE-LNHB/CEA Table de Radionucleides, Cs-137 (eval. 02/12/2021-18/07/2023)»",
+    "audit/sci-halflife-2026-09-30.md:7"
+   ]
+  },
+  "ICRP126": {
+   "title": "Radiological Protection against Radon Exposure",
+   "title_ru": "Радиационная защита от облучения радоном",
+   "authors": "ICRP",
+   "year": 2014,
+   "publisher": "ICRP Publication 126. Ann. ICRP 43(3)",
+   "doi": null,
+   "url": null,
+   "local": null,
+   "kind": "рекомендации МКРЗ",
+   "same_as": null,
+   "evidence": [
+    "src/vendor/radon_risk/coefficients.json: «МКРЗ 126 (2014) п.36: 13 мЗв/WLM для жилищ»"
+   ]
+  },
+  "IRSN_PSE2018": {
+   "title": "IRSN report PSE-SAN-2018-00002",
+   "title_ru": "Отчёт IRSN PSE-SAN-2018-00002 (дозовые коэффициенты радона и единица WLM)",
+   "authors": "IRSN",
+   "year": 2018,
+   "publisher": "Institut de radioprotection et de sûreté nucléaire",
+   "doi": null,
+   "url": null,
+   "local": null,
+   "kind": "отчёт",
+   "same_as": null,
+   "evidence": [
+    "src/vendor/radon_risk/coefficients.json: «IRSN PSE-SAN-2018-00002, сноска 2 (1 WLM = 3700 Бк/м3 ЭРОА x 170 ч); строки 541-543»"
+   ]
+  },
   "ICRP137": {
    "title": "Occupational Intakes of Radionuclides: Part 3",
    "title_ru": "Профессиональное поступление радионуклидов: часть 3",
@@ -1105,6 +1183,136 @@
     "doc_4293773574.md:1847-1890",
     "sha256 314b9f5cff91609992832b4e29d6849b561b7106f8835de20de99c5a031b85bc"
    ]
+  },
+  "UNSCEAR2026_PR": {
+   "title": "UN scientific report confirms natural background radiation (press release UNIS/OUS/453, 12 February 2026; UNSCEAR annex Evaluation of public exposure to ionizing radiation)",
+   "title_ru": "Научный доклад ООН подтверждает уровень природного фонового излучения (пресс-релиз UNIS/OUS/453 от 12.02.2026; приложение НКДАР ООН «Оценка облучения населения ионизирующим излучением»)",
+   "authors": "НКДАР ООН",
+   "year": 2026,
+   "publisher": "Информационная служба ООН в Вене",
+   "doi": null,
+   "url": "https://unis.unvienna.org/unis/en/pressrels/2026/unisous453.html",
+   "local": null,
+   "kind": "пресс-релиз",
+   "same_as": null,
+   "evidence": ["audit/fr100-ru-dose-structure-2026-10-10.md, Б.2 (итог 3,0 мЗв/год прочитан в релизе; разбивка по составляющим приведена в исследовании со ссылкой на тот же источник)"]
+  },
+  "UNSCEAR2020_A": {
+   "title": "Sources, Effects and Risks of Ionizing Radiation. UNSCEAR 2020/2021 Report, Vol. I, Annex A: Medical radiation exposures (по вторичной сводке Mahesh et al., Radiology 2023)",
+   "title_ru": "Источники, эффекты и риски ионизирующего излучения. Доклад НКДАР ООН 2020/2021, т. I, прил. A: Медицинское облучение (по вторичной сводке Mahesh и др., Radiology 2023)",
+   "authors": "НКДАР ООН",
+   "year": 2022,
+   "publisher": "United Nations, New York",
+   "doi": null,
+   "url": "https://www.unscear.org/unscear/uploads/documents/publications/UNSCEAR_2020_21_Annex-A.pdf",
+   "local": null,
+   "kind": "доклад",
+   "same_as": null,
+   "evidence": ["первоисточник не открыт (unscear.org отдаёт 403); числа взяты из Mahesh et al. 2023, табл. 1–2, см. audit/fr100-ru-dose-structure-2026-10-10.md, Б.1"]
+  },
+  "MAHESH2023": {
+   "title": "Mahesh M., Ansari A.J., Mettler F.A. Patient Exposure from Radiologic and Nuclear Medicine Procedures in the United States and Worldwide: 2009-2018. Radiology 2023;307(1):e221263",
+   "title_ru": "Mahesh M., Ansari A.J., Mettler F.A. Облучение пациентов при радиологических и радионуклидных исследованиях в США и в мире, 2009–2018 гг. Radiology, 2023, т. 307, № 1, e221263",
+   "authors": "Mahesh M., Ansari A.J., Mettler F.A.",
+   "year": 2023,
+   "publisher": "Radiology",
+   "doi": "10.1148/radiol.221263",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10050133/",
+   "local": null,
+   "kind": "статья (вторичная сводка отчёта НКДАР)",
+   "same_as": null,
+   "evidence": ["audit/fr100-ru-dose-structure-2026-10-10.md, Б.1 (таблицы 1–2; в колонке обычной рентгенографии таблицы 1 опечатки, взяты значения из таблицы по уровням дохода)"]
+  },
+  "BARKOVSKY2021": {
+   "title": "Barkovsky A.N., Akhmatdinov R.R., Akhmatdinov R.R., Baryshkov N.K. et al. Doses of exposure of the population of the Russian Federation in 2020. Radiatsionnaya Gygiena 2021;14(4):103-113",
+   "title_ru": "Барковский А.Н., Ахматдинов Р.Р., Ахматдинов Р.Р., Барышков Н.К. и др. Дозы облучения населения Российской Федерации в 2020 году. Радиационная гигиена, 2021, т. 14, № 4, с. 103–113",
+   "authors": "Барковский А.Н. и др.",
+   "year": 2021,
+   "publisher": "Радиационная гигиена",
+   "doi": "10.21514/1998-426X-2021-14-4-103-113",
+   "url": "https://www.radhyg.ru/jour/article/view/840",
+   "local": null,
+   "kind": "статья",
+   "same_as": null,
+   "evidence": ["audit/fr100-ru-dose-structure-2026-10-10.md, А.1 (табл. 6 и «Заключение» статьи прочитаны по тексту PDF)"]
+  },
+  "ONISHCHENKO2019": {
+   "title": "Onishchenko G.G., Popova A.Yu., Romanovich I.K., Vodovatov A.V. et al. Modern principles of radiation safety in medicine. Part 1. Radiatsionnaya Gygiena 2019;12(1):6-24",
+   "title_ru": "Онищенко Г.Г., Попова А.Ю., Романович И.К., Водоватов А.В. и др. Современные принципы обеспечения радиационной безопасности в медицине. Часть 1. Тенденции развития, структура лучевой диагностики и дозы медицинского облучения. Радиационная гигиена, 2019, т. 12, № 1, с. 6–24",
+   "authors": "Онищенко Г.Г. и др.",
+   "year": 2019,
+   "publisher": "Радиационная гигиена",
+   "doi": "10.21514/1998-426X-2019-12-1-6-24",
+   "url": "https://www.radhyg.ru/jour/article/download/592/601",
+   "local": null,
+   "kind": "статья",
+   "same_as": null,
+   "evidence": ["audit/fr100-ru-dose-structure-2026-10-10.md, А.3 (табл. 1 и 3 статьи)"]
+  },
+  "ONISHCHENKO2017": {
+   "title": "Onishchenko G.G., Popova A.Yu., Romanovich I.K. et al. Radiation-hygienic certification and ESKID. Report 2. Radiatsionnaya Gygiena 2017;10(3):18-35",
+   "title_ru": "Онищенко Г.Г., Попова А.Ю., Романович И.К. и др. Радиационно-гигиеническая паспортизация и ЕСКИД. Сообщение 2. Характеристика источников и доз облучения населения РФ. Радиационная гигиена, 2017, т. 10, № 3, с. 18–35",
+   "authors": "Онищенко Г.Г. и др.",
+   "year": 2017,
+   "publisher": "Радиационная гигиена",
+   "doi": "10.21514/1998-426X-2017-10-3-18-35",
+   "url": "https://www.radhyg.ru/jour/article/viewFile/514/520",
+   "local": null,
+   "kind": "статья",
+   "same_as": null,
+   "evidence": ["audit/fr100-ru-dose-structure-2026-10-10.md, А.4 (с. 22: ЭРОА 28,1 Бк/м³; МАД в зданиях 0,11 и на открытой местности 0,10 мкЗв/ч)"]
+  },
+  "MR_2_6_1_0333_23": {
+   "title": "MR 2.6.1.0333-23 Radiation control and sanitary-epidemiological assessment of residential, public and industrial buildings by radiation safety indicators",
+   "title_ru": "МР 2.6.1.0333-23. Радиационный контроль и санитарно-эпидемиологическая оценка жилых, общественных и производственных зданий и сооружений по показателям радиационной безопасности",
+   "authors": "Роспотребнадзор",
+   "year": 2023,
+   "publisher": "Роспотребнадзор",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Кормановская, Т. и др. Радиационный контроль и санитарно-эпидемиологическая оценка жилых. - 2023.pdf.md",
+   "kind": "методические рекомендации",
+   "same_as": null,
+   "evidence": ["Кормановская ... 2023.pdf.md:271 (п. 2.5, формула (3): коэффициент равновесия принимается равным 0,5)"]
+  },
+  "MU_2_6_1_037_2015": {
+   "title": "MU 2.6.1.037-2015 Determination of annual mean values of equivalent equilibrium radon concentration in indoor air from measurements of various duration",
+   "title_ru": "МУ 2.6.1.037-2015. Определение среднегодовых значений ЭРОА изотопов радона в воздухе помещений по результатам измерений разной длительности",
+   "authors": "ФГУП НИИРГ",
+   "year": 2015,
+   "publisher": "ФГУП Санкт-Петербургский НИИ радиационной гигиены",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/Фгуп, Ф. Н. и др. Определение среднегодовых значений ЭРОА изотопов радона в воздухе. - 2015.pdf.md",
+   "kind": "методические указания",
+   "same_as": null,
+   "evidence": ["Фгуп ... 2015.pdf.md:419 (формула (1): коэффициент равновесия, равный 0,5)"]
+  },
+  "UN_WPP2024": {
+   "title": "World Population Prospects 2024: Abridged life table, World, 2019 (WPP2024_Life_Table_Abridged_Medium_1950-2023)",
+   "title_ru": "Мировые демографические перспективы ООН 2024: сокращённая таблица дожития, мир, 2019 г.",
+   "authors": "United Nations, Department of Economic and Social Affairs, Population Division",
+   "year": 2024,
+   "publisher": "United Nations, New York",
+   "doi": null,
+   "url": "https://population.un.org/wpp/",
+   "local": "audit/_lit_risks/wpp2024_lt_world_ru_2019.csv",
+   "kind": "демографическая база данных ООН",
+   "same_as": null,
+   "evidence": ["audit/_lit_risks/wpp2024_lt_world_ru_2019.csv (World, 2019, оба пола и по полу; e0 оба пола = 72,61)"]
+  },
+  "WHO_GHE2023": {
+   "title": "Global Health Estimates 2023: Deaths by Cause, Age, Sex, by Country and by Region, 2000-2023",
+   "title_ru": "Глобальные оценки здоровья ВОЗ 2023: смерти по причинам, возрасту и полу, по странам и регионам, 2000–2023",
+   "authors": "World Health Organization",
+   "year": 2026,
+   "publisher": "WHO, Geneva (Global Health Estimates, сводная таблица «Estimated deaths by cause and region»)",
+   "doi": null,
+   "url": "https://www.who.int/data/global-health-estimates",
+   "local": "audit/_lit_risks/who_ghe2023_deaths_global.xlsx",
+   "kind": "база данных ВОЗ",
+   "same_as": null,
+   "evidence": ["audit/_lit_risks/who_ghe2023_deaths_global.xlsx, лист Global 2019, строки 7, 8, 10"]
   }
  }
 }

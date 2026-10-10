@@ -3,6 +3,8 @@ import { makeLifeTable, causeProb, BG_CODE } from './life_table.js';
 import { NOMINAL_AGE } from './years.js';
 import { horizonYears } from './compare.js';
 import { lifetimeRows } from './life_lifetime.js';
+import { airAttrib } from './air_attrib.js';
+import { normRegion, recordsFor } from './region.js';
 
 // Порядок строк на вкладке: новообразования (рак), болезни системы кровообращения (инфаркт, инсульт; #FR-89 v27, оператор), дорожные происшествия, падения, утопления, огонь, случайные отравления (решение В11)
 export const DOMESTIC_CODES = [BG_CODE, '1064', '1096', '1097', '1098', '1099', '1100'];
@@ -10,9 +12,10 @@ export const DOMESTIC_CODES = [BG_CODE, '1064', '1096', '1097', '1098', '1099', 
 // Последний узел таблицы дожития; для конечного b > 85 causeProb бросает RangeError, поэтому срок за пределами 85 лет обрезается (решение исполнителя; в объекте результата флаг capped)
 export const LAST_AGE = 85;
 
-export function lifeRisks(result, input, records) {
+export function lifeRisks(result, input, allRecords) {
   try {
-    if (!result?.totals || !Array.isArray(records)) return null;
+    if (!result?.totals || !Array.isArray(allRecords)) return null;
+    const records = recordsFor(allRecords, input.region); // #FR-101 (D-031): таблица дожития и доли причин — только выбранного региона
 
     const R = result.totals.riskNominal;
     if (!Number.isFinite(R)) return null;
@@ -40,8 +43,8 @@ export function lifeRisks(result, input, records) {
 
     // #FR-89: пожизненный горизонт для диаграммы «Сводки» — тот же H, что на вкладке «Сравнение с облучением» (взрослый — 50 лет, ребёнок — до 70 лет возраста); причины — от a до a+H (не дальше 85 лет)
     const H = Math.max(0, horizonYears(input)), bL = Math.min(a + H, LAST_AGE);
-    const lifetime = { a, b: bL, H, capped: a + H > LAST_AGE, ...lifetimeRows(records, table, a, bL, R) }; // #FR-93 v31: все непересекающиеся причины + «прочие» (1000 минус показанные) + справочные строки
-    return { a, b, N, n: b - a, capped, year: lt.year, rows, lifetime };
+    const lifetime = { a, b: bL, H, capped: a + H > LAST_AGE, ...lifetimeRows(records, table, a, bL, R), air: airAttrib(records, table, a, bL) }; // #FR-98: подсектора «от загрязнения воздуха» (набор «Россия») // #FR-93 v31: все непересекающиеся причины + «прочие» (1000 минус показанные) + справочные строки
+    return { a, b, N, n: b - a, capped, year: lt.year, region: normRegion(input.region), rows, lifetime };
   } catch {
     return null;
   }

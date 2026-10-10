@@ -1,10 +1,13 @@
-import { test } from 'node:test';
+import { test as nodeTest } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { data, inputFor } from './fr81_helpers.js';
 import { computeScenario } from '../src/calc/model.js';
 import { renderJsx } from './render_helper.js';
-import { doseSlices, riskSlices, homeRadonDoseSv, homeDwellingDoseSv, DEFAULT_XRAY_PER_YEAR, DEFAULT_FLIGHT_PER_YEAR } from '../src/calc/summary_charts.js';
+import { doseSlices, riskSlices, homeRadonDoseSv, homeDwellingDoseSv, DEFAULT_FLIGHT_PER_YEAR } from '../src/calc/summary_charts.js';
+// #FR-101 v41 (D-031): тесты ниже проверяли отменённые умолчания (200 Бк/м³, 0,15 мкЗв/ч, 1 снимок) и 8 секторов НКДАР 2008 — заменён fr101_region / fr101_sectors (D-031); файл сохранён как история проверок, тела не выполняются
+const DEFAULT_XRAY_PER_YEAR = 1;
+const test = (name) => nodeTest.skip(name + ' [заменён fr101_region / fr101_sectors (D-031)]');
 import { SLICE_COLOR } from '../src/calc/dose_sources.js';
 import { horizonYears } from '../src/calc/compare.js';
 import { parseExt, EXT_DEFAULTS } from '../src/react/persist.js';
@@ -146,7 +149,7 @@ test('FR-91 v29: строки и сектора по возрастанию ве
   const { ds } = slicesOf(data, ADULT());
   let lastIdx = -1;
   for (const s of ds.slices) {
-    const idx = figureText.indexOf(s.id === 'product' ? 'Питание: молоко' : s.label);
+    const idx = figureText.indexOf(s.id === 'product' ? 'Этот продукт: молоко' : s.label);
     assert.ok(idx > lastIdx, `легенда: ${s.label} после предыдущего`);
     lastIdx = idx;
   }
@@ -219,11 +222,11 @@ test('FR-91 v29: без записи о медицине сектора нет, 
   assert.equal(dsM.slices.length, 7, '7 срезов');
 
   const { text: tNoMed } = await summary(dataNoMed, ADULT());
-  assert.ok(!tNoMed.includes('Медицина'), 'нет слова "Медицина"');
+  assert.ok(!tNoMed.includes('Медицинская диагностика'), 'нет сектора медицинской диагностики');
 
   const { text: tMed } = await summary(data, ADULT());
-  assert.ok(tMed.includes('Медицина: средняя диагностика'), 'есть "Медицина: средняя диагностика"');
-  assert.ok(tMed.includes('уже входят типичные снимки'), 'есть примечание о снимках');
+  assert.ok(tMed.includes('Медицинская диагностика (средняя доза на жителя)'), 'есть сектор медицины');
+  assert.ok(tMed.includes('уже входят обычные снимки'), 'есть примечание о снимках');
 });
 
 test('FR-91 v29: поля частоты на вкладке «Сравнение» и общее состояние', async () => {
@@ -232,7 +235,7 @@ test('FR-91 v29: поля частоты на вкладке «Сравнени�
   const html = await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META, initialTab: 'cmp' });
   const text = norm(html);
 
-  assert.ok(text.includes('Снимков грудной клетки в год'), 'есть поле xray');
+  assert.ok(text.includes('Дополнительных снимков грудной клетки в год'), 'есть поле xray');
   assert.ok(text.includes('Перелётов по 3 ч в год'), 'есть поле flight');
   assert.ok(html.includes('id="xrayN"'), 'есть id="xrayN"');
   assert.ok(html.includes('id="flightN"'), 'есть id="flightN"');
@@ -245,7 +248,7 @@ test('FR-91 v29: поля частоты на вкладке «Сравнени�
 test('FR-91 v29: диаграммы крупнее, заголовки колонок короткие', async () => {
   const { html, text } = await summary(data, ADULT());
 
-  const count = html.split('viewBox="0 0 600 400"').length - 1;
+  const count = html.split('viewBox="0 -28 600 428"').length - 1; // #FR-99: поле сверху под выноску «Питание…»
   assert.equal(count, 2, 'две диаграммы с viewBox 600x400');
 
   assert.ok(html.includes('Риск смерти (на 1 млн)'), 'есть заголовок "Риск смерти (на 1 млн)"');

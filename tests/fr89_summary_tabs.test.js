@@ -5,7 +5,7 @@ import { computeScenario } from '../src/calc/model.js';
 import { renderJsx } from './render_helper.js';
 import { doseSlices, riskSlices, homeRadonDoseSv, linearAngles, fmtShare } from '../src/calc/summary_charts.js';
 // #FR-89 v27: радон-222 + торон мирового фона — из записей данных (UNSCEAR 2008, Annex B, Table 12), а не константа кода
-const WORLD_RN_TN_MSV = data.compare.find(r => r.id === 'bg_radon_world').value + data.compare.find(r => r.id === 'bg_thoron_world').value;
+const WORLD_RN_TN_MSV = data.compare.find(r => r.id === 'ru20_radon').value; // #FR-101: радон+торон среднего фона региона «Россия» (НКДАР 2008 — superseded)
 import { horizonYears, startAge } from '../src/calc/compare.js';
 import { makeLifeTable, causeProb } from '../src/calc/life_table.js';
 import { NOMINAL_AGE } from '../src/calc/years.js';
@@ -93,12 +93,14 @@ test('FR-89: диаграмма доз — доли в сумме 100 % и ра�
     assert.equal(cmp.horizonYears, H);
 
     const rad = homeRadonDoseSv(input, cmp, 100);
-    const expectedRadon = radonRisk({ C: 100, years: H, ageStart: startAge(input), smoking: 'never' }).totalDose_mSv * 1e-3;
-    const bgPerYearSv = data.compare.find(r => r.id === 'bg_natural_world').value * 1e-3;
+    const expectedRadon = radonRisk({ C: 100, years: H, ageStart: startAge(input), smoking: 'never', F: 0.5 }) /* #FR-101 v41: Россия — F = 0,5 */.totalDose_mSv * 1e-3;
+    const bgPerYearSv = data.compare.find(r => r.id === 'ru20_natural_total').value * 1e-3;
     const expectedProduct = cmp.rows.find(r => r.id === 'product').doseSv;
     // #FR-91 v29: сектора по составляющим, каждая — из записей данных; подробности и сортировка — tests/fr89_v29.test.js
     const rv = (id) => data.compare.find(r => r.id === id).value * 1e-3;
-    const expectedBy = { product: expectedProduct, radon: expectedRadon, medicine: rv('med_percaput_world') * H, flights: 2 * rv('flight_3h') * H, xray: 1 * rv('med_chest_xray') * H, cosmic: rv('bg_cosmic_world') * H, terrestrial: (rv('street_external') + rv('bg_terr_indoor_world')) * H, internal: (rv('bg_ingest_world') + rv('bg_inhal_ut_world')) * H };
+    // #FR-101: сценарии заданы с region: 'ru' — сектора России: КТ и рентген = число процедур × доза процедуры, «остальная» = средняя медицинская доза − КТ − рентген (без двойного счёта)
+    const raw = (id) => data.compare.find(r => r.id === id).value, ctM = raw('ru17_ct_freq') * raw('ru17_ct_dose'), radM = raw('ru17_rad_freq') * raw('ru17_rad_dose');
+    const expectedBy = { techno: rv('ru20_techno') * H, product: expectedProduct, radon: expectedRadon, med_ct: ctM * 1e-3 * H, med_rad: radM * 1e-3 * H, med_other: (raw('ru20_med') - ctM - radM) * 1e-3 * H, flights: 2 * rv('flight_3h') * H, cosmic: rv('ru20_cosmic') * H, terrestrial: rv('ru20_terr') * H, internal: (rv('ru20_k40') + rv('ru20_food') + rv('ru20_water') + rv('ru20_air')) * H };
 
     const ds = doseSlices(cmp, rad);
     assert.deepEqual(ds.slices.map(s => s.id).sort(), Object.keys(expectedBy).sort());
@@ -128,7 +130,7 @@ test('FR-89: диаграмма рисков — те же причины на �
     assert.equal(rs.a, a);
     assert.equal(rs.b, 70);
     
-    const table = makeLifeTable(data.life_risks);
+    const table = makeLifeTable(data.life_risks.filter(x => x.region !== 'world')); // #FR-101: сценарии заданы с region: 'ru'
     const codes = ['1026', '1064', '1096', '1097', '1098', '1099', '1100', '1101', '1102'];
     const expectedIds = ['product', ...codes.map(c => 'cs_' + c), 'cs_other'];
     assert.deepEqual(rs.slices.map(s => s.id).sort(), [...expectedIds].sort()); // порядок секторов — по возрастанию риска (v29)
@@ -180,7 +182,7 @@ test('FR-89: радон присутствует в диаграмме доз', 
   
   const ds100 = doseSlices(cmp, homeRadonDoseSv(input, cmp, 100));
   const radonSlice = ds100.slices.find(s => s.id === 'radon');
-  const expectedRadon = radonRisk({ C: 100, years: H, ageStart: startAge(input), smoking: 'never' }).totalDose_mSv * 1e-3;
+  const expectedRadon = radonRisk({ C: 100, years: H, ageStart: startAge(input), smoking: 'never', F: 0.5 }) /* #FR-101 v41 */.totalDose_mSv * 1e-3;
   assert.ok(close(radonSlice.doseSv, expectedRadon, 1e-9), 'radon dose 100');
   
   // Радон NaN (среднее по миру)
@@ -188,10 +190,10 @@ test('FR-89: радон присутствует в диаграмме доз', 
   const radonSliceNaN = dsNaN.slices.find(s => s.id === 'radon');
   const expectedWorld = WORLD_RN_TN_MSV * 1e-3 * H;
   assert.ok(close(radonSliceNaN.doseSv, expectedWorld, 1e-9), 'radon dose world');
-  assert.ok(radonSliceNaN.label.startsWith('Радон и торон, среднее по миру'));
+  assert.ok(radonSliceNaN.label.startsWith('Радон и торон в воздухе помещений (среднее)'));
   
   const htmlNaN = norm(await summaryHtml(input, NaN));
-  assert.ok(htmlNaN.includes('Радон и торон, среднее по миру'), 'world radon label');
+  assert.ok(/Радон (в жилище|и торон в воздухе помещений)/.test(htmlNaN), 'radon sector label'); // #FR-101: NaN в поле = «не введено» → умолчание региона (радон в жилище по умолчанию)
   
   // Радон 0 и 20000 -> null
   assert.equal(homeRadonDoseSv(input, cmp, 0), null);
@@ -218,9 +220,9 @@ test('FR-89: мелкая доля питания различима', async () 
   const dosePart = doseMatch[0];
   
   const pieCount = (dosePart.match(/class="pie-sl/g) || []).length;
-  assert.equal(pieCount, 8, '8 секторов: питание, радон, медицина, перелёты, снимки, космическое, земля, внутреннее');
+  assert.equal(pieCount, 10, '10 секторов: питание, радон, КТ, рентгенография, остальная медицина, перелёты, космическое, земля, внутреннее, техногенное (#FR-101 v41)');
   
-  assert.ok(dosePart.includes(`Питание (молоко): ${fmtShare(productShare)}`), 'product label with share');
+  assert.ok(dosePart.includes(`Этот продукт (молоко): ${fmtShare(productShare)}`), 'product label with share');
   assert.ok(dosePart.includes('pie-me'), 'pie-me present');
   
   // Проверка HTML для риска
@@ -230,7 +232,7 @@ test('FR-89: мелкая доля питания различима', async () 
   
   const riskPieCount = (riskPart.match(/class="pie-sl pie-s\d/g) || []).length; // #FR-97: подсектора (pie-sub) — не сектора круга
   assert.equal(riskPieCount, 11, '11 секторов: питание + 9 причин + прочие');
-  assert.ok(riskPart.includes('Питание (молоко): '), 'risk product label with product name');
+  assert.ok(riskPart.includes('Этот продукт (молоко): '), 'risk product label with product name');
 });
 
 test('FR-89: подробный расчёт — доза собирается из показанных чисел', async () => {

@@ -4,9 +4,9 @@
   {
    "dataset": "compare",
    "file": "compare.json",
-   "record_count": 23,
-   "source_sha256": "f884a8c980ce49083d2d758554ea02f1467e06b3ad90968b7a504dabfe463615",
-   "json_sha256": "0db2384a2f99087022c14699c05db6ebcabc4eba91b24efe2ff3b394a4080e0d"
+   "record_count": 56,
+   "source_sha256": "d4b93dd0258aad8531f1a4fb6084b208ad4395a547df228f88099a5e26e911fb",
+   "json_sha256": "e9d98df911f548e1727488f4f4c6dd2fddc4444ad52a98d66d94f5149d88cc7d"
   },
   {
    "dataset": "diet",
@@ -25,9 +25,9 @@
   {
    "dataset": "life_risks",
    "file": "life_risks.json",
-   "record_count": 25,
-   "source_sha256": "381633ddee88f214c93359d0f5a76770392262c5fe238241b71c2315bea03bd0",
-   "json_sha256": "f0196bae88133b712b616170c7f32505b12cb0e7d0a44ca1007b77ef092ce06f"
+   "record_count": 49,
+   "source_sha256": "7835f5eb4c98208b26d3efdb9198f5c6a9d0c2f629cf5630e5501f6649d3a3ce",
+   "json_sha256": "8edc2596fff3b9e38bea69eca7af2d889549c78019b33f55e51f1a29cdfde44b"
   },
   {
    "dataset": "limits_foreign",

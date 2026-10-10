@@ -9,12 +9,11 @@ import { sourceFull, JUR_RU, yearsWord } from '../ui/render.js';
 import { T, fill } from '../ui/texts_v.js';
 import { VerdictBox, DoseBlock } from './Summary.jsx';
 import SummaryTab from './SummaryTab.jsx';
-import { DEFAULT_RADON_C } from '../calc/summary_charts.js';
 import DetailCalc from './DetailCalc.jsx';
 import Compare from './Compare.jsx';
 import LifeRisks from './LifeRisks.jsx';
-import Bibliography from './Bibliography.jsx';
-import Reference from './Reference.jsx';
+import { effectiveInputs } from '../calc/ext_inputs.js';
+import Bibliography from './Bibliography.jsx';import Reference from './Reference.jsx';
 
 export function Kpi({ value, unit, label, level }) {
   return <div className={'kpi' + (level ? ' risk-' + level : '')}><div className="v">{value}{unit && <span className="u"> {unit}</span>}</div><div className="l">{label}</div></div>;
@@ -34,8 +33,8 @@ function normKpi(share, limitLabel, totals) {
 // Карточки итогов: строки — 1 год и весь период, столбцы — доза, риск, доля нормы НРБ
 export function KpiGrid({ totals, input }) {
   // e(g) — ожидаемая доза: взрослому за 50 лет после поступления, ребёнку до 70 лет возраста (МКРЗ 103)
-  const horizon = input.age === 'adult' ? '50 лет' : 'до 70 лет возраста';
-  const who = `Вся доза, которую даст поступление за 1 год, накопленная за ${horizon} (${(AGE_LABEL[input.age] || input.age).toLowerCase()}); ${SOURCE_LABEL[input.doseSource] || input.doseSource}`;
+  const horizon = input.age === 'adult' ? 'за 50 лет' : 'до 70 лет возраста'; // #FR-99: без «за до»
+  const who = `Вся доза, которую даст поступление за 1 год, накопленная ${horizon} (${(AGE_LABEL[input.age] || input.age).toLowerCase()}); ${SOURCE_LABEL[input.doseSource] || input.doseSource}`;
   const n = input.years, span = input.lifetime ? `${input.lifetime.fromAge}–${input.lifetime.toAge} лет` : `${n} ${yearsWord(n)}`;
   return <div className="kgrid" style={{ gridTemplateColumns: 'max-content repeat(2, minmax(0, 1fr))' }}>
     <div /><div className="kh">Ожидаемая эффективная доза</div><div className="kh">Доля нормы НРБ-99/2009</div>
@@ -70,15 +69,16 @@ export function DataTable({ rows, cols }) {
   </tbody></table></div>;
 }
 
-export default function Result({ result, input, meta, initialTab = '' }) {
+export default function Result({ result, input, meta, initialTab = '', onRegion }) {
   // #FR-66: нормы РФ, зарубежные нормы и источники — одна вкладочная группа
   const [rt, setRt] = useState(initialTab); // initialTab — для тестов: открыть нужную вкладку при серверном рендере
   const [ext0] = useState(loadExt); // #FR-89 v29: сохранённые значения полей «Сравнения» (старое состояние без них — умолчания)
-  const [xrayN, setXrayN] = useState(ext0.xrayN); // снимков грудной клетки в год
+  const [ctN, setCtN] = useState(ext0.ctN); // #FR-101: КТ в год (NaN — не введено, умолчание региона)
+  const [xrayN, setXrayN] = useState(ext0.xrayN); // #FR-101: рентгенографий и флюорографий в год (NaN — не введено, умолчание региона)
   const [flightN, setFlightN] = useState(ext0.flightN); // перелётов по 3 ч в год
   const [radonC, setRadonC] = useState(ext0.radonC); // #FR-73: ОА радона-222 дома, Бк/м³ — состояние здесь, чтобы не сбрасывалось при смене вкладки
   const [dwellU, setDwellU] = useState(ext0.dwellU);
-  useEffect(() => { saveExt({ radonC, dwellU, xrayN, flightN }); }, [radonC, dwellU, xrayN, flightN]); // #FR-74: мощность дозы в жилище, мкЗв/ч (пусто — строки нет)
+  useEffect(() => { saveExt({ radonC, dwellU, ctN, xrayN, flightN }); }, [radonC, dwellU, ctN, xrayN, flightN]); // #FR-74: мощность дозы в жилище, мкЗв/ч (пусто — строки нет)
   const messages = [];
   result.errors.forEach(e => messages.push(<div key={e} className="msg err">{e}</div>));
   result.warnings.forEach(w => messages.push(<div key={w} className="msg warn">{w}</div>));
@@ -107,6 +107,7 @@ export default function Result({ result, input, meta, initialTab = '' }) {
   // #FR-89: три новые вкладки (Сводка, Соответствие нормам, Подробный расчёт), затем прежние «Сравнение с облучением», «Бытовые риски», «Расчёт и источники»
   const tabs = [{ id: 'sum', label: 'Сводка' }, { id: 'norms', label: 'Соответствие нормам' }, { id: 'calc', label: 'Подробный расчёт' }, result.comparison && { id: 'cmp', label: 'Сравнение с облучением' }, result.lifeRisks && { id: 'life', label: `Бытовые риски за ${result.lifeRisks.lifetime?.H ?? span} ${yearsWord(result.lifeRisks.lifetime?.H ?? 0)}` }, { id: 'src', label: 'Источники' }].filter(Boolean);
   const curTab = tabs.some(t => t.id === rt) ? rt : tabs[0].id;
+  const eiR = result.comparison ? effectiveInputs(result.comparison.parts, { radonC, dwellU, ctN, xrayN, flightN }) : null; // #FR-101: действующий радон (введённый или умолчание региона) — и для «Бытовых рисков»
   const grp = (key, grow) => ({ className: 'rgroup' + (grow ? ' grow' : '') });
   const massKg = input.portionKg * input.portionsPerYear;
 
@@ -116,7 +117,7 @@ export default function Result({ result, input, meta, initialTab = '' }) {
 
     {tabs.length > 0 && <div className="rtabs"><div className="tabs" role="tablist">{tabs.map(t => <button type="button" role="tab" key={t.id} aria-selected={curTab === t.id} className={curTab === t.id ? 'on' : undefined} onClick={() => setRt(t.id)}>{t.label}</button>)}</div>
     <div className="tabbody" role="tabpanel">
-    {curTab === 'sum' && <SummaryTab result={result} input={input} radonC={radonC} dwellU={dwellU} xrayN={xrayN} flightN={flightN} />}
+    {curTab === 'sum' && <SummaryTab result={result} input={input} radonC={radonC} dwellU={dwellU} ctN={ctN} xrayN={xrayN} flightN={flightN} onRegion={onRegion} />}
     {curTab === 'norms' && <>
       <VerdictBox result={result} input={input} />
       <DoseBlock result={result} input={input} />
@@ -181,8 +182,8 @@ export default function Result({ result, input, meta, initialTab = '' }) {
     })()}
     {/* #FR-92 v30: все расчёты — на вкладке «Подробный расчёт»: вход → поступление → доза по годам → доза по нуклидам и органам, поступление/риск/ПГП, плотность загрязнения → справочные величины; «Источники» — только источники */}
     {curTab === 'calc' && <DetailCalc result={result} input={input} />}
-    {curTab === 'cmp' && <Compare comparison={result.comparison} input={input} radonC={radonC} setRadonC={setRadonC} dwellU={dwellU} setDwellU={setDwellU} xrayN={xrayN} setXrayN={setXrayN} flightN={flightN} setFlightN={setFlightN} />}
-    {curTab === 'life' && <LifeRisks life={result.lifeRisks} input={input} radonC={radonC} />}
+    {curTab === 'cmp' && <Compare comparison={result.comparison} input={input} radonC={radonC} setRadonC={setRadonC} dwellU={dwellU} setDwellU={setDwellU} ctN={ctN} setCtN={setCtN} xrayN={xrayN} setXrayN={setXrayN} flightN={flightN} setFlightN={setFlightN} onRegion={onRegion} />}
+    {curTab === 'life' && <LifeRisks life={result.lifeRisks} input={input} radonC={eiR?.radonC} radonIsDefault={eiR ? eiR.radonIsDefault : true} onRegion={onRegion} />}
     {(curTab === 'src' || curTab === 'calc') && <>
     {curTab === 'calc' && <fieldset {...grp('calc', false)}><legend>Расчёт по нуклидам</legend>
     <DataTable rows={rows} cols={[
