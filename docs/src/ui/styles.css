@@ -580,7 +580,14 @@ td.org-hi .cmpbar i { background: var(--warn); }
 .cmp-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .75rem; margin: .5rem 0 .5rem; align-items: end; } /* #FR-91 v33: подписи сверху, поля внизу на одной линии (align-items: end), 4 поля в ряд на десктопе, 2×2 / в столбик на узком */
 .cmp-inputs label { display: flex; flex-direction: column; justify-content: flex-end; gap: .25rem; font-weight: 700; color: var(--ink); }
 .cmp-inputs input { font-weight: 400; width: 100%; max-width: 20rem; }
-@media (max-width: 640px) { .kgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .kgrid:not(.one) > div:first-child { display: none; } .kgrid .kr { grid-column: 1 / -1; } }
+@media (max-width: 640px) { .kgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .kgrid:not(.one) > div:first-child { display: none; } .kgrid .kr { grid-column: 1 / -1; white-space: normal; } .kgrid:not(.one) { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } } /* #FR-105: inline-стиль Result.jsx «max-content repeat(2, …)» перебивал media — первая (скрытая) колонка max-content брала ширину подписи ~490 px; на узком экране колонок две (доза, доля нормы) */
+/* #FR-105 v45: ячейки сетки итогов не раздувают дорожки (min-width: auto у элемента, охватывающего несколько fr-дорожек, брал ширину nowrap-подписи ~500 px на 360 px) — текст переносится */
+.kgrid, .kgrid > *, .kpis, .kpis > .kpi { min-width: 0; max-width: 100%; }
+.kgrid .kpi, .kpis .kpi, .kgrid .kh, .kgrid .kr { overflow-wrap: anywhere; }
+/* #FR-105 v45: длинные URL и названия в списках источников и в тексте вкладок переносятся, а не растягивают страницу вбок */
+.tabbody a, ol.biblio, ol.biblio li, ol.biblio a, .science a { overflow-wrap: anywhere; word-break: break-word; }
+/* #FR-105 v45: заголовок числового столбца легенды переносится в границах max-width: 10rem (правило .pie-legend th.num с nowrap перебивало его и давало +15 px вбок на 1280 px) */
+.pie-legend thead th.num { white-space: normal; }
 /* #FR-101: переключатель региона данных */
 .region-switch { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: .4rem 0; }
 .region-switch .region-label { font-weight: 700; }
