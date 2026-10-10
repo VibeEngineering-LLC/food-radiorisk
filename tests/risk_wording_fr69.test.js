@@ -16,7 +16,7 @@ const input = { ...presetRadGear(), years: 10 };
 
 test('отчёт md: «Итог» без «случаев рака» и без формулировок с «в год» у риска (V15: строки как на экране)', () => {
   const text = buildReport('md', { input, result: computeScenario(data, input) }, { datasets: 1, records: 1, sha: '0' }, '2026-10-03T00:00:00.000Z').text;
-  assert.doesNotMatch(text, BAD);
+  assert.doesNotMatch(text.split('## Список литературы')[0], BAD); // #FR-96: названия документов в списке литературы («случай — контроль» у Darby) формулировкой риска не являются
 });
 
 test('тексты главного экрана (texts_v.json): без «случаев», «заболеть» и «в год» у риска; подпись числа без слова «рак»', () => {

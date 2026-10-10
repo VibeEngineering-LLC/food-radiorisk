@@ -18,7 +18,7 @@ async function figures(input) {
 }
 
 function sectorAngles(figureHtml) {
-  const re = /<path class="pie-sl[^"]*" d="M ([\d.-]+) ([\d.-]+) L ([\d.-]+) ([\d.-]+) A [\d.]+ [\d.]+ 0 ([01]) 1 ([\d.-]+) ([\d.-]+) Z"/g;
+  const re = /<path class="pie-sl pie-s\d[^"]*" d="M ([\d.-]+) ([\d.-]+) L ([\d.-]+) ([\d.-]+) A [\d.]+ [\d.]+ 0 ([01]) 1 ([\d.-]+) ([\d.-]+) Z"/g;
   const angles = [];
   let m;
   while ((m = re.exec(figureHtml)) !== null) {

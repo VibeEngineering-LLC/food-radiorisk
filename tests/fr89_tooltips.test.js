@@ -24,5 +24,5 @@ test('FR-89 v29: легенда — короткие названия, полн�
   const part = fig('risk');
   assert.ok(part.includes('<td title="Умереть в дорожно-транспортном происшествии">ДТП</td>'));
   assert.ok(part.includes('>Кровообращение (I00–I99)</td>'));
-  assert.equal(rs.slices.length, (part.match(/<td title=/g) || []).length);
+  assert.equal(rs.slices.length, (part.replace(/<tr class="pie-sub"[^]*?<\/tr>/g, '').match(/<td title=/g) || []).length); // подстроки «в т. ч.» (#FR-95) — не сектора
 });

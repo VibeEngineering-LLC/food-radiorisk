@@ -1,6 +1,7 @@
 import { RiskSummary } from './Summary.jsx';
 import Pie from './Pie.jsx';
-import { doseSlices, riskSlices, homeRadonDoseSv, homeDwellingDoseSv, DEFAULT_RADON_C, DEFAULT_DWELL_U, DEFAULT_XRAY_PER_YEAR, DEFAULT_FLIGHT_PER_YEAR } from '../calc/summary_charts.js';
+import { radonLungSub, radonSubShares } from '../calc/cancer_sub.js';
+import { doseSlices, riskSlices, homeRadonDoseSv, homeDwellingDoseSv, fmtShare, DEFAULT_RADON_C, DEFAULT_DWELL_U, DEFAULT_XRAY_PER_YEAR, DEFAULT_FLIGHT_PER_YEAR } from '../calc/summary_charts.js';
 import { fmtNum, fmtDose, fmtPerMillion, esc } from '../ui/fmt.js';
 import { yearsWord, sourceFull } from '../ui/render.js';
 import { locRu } from '../ui/ru.js';
@@ -16,6 +17,20 @@ export default function SummaryTab({ result, input, radonC, dwellU = NaN, xrayN 
   const cmp = result.comparison;
   const ds = cmp ? doseSlices(cmp, homeRadonDoseSv(input, cmp, radonC), { dwellingSv: homeDwellingDoseSv(cmp, dwellU), radonC, radonIsDefault: radonC === DEFAULT_RADON_C, dwellU, dwellIsDefault: dwellU === DEFAULT_DWELL_U, xrayN, flightN, xrayDefault: xrayN === DEFAULT_XRAY_PER_YEAR, flightDefault: flightN === DEFAULT_FLIGHT_PER_YEAR }) : null;
   const rs = riskSlices(result.lifeRisks);
+  const radonSub = rs ? radonLungSub(input, rs.H, radonC) : null; // #FR-95: «в т. ч.» к новообразованиям — сектор цельный (радон и курение перекрываются)
+  const cancerP = rs?.slices.find(s => s.id === 'cs_1026')?.p;
+  const subSh = radonSub && rs ? radonSubShares(radonSub, cancerP, rs.total) : null; // #FR-97: подсектора внутри сектора новообразований
+  const subOk = !!subSh && !subSh.bad;
+  const radonOrigin = radonC === DEFAULT_RADON_C ? 'по умолчанию' : 'по вашему вводу';
+  // подсектора (сплошной — радон у некурящего; штриховка — добавка у курящего) и такие же строки легенды «в т. ч.»
+  const lblNever = radonSub ? fill(T.LIFE_SUB_RADON_NEVER, { C: fmtNum(radonSub.C), origin: radonOrigin }) : '';
+  const cancerInner = subOk ? [
+    { id: 'radon_never', label: lblNever, share: subSh.never, valueText: fmtPerMillion(radonSub.never), hatch: false },
+    { id: 'radon_smoker_add', label: T.LIFE_SUB_RADON_ADD, share: subSh.add, valueText: fmtPerMillion(subSh.addP), hatch: true },
+  ] : [];
+  const cancerSubs = !radonSub ? [] : subOk
+    ? cancerInner.map(u => ({ ...u, short: u.hatch ? T.LIFE_SUB_RADON_ADD_SHORT : T.LIFE_SUB_RADON_NEVER_SHORT, shareText: fmtShare(u.share), sw: true }))
+    : [{ id: 'radon', label: fill(T.LIFE_SUB_RADON, { C: fmtNum(radonSub.C), origin: radonOrigin }), short: T.LIFE_SUB_RADON_SHORT, valueText: fill(T.LIFE_SUB_VALUE, { never: fmtPerMillion(radonSub.never), smoker: fmtPerMillion(radonSub.smoker) }) }];
   // строка питания называется явно, с продуктом из формы; длинное название — с многоточием в легенде, полностью в подсказке
   const pname = String(input.product?.name || result.limits?.productName || '').trim();
   const trunc = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
@@ -108,12 +123,17 @@ export default function SummaryTab({ result, input, radonC, dwellU = NaN, xrayN 
                 share: s.share,
                 me: s.id === 'product',
                 valueText: fmtPerMillion(s.p),
+                subs: s.id === 'cs_1026' ? cancerSubs : [],
+                inner: s.id === 'cs_1026' && subOk ? cancerInner : undefined,
               }))}
             />
             <p className="hint">
               {fill(T.SUM_CHART_B_NOTE, { a: fmtNum(rs.a), b: fmtNum(rs.b) })}
               {rs.capped ? ` ${T.SUM_CHART_B_CAPPED}` : ''} {T.SUM_UNIT}
             </p>
+            {subSh && subSh.bad ? <p className="msg warn" id="sumSubBad">{T.LIFE_SUB_BAD}</p> : null}
+            {subOk ? <p className="hint" id="sumSubSmoke">{T.LIFE_SUB_SMOKE_NOTE}</p> : null}
+            <p className="hint" id="sumSubNote">{fill(T.LIFE_SUB_NOTE, { H: rs.H, years: yearsWord(rs.H) })}</p>
             {!hasProductRisk ? <p className="hint">{T.SUM_CHART_B_NO_PRODUCT}</p> : null}
           </>
         ) : (

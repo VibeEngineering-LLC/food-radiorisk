@@ -2,6 +2,7 @@ import { esc, fmtNum, fmtSci, fmtNear, fmtBLine, fmtDose, fmtPct, verdictText } 
 import { AGE_LABEL, SOURCE_LABEL } from './form.js';
 import { locRu, unitRu } from './ru.js';
 import { sourceFull, yearsWord, JUR_RU } from './render.js';
+import { buildBibliography } from './bibliography.js';
 import { summaryParts } from './summary_text.js';
 import { T, fill } from './texts_v.js';
 import { seriesLabel, shortSource } from '../calc/diet.js';
@@ -139,6 +140,10 @@ function blocks(calc, meta, isoDate) {
     return [`${p.nuclide} · ${p.step}${p.what ? ': ' + p.what : ''}`, valStr, srcStr];
   });
   b.push({ kind: 'table', head: srcHead, body: srcBody, num: srcNum });
+
+  // #FR-96: список литературы — тот же, что на вкладке «Источники»
+  b.push({ kind: 'h2', text: 'Список литературы' });
+  buildBibliography(result).forEach(e => b.push({ kind: 'p', text: `${e.n}. ${e.text}${e.doi ? ' DOI: ' + e.doi + '.' : e.url ? ' ' + e.url : ''}` }));
 
   // g. Предупреждения
   if (result.warnings?.length) {

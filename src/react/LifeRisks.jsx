@@ -1,8 +1,10 @@
-import { fmtPerMillion } from '../ui/fmt.js';
+import { fmtPerMillion, fmtNum } from '../ui/fmt.js';
 import { yearsWord } from '../ui/render.js';
 import { T, fill, ageWord } from '../ui/texts_v.js';
+import { radonLungSub } from '../calc/cancer_sub.js';
+import { DEFAULT_RADON_C } from '../calc/summary_charts.js';
 
-export default function LifeRisks({ life, input }) {
+export default function LifeRisks({ life, input, radonC = DEFAULT_RADON_C }) {
   // защита от отсутствующих данных
   if (!life || !input || !life.lifetime) return null;
 
@@ -21,6 +23,8 @@ export default function LifeRisks({ life, input }) {
 
   // ширина полосы в процентах
   const pct = (p) => (maxP > 0 && p > 0 ? (p / maxP) * 100 : 0);
+  const sub = radonLungSub(input, lt.H, radonC); // #FR-95: «в т. ч.» под «Новообразованиями», вне суммы
+  const origin = radonC === DEFAULT_RADON_C ? 'по умолчанию' : 'по вашему вводу';
 
   return (
     <>
@@ -66,7 +70,7 @@ export default function LifeRisks({ life, input }) {
             </tr>
           </thead>
           <tbody>
-            {main.map((r) => (
+            {main.map((r) => [
               <tr key={r.id} className={r.kind === 'product' ? 'cmp-me' : undefined}>
                 <td className="life-cause">
                   {r.kind === 'product' ? (
@@ -81,8 +85,15 @@ export default function LifeRisks({ life, input }) {
                     <i style={{ width: `${pct(r.p)}%`, minWidth: 0 }} />
                   </span>
                 </td>
-              </tr>
-            ))}
+              </tr>,
+              r.id === 'cs_1026' && sub ? (
+                <tr key="sub_radon" className="life-sub" data-sub="radon">
+                  <td className="life-cause">{fill(T.LIFE_SUB_RADON, { C: fmtNum(sub.C), origin })}</td>
+                  <td className="num">{fill(T.LIFE_SUB_VALUE, { never: fmtPerMillion(sub.never), smoker: fmtPerMillion(sub.smoker) })}</td>
+                  <td className="life-bar"></td>
+                </tr>
+              ) : null,
+            ])}
           </tbody>
         </table>
       </div>
@@ -108,6 +119,7 @@ export default function LifeRisks({ life, input }) {
       )}
 
       {/* пояснения */}
+      <p className="hint" id="lifeSubNote">{fill(T.LIFE_SUB_NOTE, { H: lt.H, years: yearsWord(lt.H) })}</p>
       <p className="hint">{T.LIFE_TIMING}</p>
       <p className="hint">{T.LIFE_PURPOSE}</p>
       <p className="hint">{fill(T.LIFE_METHOD, { year: life.year })}</p>

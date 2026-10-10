@@ -112,7 +112,7 @@ test('FR-93: шкала линейная, строки по возрастани
         const tbodyEnd = tableHtml.indexOf('</tbody>');
         const tbodyHtml = tableHtml.substring(tbodyStart, tbodyEnd);
         
-        const rows = tbodyHtml.match(/<tr[^>]*>[\s\S]*?<\/tr>/g) || [];
+        const rows = (tbodyHtml.match(/<tr[^>]*>[\s\S]*?<\/tr>/g) || []).filter((r) => !r.includes('data-sub=')); // #FR-95: подстрока «в т. ч.» — не причина, без полосы
         const widths = [];
         for (const row of rows) {
             const widthMatch = row.match(/width:([\d.]+)%/);

@@ -13,6 +13,7 @@ import { DEFAULT_RADON_C } from '../calc/summary_charts.js';
 import DetailCalc from './DetailCalc.jsx';
 import Compare from './Compare.jsx';
 import LifeRisks from './LifeRisks.jsx';
+import Bibliography from './Bibliography.jsx';
 import Reference from './Reference.jsx';
 
 export function Kpi({ value, unit, label, level }) {
@@ -181,7 +182,7 @@ export default function Result({ result, input, meta, initialTab = '' }) {
     {/* #FR-92 v30: все расчёты — на вкладке «Подробный расчёт»: вход → поступление → доза по годам → доза по нуклидам и органам, поступление/риск/ПГП, плотность загрязнения → справочные величины; «Источники» — только источники */}
     {curTab === 'calc' && <DetailCalc result={result} input={input} />}
     {curTab === 'cmp' && <Compare comparison={result.comparison} input={input} radonC={radonC} setRadonC={setRadonC} dwellU={dwellU} setDwellU={setDwellU} xrayN={xrayN} setXrayN={setXrayN} flightN={flightN} setFlightN={setFlightN} />}
-    {curTab === 'life' && <LifeRisks life={result.lifeRisks} input={input} />}
+    {curTab === 'life' && <LifeRisks life={result.lifeRisks} input={input} radonC={radonC} />}
     {(curTab === 'src' || curTab === 'calc') && <>
     {curTab === 'calc' && <fieldset {...grp('calc', false)}><legend>Расчёт по нуклидам</legend>
     <DataTable rows={rows} cols={[
@@ -217,6 +218,14 @@ export default function Result({ result, input, meta, initialTab = '' }) {
 
     {dep && <div style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: dep }} />}
 
+    {/* #FR-96 v35: значения величин и их источники — под блоком плотности загрязнения (было на вкладке «Источники») */}
+    <h4 className="subhead">Значения величин и их источники</h4>
+    <DataTable rows={provRows} cols={[
+      { h: 'Величина', f: p => `${p.nuclide} · ${p.step}${p.what ? ': ' + p.what : ''}` },
+      { h: 'Значение', f: p => `${fmtNum(p.value)} ${unitRu(p.unit)}`.trim(), c: 'num' },
+      { h: 'Источник', html: true, f: p => sourceFull(p.source) + (p.loc ? ', ' + esc(locRu(p.loc)) : '') + (p.level ? ` <span class="chip ${levelClass(p.level)}">${esc(p.level)}</span>` : '') + (p.note ? `<br><span style="color:var(--muted)">${esc(p.note)}</span>` : '') }
+    ]} />
+
     </fieldset>}
     {curTab === 'calc' && <>
       <h4 className="subhead">Справочные величины для специалиста</h4>
@@ -224,11 +233,8 @@ export default function Result({ result, input, meta, initialTab = '' }) {
     </>}
     {curTab === 'src' && <>
     <p className="hint">Описание каждого документа и методика расчёта — на странице <a href="sources.html">«Справка»</a>.</p>
-    <DataTable rows={provRows} cols={[
-      { h: 'Величина', f: p => `${p.nuclide} · ${p.step}${p.what ? ': ' + p.what : ''}` },
-      { h: 'Значение', f: p => `${fmtNum(p.value)} ${unitRu(p.unit)}`.trim(), c: 'num' },
-      { h: 'Источник', html: true, f: p => sourceFull(p.source) + (p.loc ? ', ' + esc(locRu(p.loc)) : '') + (p.level ? ` <span class="chip ${levelClass(p.level)}">${esc(p.level)}</span>` : '') + (p.note ? `<br><span style="color:var(--muted)">${esc(p.note)}</span>` : '') }
-    ]} />
+    <p className="hint">{T.SRC_BIBLIO_NOTE}</p>
+    <Bibliography result={result} />
     </>}
     </>}
     </div></div>}

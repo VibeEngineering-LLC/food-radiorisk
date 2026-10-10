@@ -228,7 +228,7 @@ test('FR-89: мелкая доля питания различима', async () 
   assert.ok(riskMatch, 'risk figure found');
   const riskPart = riskMatch[0];
   
-  const riskPieCount = (riskPart.match(/class="pie-sl/g) || []).length;
+  const riskPieCount = (riskPart.match(/class="pie-sl pie-s\d/g) || []).length; // #FR-97: подсектора (pie-sub) — не сектора круга
   assert.equal(riskPieCount, 11, '11 секторов: питание + 9 причин + прочие');
   assert.ok(riskPart.includes('Питание (молоко): '), 'risk product label with product name');
 });

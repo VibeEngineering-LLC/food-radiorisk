@@ -30,6 +30,9 @@ export default function Pie({ id, title, slices, valueHead = 'Значение',
     return { s, i, a, start, end, mid, full, cls };
   });
 
+  // подсектора: идут подряд от начала родительского сектора (не пересортировываются), доля u.share — от итога круга
+  const inner = shapes.flatMap((sh) => { let a0 = sh.start; return (sh.s.inner || []).map((u) => { const a1 = a0 + u.share * 360; const o = { u, a0, a1 }; a0 = a1; return o; }); });
+
   return (
     <figure className="pie" data-chart={id}>
       <h4 className="pie-title">{title}</h4>
@@ -51,6 +54,17 @@ export default function Pie({ id, title, slices, valueHead = 'Значение',
             return <g key={s.id}>
               <path className={cls} d={d} tabIndex={0} aria-label={tip(s)}><title>{tip(s)}</title></path>
               {a < 4 && <line className="pie-hit" x1={r2(e0.x)} y1={r2(e0.y)} x2={r2(e1.x)} y2={r2(e1.y)}><title>{tip(s)}</title></line>}
+            </g>;
+          })}
+          {/* #FR-97: подсектора внутри сектора (радон у некурящего — сплошной, добавка у курящего — штриховка); углы линейны (доля × 360°) от начала родительского сектора, круг не меняется */}
+          {inner.length > 0 && <defs><pattern id={`${id}-hatch`} patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)"><rect width="8" height="8" className="pie-hatch-bg" /><line x1="0" y1="0" x2="0" y2="8" className="pie-hatch-line" strokeWidth="3" /></pattern></defs>}
+          {inner.map(({ u, a0, a1 }) => {
+            const q1 = pt(cx, cy, r, a0), q2 = pt(cx, cy, r, a1), md = (a0 + a1) / 2;
+            const d = `M ${cx} ${cy} L ${r2(q1.x)} ${r2(q1.y)} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${r2(q2.x)} ${r2(q2.y)} Z`;
+            const h1 = pt(cx, cy, r, md);
+            return <g key={'in-' + u.id} data-inner={u.id} data-a0={r2(a0)} data-a1={r2(a1)}>
+              <path className={'pie-sl pie-sub ' + (u.hatch ? 'pie-sub-hatch' : 'pie-sub-solid')} d={d} fill={u.hatch ? `url(#${id}-hatch)` : undefined} tabIndex={0} aria-label={tip(u)}><title>{tip(u)}</title></path>
+              {a1 - a0 < 4 && <line className="pie-hit" x1={cx} y1={cy} x2={r2(h1.x)} y2={r2(h1.y)}><title>{tip(u)}</title></line>}
             </g>;
           })}
           {/* выноска для выделенного среза (продукт) */}
@@ -80,7 +94,7 @@ export default function Pie({ id, title, slices, valueHead = 'Значение',
             </tr>
           </thead>
           <tbody>
-            {slices.map((s, i) => (
+            {slices.map((s, i) => [
               <tr key={s.id} className={s.me ? 'cmp-me' : undefined}>
                 <td>
                   <span className={`pie-sw pie-s${(s.ci ?? i) % 12}` + (s.me ? ' pie-me' : '')} aria-hidden="true" />
@@ -88,8 +102,17 @@ export default function Pie({ id, title, slices, valueHead = 'Значение',
                 <td title={s.label}>{s.short || s.label}</td>
                 <td className="num">{fmtShare(s.share)}</td>
                 <td className="num">{s.valueText}</td>
-              </tr>
-            ))}
+              </tr>,
+              // подстроки «в т. ч.»: без сектора, без доли, в сумму не входят (они часть строки выше)
+              ...(s.subs || []).map((u) => (
+                <tr key={s.id + '-' + u.id} className="pie-sub" data-sub={u.id}>
+                  <td>{u.sw ? <span className={'pie-sw ' + (u.hatch ? 'pie-sub-hatch' : 'pie-sub-solid')} aria-hidden="true" /> : null}</td>
+                  <td title={u.label}>{u.short || u.label}</td>
+                  <td className="num">{u.shareText ?? '—'}</td>
+                  <td className="num">{u.valueText}</td>
+                </tr>
+              )),
+            ])}
           </tbody>
         </table>
       </div>

@@ -5,6 +5,7 @@ import { loadAll } from '../src/data/loader.js';
 import { computeScenario, listChoices } from '../src/calc/model.js';
 import * as S from '../src/react/formState.js';
 import { buildReport } from '../src/ui/report.js';
+import { buildBibliography } from '../src/ui/bibliography.js';
 import { summaryParts } from '../src/ui/summary_text.js';
 import { fmtNum, fmtSci, fmtDose, fmtBLine, verdictText } from '../src/ui/fmt.js';
 import { locRu, unitRu } from '../src/ui/ru.js';
@@ -173,6 +174,9 @@ function collectExpectations(input, result) {
       expect('источник числа', `${r.nuclide} · ${p.step}${p.what ? ': ' + p.what : ''} ${`${fmtNum(p.value)} ${unitRu(p.unit)}`.trim()}`);
     }
   }
+
+  // 10a. Список литературы (#FR-96): каждая запись видна на экране
+  for (const e of buildBibliography(result)) expect('список литературы', e.text);
 
   // 11. Рацион
   if (result.diet) {

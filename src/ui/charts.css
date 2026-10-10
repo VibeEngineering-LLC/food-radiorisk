@@ -38,7 +38,16 @@
 .life-table td.num, .life-table th.num { width: 1%; white-space: nowrap; }
 .life-table td.life-bar { width: 55%; min-width: 8rem; }
 .life-refs td { color: var(--muted); }
+/* #FR-97: подсектора радона внутри «новообразований» (оранжевый pie-s1): сплошной — тёмный оттенок, добавка у курящего — диагональная штриховка; цвета не зависят от темы */
+.pie-sl.pie-sub-solid { fill: #9a4d00; stroke: #fff; stroke-width: 1; }
+.pie-sl.pie-sub-hatch { stroke: #fff; stroke-width: 1; }
+.pie-hatch-bg { fill: #f28e2b; } .pie-hatch-line { stroke: #4a2400; }
+.pie-sw.pie-sub-solid { background: #9a4d00; }
+.pie-sw.pie-sub-hatch { background: repeating-linear-gradient(45deg, #f28e2b 0 3px, #4a2400 3px 5px); }
+.pie-sub td { color: var(--muted); }
 @media print {
+  .pie, .pie-svg, .pie-sw { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pie-hatch-line { stroke: #000; } .pie-sw.pie-sub-hatch { background: repeating-linear-gradient(45deg, #f28e2b 0 3px, #000 3px 5px); }
   .pie { break-inside: avoid; }
   .detail-years .tablewrap { max-height: none; overflow: visible; }
 }

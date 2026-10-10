@@ -863,6 +863,21 @@
     "audit/risk-comparison-literature-2026-10-04.md:106"
    ]
   },
+  "ICRP137": {
+   "title": "Occupational Intakes of Radionuclides: Part 3",
+   "title_ru": "Профессиональное поступление радионуклидов: часть 3",
+   "authors": "ICRP",
+   "year": 2017,
+   "publisher": "ICRP Publication 137. Ann. ICRP 46(3/4)",
+   "doi": null,
+   "url": null,
+   "local": null,
+   "kind": "рекомендации МКРЗ",
+   "same_as": null,
+   "evidence": [
+    "src/vendor/radon_risk/coefficients.json:50 (3 мЗв на мДж·ч/м3, п. 667, разд. 12.7)"
+   ]
+  },
   "DARBY2005": {
    "title": "Radon in homes and risk of lung cancer: collaborative analysis of individual data from 13 European case-control studies",
    "title_ru": "Радон в жилищах и риск рака лёгкого: совместный анализ данных 13 европейских исследований «случай — контроль»",
