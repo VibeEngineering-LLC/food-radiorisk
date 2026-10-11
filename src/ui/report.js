@@ -120,7 +120,6 @@ function blocks(calc, meta, isoDate) {
     b.push({ kind: 'table', head: ['Путь поступления', 'Доза за 1 год', 'Доза за весь срок'], body: rnRows, num: [false, true, true] });
     if (rn.inhalation && Number.isFinite(rn.inhalationShare)) b.push({ kind: 'p', text: fill(T.RN_NOT_SUM, { share: fmtNum(rn.inhalationShare * 100, 2), screen: fmtNum(100 * rn.inhalation.doseSvPerYear / (rn.inhalation.doseSvPerYear + rn.ingestion.doseSvPerYear), 2) }) });
     b.push({ kind: 'p', text: rn.inhalation ? T.RN_HOME : T.RN_NO_INHAL });
-    if (rn.packaging === 'unknown') b.push({ kind: 'p', text: T.RN_PACK_UNKNOWN });
     if (rn.noBackExtrapolation) b.push({ kind: 'p', text: T.RN_NO_BACK });
     for (const k of rn.mineral ? ['RN_ING_NOTE', 'RN_MINERAL', 'RN_BOIL'] : ['RN_ING_NOTE', 'RN_RU', 'RN_EU', 'RN_WHO', 'RN_BOIL']) b.push({ kind: 'p', text: T[k] });
   }
@@ -128,6 +127,7 @@ function blocks(calc, meta, isoDate) {
   // e. Зарубежные нормы
   if (result.limits?.foreign?.length) {
     b.push({ kind: 'h2', text: 'Нормы других стран' });
+    if (result.limits.foreignMineralNote) b.push({ kind: 'p', text: T.FOREIGN_MINERAL }); // v57: природная минеральная вода — норма для общественных систем водоснабжения не показана
     const fHead = ['Радионуклид', 'Юрисдикция', 'Документ', 'Категория', 'Норматив, Бк/кг', 'A/норматив'];
     const fNum = [false, false, false, false, true, true];
     const fBody = result.limits.foreign.map(l => {

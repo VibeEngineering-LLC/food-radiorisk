@@ -24,7 +24,7 @@ const META = { datasets: 3, records: 9, sha: 'abcdef0123456789' };
 const TABS = ['sum', 'cmp', 'life', 'norms', 'calc', 'site', 'spec', 'src'];
 const WHEN = '2026-10-10T12:00:00.000Z';
 const close = (a, b, rel = 1e-9, msg = '') => assert.ok(Math.abs(a - b) <= rel * Math.abs(b), `${msg} получено ${a}, ожидалось ${b}`);
-const water = (name, nuc, over = {}) => inputFor('water', name, nuc, { portionKg: 2, portionsPerYear: 365, ...over });
+const water = (name, nuc, over = {}) => inputFor(name === UNPACKED ? null : 'water', name, nuc, { portionKg: 2, portionsPerYear: 365, ...over });
 const run = (name, nuc, over) => computeScenario(data, water(name, nuc, over));
 const strip = (h) => h.replace(/<[^>]+>/g, ' ');
 const flat = (h) => strip(h).replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&#x27;/g, "'").replace(/&#39;/g, "'").replace(/[\s  ]+/g, ' ').trim();

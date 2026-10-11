@@ -11,7 +11,7 @@ import { renderJsx } from './render_helper.js';
 test('А-1: Сравнение списков норм для Sr-90 в разных видах воды', () => {
   const r1 = computeScenario(data, inputFor(null, 'вода из крана', [['Sr-90', 9.8]]));
   // бутилированная: группа норм ТР ЕАЭС 044 — 'water'; из-под крана группы норм нет
-  const r2 = computeScenario(data, inputFor('water', 'вода минеральная', [['Sr-90', 9.8]]));
+  const r2 = computeScenario(data, inputFor('water', 'вода питьевая бутилированная', [['Sr-90', 9.8]])); // v57: у природной минеральной воды EPA MCL (общественные системы водоснабжения) не показывается — tests/fr130_v57.test.js
   assert.ok(r1.ok && r2.ok);
   const ids1 = r1.limits.foreign.map(x => x.id).sort();
   const ids2 = r2.limits.foreign.map(x => x.id).sort();

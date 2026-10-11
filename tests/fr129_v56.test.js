@@ -18,12 +18,12 @@ const META = { datasets: 3, records: 9, sha: 'abcdef0123456789' };
 const WHEN = '2026-10-11T12:00:00.000Z';
 const strip = (h) => h.replace(/<[^>]+>/g, ' ');
 const flat = (h) => strip(h).replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&#x27;/g, "'").replace(/&#39;/g, "'").replace(/[\s   ]+/g, ' ').trim();
-const water = (name, nuc, over = {}) => inputFor('water', name, nuc, { portionKg: 1, portionsPerYear: 336, region: 'world', eatDate: '2026-10-11', ...over });
+const water = (name, nuc, over = {}) => inputFor(name === UNPACKED ? null : 'water', name, nuc, { portionKg: 1, portionsPerYear: 336, region: 'world', eatDate: '2026-10-11', ...over });
 const sampled = (input, date) => { input.nuclides.forEach(n => { n.sampleDate = date; }); return input; };
 const run = (input) => { const r = computeScenario(data, input); assert.ok(r.ok, (r.errors || []).join('; ')); return r; };
 const report = (input, result) => flat(buildReport('md', { input, result }, META, WHEN).text);
 const NO_BACK = /Радон-222: дата пробы позже даты начала потребления[^.]*не пересчитана назад/;
-const MINERAL_NORM = /Для природных минеральных вод нормативы особые[^.]*калькулятор их не содержит[^.]*оценка по таблице 4[^.]*не проводится/;
+const MINERAL_NORM = /Для столовой природной минеральной воды ТР ЕАЭС 044\/2017[\s\S]*собственные уровни вмешательства[\s\S]*оценка по таблице 4[^.]*не проводится/; // v57 (замечание 9): формулировка уточнена
 const rawOf = (r, n) => r.rows.find(x => x.nuclide === n).rawBqPerKg;
 let R;
 const view = async (result, input, tab) => { R ??= await loadJsx('src/react/Result.jsx', 'default'); return flat(R.render({ result, input, meta: META, initialTab: tab })); };
@@ -147,7 +147,7 @@ test('Н-2 (S4b): своё название + группа норм «упако
   assert.doesNotMatch(t, /неупакованная вода .{0,40}непрерывного источника/);
 });
 
-test('Н-2 (контроль): запись словаря «неупакованная» важнее группы норм; «упакованная» из словаря — как раньше', () => {
+test('Н-2 (контроль; v57: явная группа «упакованная» для неупакованной воды — см. fr130_v57): неупакованная вода без выбранной группы норм — неупакованная; «упакованная» из словаря — как раньше', () => {
   assert.equal(run(water(UNPACKED, [['Rn-222', 100]])).radon.packaging, 'unpacked');
   assert.equal(run(water(PACKED, [['Rn-222', 100]])).radon.packaging, 'packaged');
 });

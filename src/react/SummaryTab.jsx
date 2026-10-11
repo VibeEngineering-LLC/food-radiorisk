@@ -1,5 +1,6 @@
 import { RiskSummary } from './Summary.jsx';
 import Pie from './Pie.jsx';
+import RadonSummary from './RadonSummary.jsx';
 import { radonLungSub, radonSubShares } from '../calc/cancer_sub.js';
 import { doseSlices, riskSlices, homeRadonDoseSv, homeDwellingDoseSv, fmtShare, DEFAULT_FLIGHT_PER_YEAR } from '../calc/summary_charts.js';
 import { summarySets } from '../calc/summary_sets.js';
@@ -64,6 +65,7 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
     <>
       {/* Сводка рисков и блока доз */}
       <RiskSummary result={result} input={input} />
+      {result.radon && <RadonSummary radon={result.radon} input={input} />}{/* v57: доза и риск радона-222 из воды — отдельно от основного итога */}
       {result.totals.doseSvPerYear != null && <p className="hint" id="sumDoses">
         {fill(T.SUM_DOSES, {
           y: fmtDose(result.totals.doseSvPerYear),

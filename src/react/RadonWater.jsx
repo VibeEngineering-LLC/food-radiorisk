@@ -89,7 +89,6 @@ export default function RadonWater({ radon }) {
     <div className="radon-water" id="radonWater">
       <h4 className="subhead">{T.RN_TITLE}</h4>
       <p className="hint">{T.RN_NATURAL}</p>
-      {radon.packaging === 'unknown' && <p className="hint" id="rnPackUnknown">{T.RN_PACK_UNKNOWN}</p>}
       {radon.noBackExtrapolation && <p className="hint" id="rnNoBack">{T.RN_NO_BACK}</p>}
 
       <div className="tablewrap">

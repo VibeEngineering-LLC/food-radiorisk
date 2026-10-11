@@ -610,6 +610,8 @@ ol.biblio, ol.biblio li { max-width: none; text-align: left; }
 .pie-legend thead th.num { white-space: normal; }
 /* v56: заголовок числового столбца «Бытовых рисков» («За 50 лет, на 1 000 000 человек») не выходит из своей ячейки на заголовок «Шкала»: nowrap в charts.css (.life-table th.num) давал текст шире ячейки на ~190 px при окне 620 px */
 .life-table thead th.num { white-space: normal; min-width: 7rem; max-width: 10rem; }
+/* v57 (Н-2 прохода A): на 360 px таблица была шире обёртки на 13 px (333 против 320) — шкала в узком окне занимает меньше */
+@media (max-width: 480px) { .life-table tbody td.life-bar { min-width: 5rem; width: auto; } .life-table tbody td.life-bar .cmpbar { width: 100%; min-width: 0; } }
 /* #FR-101: переключатель региона данных */
 .region-switch { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: .4rem 0; }
 .region-switch .region-label { font-weight: 700; }

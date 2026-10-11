@@ -14,7 +14,7 @@ const META = { datasets: 3, records: 9, sha: 'abcdef0123456789' };
 const WHEN = '2026-10-10T12:00:00.000Z';
 const strip = (h) => h.replace(/<[^>]+>/g, ' ');
 const flat = (h) => strip(h).replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&#x27;/g, "'").replace(/&#39;/g, "'").replace(/[\s   ]+/g, ' ').trim();
-const water = (name, nuc, over = {}) => inputFor('water', name, nuc, { portionKg: 2, portionsPerYear: 365, region: 'world', ...over });
+const water = (name, nuc, over = {}) => inputFor(name === UNPACKED ? null : 'water', name, nuc, { portionKg: 2, portionsPerYear: 365, region: 'world', ...over });
 const run = (input) => { const r = computeScenario(data, input); assert.ok(r.ok, (r.errors || []).join('; ')); return r; };
 const report = (format, input, result) => flat(buildReport(format, { input, result }, META, WHEN).text);
 let R;

@@ -14,7 +14,8 @@ const HALF_DAYS = 3.8232; // DDEP, T½ Rn-222
 const DAY_MS = 86400000;
 const A = 10, VOLUME_KG = 2 * 365; // 10 Бк/кг; 2 кг в день, 730 кг в год (НРБ-99/2009 п. 8: Мнас = 730 кг)
 const close = (a, b, rel = 1e-9, msg = '') => assert.ok(Math.abs(a - b) <= rel * Math.abs(b), `${msg} получено ${a}, ожидалось ${b}`);
-const water = (nuc, over = {}) => inputFor('water', WATER, nuc, { portionKg: 2, portionsPerYear: 365, ...over });
+// v57: у неупакованной воды группа норм не выбирается (как в форме); явно выбранная «Упакованная питьевая вода» делает воду упакованной (tests/fr130_v57.test.js)
+const water = (nuc, over = {}) => inputFor((over.product?.name ?? WATER) === WATER ? null : 'water', WATER, nuc, { portionKg: 2, portionsPerYear: 365, ...over });
 const run = (nuc, over) => computeScenario(data, water(nuc, over));
 const flat = (h) => h.replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&#x27;/g, "'").replace(/[\s  ]+/g, ' ').trim();
 const sources = JSON.parse(readFileSync(new URL('../public/data/sources.json', import.meta.url), 'utf8')).sources;

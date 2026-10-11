@@ -1,6 +1,8 @@
-import { productEntry } from './products.js';
+import { productEntry, matchProduct } from './products.js';
 import { normCodeFor } from './catalog.js';
 import { classesFor } from './foodclass.js';
+import { T, fill } from '../ui/texts_v.js';
+import { riskFromDose } from './core.js';
 
 export const RN = 'Rn-222';
 
@@ -15,20 +17,28 @@ export function isWaterInput(data, input) {
   return classes.includes('water');
 }
 
-// v55: вид воды по записи словаря: unpacked — признак `intervention` (кран, колодец, скважина, родник; как для уровней вмешательства Прил. 2а), packaged / mineral — поле `water_kind`;
-// нет явного признака (своё название, «вода» до выбора варианта) — unknown, расчёт консервативный: как неупакованная
+// Вид воды для радона: mineral — запись словаря с `water_kind: mineral`; группа норм «Упакованная питьевая вода» (выбрана вручную или подставлена записью упакованной воды) — packaged
+// (v57: и для записи неупакованной воды — расчёт радона согласован с показателем B по табл. 4 ТР ЕАЭС 044/2017); иначе запись словаря: intervention (кран, колодец, скважина, родник) — unpacked, water_kind: packaged — packaged.
+// Сюда попадает только вода (isWaterInput): вид определён всегда; ветки «упаковка не указана» нет (v57: недостижима — выбор группы или записи словаря всегда задаёт вид)
 export function waterPackaging(data, input) {
   const entry = productEntry(data.products, input.product?.name, input.product?.confirmId ?? null);
-  if (entry?.intervention === 'nrb2009_app2a') return 'unpacked';
-  if (entry?.water_kind === 'mineral' || entry?.water_kind === 'packaged') return entry.water_kind;
-  // v56 (Н-2): группа норм «Упакованная питьевая вода» выбрана явно — вода упакованная и для радона (названия в словаре нет или оно без признака упаковки)
-  if (input.foodGroupCode === 'water') return 'packaged';
-  return 'unknown';
+  if (entry?.water_kind === 'mineral') return 'mineral';
+  if (input.foodGroupCode === 'water' || entry?.water_kind === 'packaged') return 'packaged';
+  return 'unpacked';
 }
 
 export function isUnpackedWater(data, input) {
-  const k = waterPackaging(data, input);
-  return k === 'unpacked' || k === 'unknown';
+  return waterPackaging(data, input) === 'unpacked';
+}
+
+// v57 (замечания 5, 7): радон не рассчитан, потому что продукт не определён как вода, — сообщение называет причину и что выбрать (а не общее «только для питьевой воды»)
+export function radonSkipMessage(data, input) {
+  const name = String(input.product?.name || '').trim();
+  const m = matchProduct(data.products, input.product?.name, input.product?.confirmId ?? null);
+  if (m.entry?.codex?.includes('water')) return fill(T.RN_NOT_WATER_GROUP, { name: m.entry.name_ru }); // вода из словаря, но группа норм не относится к воде
+  if (m.status === 'ambiguous' && m.candidates.length > 0 && m.candidates.every(c => c.codex?.includes('water'))) return fill(T.RN_NOT_WATER_CHOICE, { name }); // «Вода»: вид воды не выбран
+  if (input.product?.dietGroup === 'water') return fill(T.RN_NOT_WATER_DIET, { name }); // свое название, группа рациона «вода»
+  return T.RN_NOT_WATER;
 }
 
 export function radonUvExtra(data) {
@@ -37,7 +47,7 @@ export function radonUvExtra(data) {
   return { 'Rn-222': { uv: rec.value, id: rec.id, loc: rec.loc } };
 }
 
-export function radonWater(data, input, rows, years) {
+export function radonWater(data, input, rows, years, riskCoeff = null) {
   const row = rows.find(r => r.nuclide === RN);
   if (!row || !isWaterInput(data, input)) return null;
 
@@ -88,8 +98,16 @@ export function radonWater(data, input, rows, years) {
     unit: rec.unit
   }));
 
+  // v57 (оператор): доза и риск радона на «Сводке» — тот же номинальный коэффициент, что у остальных нуклидов (riskCoeffOf, НРБ-99/2009 п. 2.3: risk = E · r, core.js riskFromDose);
+  // питьё — riskTotal строки нуклида, вдыхание — тот же расчёт от дозы вдыхания; сумма — для сведения, в основной итог не входит
+  const inhY = withInhalation ? inhalPerYear : 0, inhT = withInhalation ? inhalPerYear * years : 0;
+  const riskOf = (e) => (Number.isFinite(riskCoeff) ? riskFromDose(e, riskCoeff) : null);
+  const sum = { doseSvPerYear: row.doseSvPerYear + inhY, doseSvTotal: row.doseSvTotal + inhT, riskTotal: riskOf(row.doseSvTotal + inhT) };
+
   return {
     nuclide: RN,
+    riskCoeff,
+    sum,
     packaging,
     mineral,
     noBackExtrapolation,
@@ -97,11 +115,13 @@ export function radonWater(data, input, rows, years) {
     years,
     ingestion: {
       doseSvPerYear: row.doseSvPerYear,
-      doseSvTotal: row.doseSvTotal
+      doseSvTotal: row.doseSvTotal,
+      riskTotal: row.riskTotal
     },
     inhalation: !withInhalation ? null : {
       doseSvPerYear: inhalPerYear,
       doseSvTotal: inhalPerYear * years,
+      riskTotal: riskOf(inhalPerYear * years),
       waterBqPerM3: cWater,
       airBqPerM3,
       ratio: ratio.value,

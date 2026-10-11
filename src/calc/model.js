@@ -15,7 +15,7 @@ import { levelWord } from '../ui/fmt.js';
 const depErrRu = (e) => /unit not established/.test(e?.message || '') ? 'у выбранного коэффициента перехода единица измерения не установлена' : /no coefficient value/.test(e?.message || '') ? 'у выбранного коэффициента перехода нет значения' : 'выбранный коэффициент перехода не подходит для оценки загрязнения';
 const tName =(r) => [r.item_ru, r.nuclide].filter(Boolean).join(', ') || 'запись перехода';
 import { isNatural, LIMIT_YEAR_SV, LIMIT_LIFE_SV } from './origin.js';
-import { RN, isContinuousSupply, isWaterInput, isUnpackedWater, radonUvExtra, radonWater } from './radon_water.js'; // #FR-126: радон-222 в питьевой воде
+import { RN, isContinuousSupply, isWaterInput, isUnpackedWater, radonSkipMessage, radonUvExtra, radonWater } from './radon_water.js'; // #FR-126: радон-222 в питьевой воде
 import { AGE_BANDS, periodYears } from './lifetime.js';
 import { yearPlan, DAYS_PER_YEAR, NOMINAL_AGE, avg5, sumSeries } from './years.js';
 import { yearlySeries, bandsOf } from './series.js';
@@ -124,8 +124,8 @@ export function computeScenario(data, input) {
   const rnSkipped = !isWaterInput(data, input) && input.nuclides.some(n => n.nuclide === RN);
   if (rnSkipped) {
     input = { ...input, nuclides: input.nuclides.filter(n => n.nuclide !== RN) };
-    // v56 (Н-2): «вода» в группе рациона при неопознанном названии — не «только для питьевой воды», а причина и что сделать
-    const rnMsg = input.product?.dietGroup === 'water' ? fill(T.RN_NOT_WATER_DIET, { name: String(input.product?.name || '').trim() }) : T.RN_NOT_WATER;
+    // v56 (Н-2), v57 (замечания 5, 7): не «только для питьевой воды», а причина и что выбрать — по случаю (группа норм не вода, вид воды не выбран, группа рациона «вода»)
+    const rnMsg = radonSkipMessage(data, input);
     if (input.nuclides.length === 0) return { ok: false, errors: [rnMsg], warnings, rows, totals: {}, limits: {} };
     warnings.push(rnMsg);
   }
@@ -139,7 +139,7 @@ export function computeScenario(data, input) {
     for (const r of rows) r.provenance.unshift(dietProvenance(dietCk.rec, dietCk.group));
   }
   // #FR-126: радон-222 в воде — ингаляция выделившегося радона отдельной строкой (в суммы доз не входит) и нормативы; параметры ингаляции — в провенанс строки нуклида
-  const radon = radonWater(data, input, rows, period.years);
+  const radon = radonWater(data, input, rows, period.years, riskCoeff);
   if (radon) rows.find(r => r.nuclide === RN).provenance.push(...radon.provenance);
 
   // v54 (оператор): радон-222 — природный, в основной (техногенный) результат не входит и в итоги не суммируется: Ē₅, доли нормы, сравнение с облучением, эквиваленты, сектор продукта, пожизненный риск считаются по остальным нуклидам; радон показан в своём блоке и в строке нуклида
@@ -249,8 +249,9 @@ function rowFor(data, input, n, warnings, riskCoeff) {
       if (!halfRec) { warn('нет периода полураспада — поправка на распад не применена'); prov.push({ step: 'распад', id: null, source: null, loc: null, level: null, value: null, unit: null, note: 'нет периода полураспада' }); }
       else {
         const days = daysBetween(n.sampleDate, input.eatDate, 'пробы', true);
-        if (days < 0 && n.nuclide === RN) {
-          // v56 (Б-2): дата розлива неизвестна, T½ радона-222 3,8232 сут — пересчёт назад на десятки суток даёт нереальную активность; принята измеренная
+        if (days < 0 && n.nuclide === RN && -days > halfRec.half_life_days) {
+          // v56 (Б-2), v57 (замечание 6): дата розлива неизвестна, T½ радона-222 3,8232 сут — пересчёт назад более чем на один период полураспада (рост более чем в 2 раза) даёт нереальную активность; принята измеренная.
+          // В пределах одного периода (1–3 сут) пересчёт назад выполняется, как у других нуклидов: активность не выше измеренной ×2
           noBackDecay = true;
           prov.push({ step: 'распад', id: null, source: null, loc: null, level: null, value: null, unit: null, note: RN_NO_BACK });
         } else {
@@ -543,6 +544,8 @@ function calcLimits(data, input, rows, warnings) {
     return { rank: 0, label: 'обязательный государственный акт' };
   };
   let foreign = [];
+  let foreignMineralNote = false; // v57: у природной минеральной воды опущена норма для общественных систем водоснабжения — на экране и в отчёте одна фраза-пояснение
+  const PUBLIC_SUPPLY_ONLY = /141\.66/;
   // #FR-81 E08: зарубежные нормы относятся к продукту в готовом (восстановленном) виде — активность сухого продукта делится на коэффициент концентрирования при сушке
   const dried = input.product?.state === 'dried';
   const recon = dried && Number.isFinite(input.dryingFactor) && input.dryingFactor >= 1 ? input.dryingFactor : 1;
@@ -558,12 +561,13 @@ function calcLimits(data, input, rows, warnings) {
         if (!Number.isFinite(f.value) || !(f.unit === 'Bq/kg' || (f.unit === 'Bq/L' && isWater))) continue;
         const classRank = classRankOf(f.food_category_ru, pcs); // #FR-81 E09: 0 — самая узкая категория продукта
         if (classRank < 0) continue; // только категория исследуемого продукта
-        if (prodEntry?.water_kind === 'mineral' && f.nuclides.includes('Rn-222')) continue; // v55 (Б-1): Директива 2013/51/Евратом, ст. 3, п. 2(a), природные минеральные воды исключает
-        // нуклид записан либо именем («Cs-137»), либо группой ЕС («group: … notably Cs-134 and Cs-137»)
+        if (prodEntry?.water_kind === 'mineral' && f.nuclides.includes('Rn-222')) continue; // v55 (Б-1): Директива 2013/51/Евратом, ст. 3, п. 2(a), природные минеральные воды исключает        // нуклид записан либо именем («Cs-137»), либо группой ЕС («group: … notably Cs-134 and Cs-137»)
         // сравнивать по нуклиду, не по элементу: у Codex Sr-89 и Sr-90 в разных группах (1000 и 100 Бк/кг)
         // #FR-52: утратившие силу не показываются. #FR-60 (оператор «да»): аварийные уровни (Euratom 2016/52, Codex CXS 193, FDA DIL) показываются с пометкой силы документа
         if (legalForce(f).rank === 3) continue;
         if (f.nuclides.some(n => n === elem || inItem(n, r.nuclide))) {
+          // v57: MCL EPA (40 CFR 141.66) задан для общественных систем водоснабжения (в записи: «обязателен для общественных систем водоснабжения, не для частных колодцев»), а не для бутилированной природной минеральной воды
+          if (prodEntry?.water_kind === 'mineral' && PUBLIC_SUPPLY_ONLY.test(f.document)) { foreignMineralNote = true; continue; }
           foreign.push({ id: f.id, jurisdiction: f.jurisdiction, document: f.document, food_category_ru: f.food_category_ru, value: f.value, ratio: r.rawBqPerKg / recon / f.value, nuclides: [r.nuclide], activity: r.rawBqPerKg / recon, reconstitution: recon, perNuclide: /^iaea_tecdoc1788/.test(f.id), sum_rule: f.sum_rule, loc: f.loc, force: legalForce(f), emergency: EMERGENCY_DOC.test(f.document), classRank, key: foreignKey(f) });
         }
       }
@@ -586,10 +590,10 @@ function calcLimits(data, input, rows, warnings) {
   foreign.sort((a, b) => a.force.rank - b.force.rank || a.value - b.value || a.jurisdiction.localeCompare(b.jurisdiction));
 
   // #FR-81 V10: для готового блюда зарубежные нормы не показываются (нормы заданы для продукта, а не для блюда)
-  if (input.product?.state === 'cooked') foreign = [];
+  if (input.product?.state === 'cooked') { foreign = []; foreignMineralNote = false; }
   // #FR-85 v11: у распознанного продукта нет строки норматива РФ (садовые фрукты, яйца …) — в результате «норматив РФ не установлен», а не «выберите группу»
   const ruNone = !!prodEntry && !normIdFor(prodEntry, 'fresh') && !normIdFor(prodEntry, 'dried');
   // #FR-85 v14 п. 7: вода колодцев и скважин — не упакованная; норматива B нет, сравнение с уровнями вмешательства НРБ-99/2009 Прил. 2а
   const intervention = prodEntry?.intervention === 'nrb2009_app2a' ? interventionLevels(data.dose_coeff, rows, radonUvExtra(data)) : null; // #FR-126: УВ радона-222 — из набора risk (НРБ-99/2009 п. 5.3.5), в Прил. 2а его нет
-  return { ru, compliance, foreign, foreignClasses: pcs, formNote: adj.note, ruNone, mineralNorms, intervention, productName: prodEntry?.name_ru ?? null, productCaption: prodEntry?.caption ?? null };
+  return { ru, compliance, foreign, foreignClasses: pcs, formNote: adj.note, ruNone, mineralNorms, foreignMineralNote, intervention, productName: prodEntry?.name_ru ?? null, productCaption: prodEntry?.caption ?? null };
 }

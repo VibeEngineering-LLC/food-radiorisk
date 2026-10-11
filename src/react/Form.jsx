@@ -121,7 +121,7 @@ export default function Form({ choices, raw, setRaw, tab, setTab, onPreset, onEx
           <button type="button" id="addNuclide" className="btn" onClick={() => { setRaw(r => S.addNuclide(r, choices)); setSel(raw.nuclides.length); }}>+ радионуклид</button>
           <button type="button" id="delNuclide" className="btn" disabled={raw.nuclides.length < 2} onClick={() => { setRaw(r => S.removeNuclide(r, cur)); setSel(Math.max(0, cur - 1)); }}>удалить</button>
         </div>
-        <TransferPick n={raw.nuclides[cur]} view={tv(cur)} onField={(name, v) => setRaw(r => S.setNuclideField(r, cur, name, v))} />
+        {tv(cur).transferIds.length > 0 && <TransferPick n={raw.nuclides[cur]} view={tv(cur)} onField={(name, v) => setRaw(r => S.setNuclideField(r, cur, name, v))} />}{/* v57: у нуклида без коэффициентов перехода (Rn-222) выбор оценки загрязнения места сбора не показывается */}
       </fieldset>
       <details className="prep" id="prepBox" open={!!(raw.rawMass || raw.probeMass) || undefined}>
         <summary>Подготовка пробы (если пробу сушили или озоляли)</summary>
