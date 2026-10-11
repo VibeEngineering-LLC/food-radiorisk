@@ -23,8 +23,8 @@ test('D11: при питании один год вторых значений �
 
 test('D11: на экране «За 1 год питания: …» и «За 10 лет питания: …», добавка к риску рака — оба срока', async () => {
   const { html } = await screen({ field: { years: '10', constAct: true }, comp: view });
-  assert.match(html, /За 1 год питания: /);
-  assert.match(html, /За 10 лет питания: /);
+  assert.match(html, /За 1 год потребления: /);
+  assert.match(html, /За 10 лет потребления: /);
   const one = await screen({ field: { years: '1' }, comp: view });
-  assert.doesNotMatch(one.html, /За 1 год питания/);
+  assert.doesNotMatch(one.html, /За 1 год потребления/);
 });

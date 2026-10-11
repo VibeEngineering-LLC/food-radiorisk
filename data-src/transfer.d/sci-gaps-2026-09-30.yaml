@@ -340,7 +340,7 @@
   soil_type: "light Polesie soils"
   mass_basis: "fresh"
   mass_basis_status: "stated"
-  mass_basis_note: "Общая оговорка автора: «в этих и многих последующих результатах используется сырой вес продукта» (Панченко 2000, PDF с. 19); к табл. 35 отдельно не привязана."
+  mass_basis_note: "Общая оговорка автора: «в этих и многих последующих результатах используется свежая масса продукта» (Панченко 2000, PDF с. 19); к табл. 35 отдельно не привязана."
   unit: "(Bq/kg)/(kBq/m2)"
   n: null
   gm: null
@@ -364,7 +364,7 @@
   soil_type: "light Polesie soils"
   mass_basis: "fresh"
   mass_basis_status: "stated"
-  mass_basis_note: "Общая оговорка автора: «в этих и многих последующих результатах используется сырой вес продукта» (Панченко 2000, PDF с. 19); к табл. 35 отдельно не привязана."
+  mass_basis_note: "Общая оговорка автора: «в этих и многих последующих результатах используется свежая масса продукта» (Панченко 2000, PDF с. 19); к табл. 35 отдельно не привязана."
   unit: "(Bq/kg)/(kBq/m2)"
   n: null
   gm: null
@@ -388,7 +388,7 @@
   soil_type: null
   mass_basis: "fresh"
   mass_basis_status: "stated"
-  mass_basis_note: "Общая оговорка автора: «в этих и многих последующих результатах используется сырой вес продукта» (Панченко 2000, PDF с. 19); к табл. 35 отдельно не привязана."
+  mass_basis_note: "Общая оговорка автора: «в этих и многих последующих результатах используется свежая масса продукта» (Панченко 2000, PDF с. 19); к табл. 35 отдельно не привязана."
   unit: "(Bq/kg)/(kBq/m2)"
   n: null
   gm: null
@@ -407,7 +407,7 @@
   quantity: "KP"
   nuclide: "Cs-137"
   item: "bilberry edible part, dry deposition about 2.5 months before ripening (Chernobyl 1986), fresh weight"
-  item_ru: "Черника, сухие выпадения 1986, сырой вес"
+  item_ru: "Черника, сухие выпадения 1986, свежая масса"
   food_group: "berries"
   soil_type: null
   mass_basis: "fresh"
@@ -429,7 +429,7 @@
   quantity: "KP"
   nuclide: "Cs-137"
   item: "bilberry edible part, dry deposition 1986, air-dry weight"
-  item_ru: "Черника, сухие выпадения 1986, сухо-воздушный вес"
+  item_ru: "Черника, сухие выпадения 1986, воздушно-сухая масса"
   food_group: "berries"
   soil_type: null
   mass_basis: "dry"
@@ -444,14 +444,14 @@
   quote: "200÷400 Бк⋅кг-1/(кБк⋅м-2) для сухо-воздушного веса"
   checked_against: "PDF p.24 text layer"
   level: "✅"
-  note: "Air-dry weight (сухо-воздушный вес), same measurement as the fresh-weight record; ratio 5.7."
+  note: "Air-dry weight (воздушно-сухая масса), same measurement as the fresh-weight record; ratio 5.7."
 - id: "panchenko2000_kp_cs_137_polish_bolete_5km_zone_dry"
   source: "PANCHENKO2000"
   loc: "PDF p.33 (данные Щеглов 1999)"
   quantity: "KP"
   nuclide: "Cs-137"
   item: "bay bolete (Imleria badia), 5 km zone of ChNPP, dry weight"
-  item_ru: "Польский гриб, 5-километровая зона ЧАЭС, сухой вес"
+  item_ru: "Польский гриб, 5-километровая зона ЧАЭС, сухая масса"
   food_group: "mushrooms"
   soil_type: null
   mass_basis: "dry"

@@ -1,16 +1,17 @@
 import { detailOf } from '../calc/detail_calc.js';
 import { DataTable } from './Result.jsx';
-import { fmtNum, fmtSci, fmtDose, fmtPerMillion } from '../ui/fmt.js';
+import { fmtNum, fmtSci, fmtDose, fmtPerMillion, nb } from '../ui/fmt.js';
 import { sourceFull } from '../ui/render.js';
 import { locRu, unitRu } from '../ui/ru.js';
 import { AGE_LABEL } from '../ui/form.js';
 import { dietReportText } from '../ui/report.js';
 import { T } from '../ui/texts_v.js';
+import LifetimeDetail from './LifetimeDetail.jsx';
 
 // Вспомогательный span для HTML-источника (безопасно для SSR)
 const Src = ({ html }) => <span dangerouslySetInnerHTML={{ __html: html }} />;
 
-export default function DetailCalc({ result, input }) {
+export default function DetailCalc({ result, input, ext }) {
   // Детализация расчёта по нуклидам
   const d = detailOf(result, input);
 
@@ -37,22 +38,22 @@ export default function DetailCalc({ result, input }) {
     <>
       {/* Пояснение к формулам */}
       <p className="hint">
-        Здесь по шагам показано, как из измеренной активности получаются доза и риск, чтобы пересчитать вручную. Формулы: I₀ = A · Fr · M (поступление за первый год, Бк); I_k = I₀ · w_k · d_k (поступление в год k; w_k — доля года, d_k — множитель физического распада); E_k = I_k · e_k (доза года k, Зв, e_k — коэффициент ожидаемой дозы e(g) для возраста в год k); E = Σ E_k; R = r · E (риск смерти от рака, r — коэффициент риска).
+        Здесь по шагам показано, как из измеренной активности получаются доза и риск, чтобы пересчитать вручную. Формулы: I₀ = A · Fr · M (поступление за первый год, Бк); I_k = I₀ · w_k · d_k (поступление в год k; w_k — доля года, d_k — множитель физического распада); E_k = I_k · e_k (доза года k, Зв, e_k — дозовый коэффициент e(g) для возраста в год k); E = Σ E_k; R = r · E (риск смерти от рака, r — коэффициент риска).
       </p>
 
       {/* Потребление и масса */}
       <p className="hint" id="detailDiet">
-        {`Потребление: ${dietReportText(input, result)} M = ${fmtNum(d.massKg)} кг в год.`}
+        {nb(`Потребление: ${dietReportText(input, result)} M = ${fmtNum(d.massKg)} кг в год.`)}
       </p>
 
       {/* Блок по каждому нуклиду */}
       {d.nuclides.map(n => {
         // Строки таблицы шагов
         const rows = [
-          { name: 'A — активность продукта на начало питания, Бк/кг', value: fmtNum(n.aBqPerKg), note: 'измерено или рассчитано; с поправками пробы и распада до даты употребления' },
+          { name: 'A — удельная активность продукта на начало потребления, Бк/кг', value: fmtNum(n.aBqPerKg), note: 'измерено или рассчитано; с поправками пробы и распада до даты начала потребления' },
           { name: 'Fr — доля, остающаяся после обработки', value: fmtNum(n.fr), note: 'способ и источник коэффициента — в нижней таблице этой вкладки (под блоком оценки плотности загрязнения)' },
           { name: 'M — масса продукта, кг/год', value: fmtNum(n.massKg), note: '' },
-          { name: 'I₀ = A · Fr · M — поступление за первый год, Бк', value: fmtNum(n.intakeStartBq), note: '' },
+          { name: 'I₀ = A · Fr · M — поступление за первый год (без распада в течение года), Бк', value: fmtNum(n.intakeStartBq), note: '' },
         ];
         if (n.halfLifeProv) {
           rows.push({
@@ -64,7 +65,7 @@ export default function DetailCalc({ result, input }) {
         if (n.doseProv) {
           const loc = locRu(n.doseProv.loc);
           rows.push({
-            name: 'e(g) — коэффициент дозы, ' + unitRu(n.doseProv.unit || 'Sv/Bq'),
+            name: 'e(g) — дозовый коэффициент, ' + unitRu(n.doseProv.unit || 'Sv/Bq'),
             value: fmtSci(n.doseProv.value),
             note: (
               <>
@@ -93,8 +94,8 @@ export default function DetailCalc({ result, input }) {
               )}
             </div>
             <p className="detail-sum">
-              <b>{`E = Σ E_k = ${fmtSci(n.doseTotalSv)} Зв`}</b> ({fmtDose(n.doseTotalSv)})
-              {n.riskSv != null && <>; R = r · E = {fmtPerMillion(n.riskSv)} на 1 000 000</>}
+              <b>{`E = Σ E_k = ${fmtSci(n.doseTotalSv)} Зв`}</b> ({fmtDose(n.doseTotalSv)})
+              {n.riskSv != null && <>; R = r · E = {fmtPerMillion(n.riskSv)} на 1&nbsp;000&nbsp;000 человек</>}
             </p>
             {n.y90 && (
               <p className="hint">
@@ -108,20 +109,23 @@ export default function DetailCalc({ result, input }) {
       {/* Итоговый блок */}
       <fieldset className="rgroup detail-total">
         <legend>Итог</legend>
-        <p>{`Сумма доз по всем нуклидам: E = ${fmtSci(d.doseTotalSv)} Зв (${fmtDose(d.doseTotalSv)}).`}</p>
+        <p>{`Сумма доз по всем радионуклидам: E = ${fmtSci(d.doseTotalSv)} Зв (${fmtDose(d.doseTotalSv)}).`}</p>
         {(d.techDoseTotalSv > 0 || d.nuclides.some(n => !n.natural)) && (
-          <p>{`Из них техногенные нуклиды (по ним считается риск): ${fmtSci(d.techDoseTotalSv)} Зв.`}</p>
+          <p>{`Из них техногенные радионуклиды (по ним считается риск): ${fmtSci(d.techDoseTotalSv)} Зв.`}</p>
         )}
         {d.riskCoeff != null && (
-          <p>{`Коэффициент риска r = ${fmtNum(d.riskCoeff)} Зв⁻¹ (НРБ-99/2009, п. 2.3).`}</p>
+          <p>{`Коэффициент риска r = ${fmtNum(d.riskCoeff)} Зв⁻¹ (НРБ-99/2009, п. 2.3).`}</p>
         )}
         {d.riskNominal != null && d.riskCoeff != null && (
           <p>
-            <b>{`R = r · E(техногенные) = ${fmtNum(d.riskCoeff)} · ${fmtSci(d.techDoseTotalSv)} = ${fmtSci(d.riskNominal)}`}</b> ({fmtPerMillion(d.riskNominal)} на 1 000 000)
+            <b>{`R = r · E(техногенные) = ${fmtNum(d.riskCoeff)} · ${fmtSci(d.techDoseTotalSv)} = ${fmtSci(d.riskNominal)}`}</b> ({fmtPerMillion(d.riskNominal)} на 1&nbsp;000&nbsp;000 человек)
           </p>
         )}
         <p className="hint">{T.REF_COEFF}</p>
       </fieldset>
+
+      {/* #FR-114: пожизненный расчёт — сектора обеих диаграмм «Сводки» с формулами и входными числами */}
+      <LifetimeDetail result={result} input={input} ext={ext} />
     </>
   );
 }

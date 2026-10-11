@@ -48,7 +48,7 @@ test('LifeRisks tab renders radon sub-row with correct values and labels', async
   const subHtml400 = match400[0];
 
   assert.ok(subHtml400.includes(fmtPerMillion(radonLungSub(input, H, 400, bB).neverB)), 'missing never value for C=400');
-  assert.ok(norm(html400).includes('по вашему вводу'), 'missing "по вашему вводу" text');
+  assert.ok(norm(html400).includes('введено пользователем'), 'missing "введено пользователем" text');
   assert.notEqual(subHtml400, subHtml200, 'sub-row HTML should differ between C=200 and C=400');
 });
 

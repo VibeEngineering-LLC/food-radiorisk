@@ -119,7 +119,7 @@ test('FR-106 v46: все записи обработки × Cs-137/Sr-90/I-131 �
             }
             
             // Проверяем вкладки
-            for (const tab of ['sum', 'calc']) {
+            for (const tab of ['sum', 'calc', 'site', 'spec']) { // #FR-112/#FR-113: 8 вкладок
               const html = render({ result, input, meta: META, initialTab: tab });
               const markers = findMarkers(html);
               const key = `${region}/${rec.id}/${nuc}/${tab}`;
@@ -239,7 +239,7 @@ test('FR-106 v46: переходы с аномалией/без проверки
         }
         
         if (resultA) {
-          for (const tab of ['sum', 'calc']) {
+          for (const tab of ['sum', 'calc', 'site', 'spec']) {
             const html = render({ result: resultA, input, meta: META, initialTab: tab });
             const markers = findMarkers(html);
             const key = `${region}/${rec.id}/A/${tab}`;
@@ -287,7 +287,7 @@ test('FR-106 v46: переходы с аномалией/без проверки
         }
         
         if (resultB) {
-          for (const tab of ['sum', 'calc']) {
+          for (const tab of ['sum', 'calc', 'site', 'spec']) {
             const html = render({ result: resultB, input, meta: META, initialTab: tab });
             const markers = findMarkers(html);
             const key = `${region}/${rec.id}/B/${tab}`;

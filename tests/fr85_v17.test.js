@@ -98,12 +98,12 @@ test('B4-1: подпись масла какао — отдельное поле
     assert.equal(result.limits.productCaption, CAPTION);
 
     // (c) Проверка текста вердикта
-    const lines = summaryParts(result, input).verdict.lines.map(l => l.text);
+    const lines = summaryParts(result, input).verdict.lines.map(l => l.text.replace(/ /g, ' ')); // #FR-124: неразрывные пробелы приведены к обычным
     assert.ok(lines.some(line => line.includes('Масло какао') && line.includes(CAPTION)));
 
     // (d) Проверка отчётов в форматах md и html
     for (const format of ['md', 'html']) {
-        const text = buildReport(format, { input, result }, META, ISO).text;
+        const text = buildReport(format, { input, result }, META, ISO).text.replace(/ /g, ' '); // #FR-124
         assert.ok(text.includes(CAPTION), `отчёт ${format}`);
     }
 
@@ -183,13 +183,13 @@ test('B4-9: таблица уровней вмешательства — без 
 
 test('B4-11: «добавило бы к ним около меньше 0,01» -> «добавило бы к ним меньше 0,01»; обычное число — с «около»', () => {
     const lo = inputFor('milk', 'молоко', [['Cs-137', 0.0001]]);
-    const bgLo = summaryParts(computeScenario(data, lo), lo).background;
-    assert.ok(bgLo.includes('добавило бы к ним меньше 0,01'));
+    const bgLo = summaryParts(computeScenario(data, lo), lo).background.replace(/ /g, ' '); // #FR-124
+    assert.ok(bgLo.includes('добавило бы к ним меньше одной смерти от рака (меньше 0,01 на 1 000 000)')); // #FR-123: единица названа
     assert.ok(!bgLo.includes('около меньше'));
 
     const hi = inputFor('milk', 'молоко', [['Cs-137', 100]]);
-    const bgHi = summaryParts(computeScenario(data, hi), hi).background;
-    assert.ok(bgHi.includes('добавило бы к ним около 0,06'));
+    const bgHi = summaryParts(computeScenario(data, hi), hi).background.replace(/ /g, ' '); // #FR-124
+    assert.ok(bgHi.includes('добавило бы к ним меньше одной смерти от рака (0,06 на 1 000 000)'));
 
     assert.ok(T.BG_CANCER.includes('к ним {k}.'));
 });

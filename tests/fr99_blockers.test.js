@@ -128,7 +128,7 @@ test('FR-99 Б-3: срок назван явно', async () => {
     
     assert.ok(text.includes('с 20 до 70 лет'), 'Текст должен содержать "с 20 до 70 лет"');
     assert.ok(text.includes('всю оставшуюся жизнь'), 'Текст должен содержать "всю оставшуюся жизнь"');
-    assert.ok(text.includes('без границы по возрасту'), 'Текст должен содержать "без границы по возрасту"');
+    assert.ok(text.includes('без ограничения возрастом 70 лет'), 'Текст должен содержать "без ограничения возрастом 70 лет"');
     assert.ok(!text.includes('Риск смерти за всю жизнь'), 'Текст не должен содержать "Риск смерти за всю жизнь"');
 });
 
@@ -137,13 +137,14 @@ test('FR-99 единое округление дозы', async () => {
     const { result } = a;
     const textSum = await tabText(a, 'sum');
     
-    const D = fmtDose(result.totals.doseMaxYearTech), D2 = fmtDose2(result.totals.doseMaxYearTech);
+    const sp = (s) => s.replace(/ /g, ' '); // #FR-124: текст вкладки в тесте нормализован, формат чисел даёт неразрывные пробелы
+    const D = sp(fmtDose(result.totals.doseMaxYearTech)), D2 = sp(fmtDose2(result.totals.doseMaxYearTech));
     const countD = textSum.split(D).length - 1;
     assert.ok(countD >= 2, `В тексте sum должно быть не менее 2 вхождений "${D}" (доза за год и «самого нагруженного года»), найдено: ${countD}`);
     assert.ok(D2 === D || !textSum.includes(`(${D2} за год)`), `Текст sum не должен округлять ту же дозу иначе: "${D2}"`);
     
-    const textCalc = await tabText(a, 'calc');
-    const expectedLine = `Наибольшая средняя доза за 5 лет подряд: ${fmtDose(result.totals.doseTechAvg5)}`;
+    const textCalc = await tabText(a, 'spec'); // #FR-112: справочные величины — на вкладке «Для специалиста»
+    const expectedLine = sp(`Наибольшая средняя доза за 5 лет подряд: ${fmtDose(result.totals.doseTechAvg5)}`);
     assert.ok(textCalc.includes(expectedLine), `Текст calc должен содержать: "${expectedLine}"`);
 });
 
@@ -167,8 +168,8 @@ test('FR-99 Источники: полнота списка', async () => {
 
 test('FR-99 Ссылка «Происхождение чисел» исправлена', async () => {
     const a = run(adult());
-    const text = await tabText(a, 'calc');
-    
+    const text = await tabText(a, 'site'); // #FR-113
+
     assert.ok(text.includes('Значения величин и их источники'), 'Текст calc должен содержать "Значения величин и их источники"');
     assert.ok(!text.includes('Происхождение чисел'), 'Текст calc не должен содержать "Происхождение чисел"');
 });

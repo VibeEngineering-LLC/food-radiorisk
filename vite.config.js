@@ -10,9 +10,7 @@ const copyStatic = () => ({
     cpSync('public', 'dist/public', { recursive: true });
     cpSync('src/ui/source_short.json', 'dist/src/ui/source_short.json');
     cpSync('src/ui/food_ru.json', 'dist/src/ui/food_ru.json');
-    cpSync('sources.html', 'dist/sources.html');
-    cpSync('THIRD_PARTY_LICENSES.md', 'dist/THIRD_PARTY_LICENSES.txt'); // #FR-88 v24: тексты лицензий — в собранном сайте, ссылка из sources.html
-    cpSync('src/ui/styles.css', 'dist/src/ui/styles.css'); // sources.html подключает его по относительному адресу
+    cpSync('THIRD_PARTY_LICENSES.md', 'dist/THIRD_PARTY_LICENSES.txt'); // #FR-88 v24: тексты лицензий — в собранном сайте, ссылка с вкладки «Источники» (#FR-121)
   }
 });
 

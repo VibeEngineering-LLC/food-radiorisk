@@ -319,7 +319,7 @@
   "Lysenko2017": {
    "title": "Радиобиология: Учебник",
    "title_ru": "Радиобиология: Учебник",
-   "authors": "Н.П. Лысенко, В.В. Пак, Л.В. Рогожина, З.Г. Кусурова",
+   "authors": "Лысенко Н.П., Пак В.В., Рогожина Л.В., Кусурова З.Г.",
    "year": 2017,
    "publisher": null,
    "doi": null,
@@ -339,7 +339,7 @@
   "RADIOBIOL_TEXTBOOK": {
    "title": "Радиобиология: Учебник",
    "title_ru": "Радиобиология: Учебник",
-   "authors": "Н.П. Лысенко, В.В. Пак, Л.В. Рогожина, З.Г. Кусурова",
+   "authors": "Лысенко Н.П., Пак В.В., Рогожина Л.В., Кусурова З.Г.",
    "year": 2017,
    "publisher": null,
    "doi": null,
@@ -376,7 +376,7 @@
   "Melchenko2016": {
    "title": "Миграция радионуклидов в агроэкоценозах в условиях лесостепной и степной черноземной биогеохимической зоны юга России",
    "title_ru": "Миграция радионуклидов в агроэкоценозах в условиях лесостепной и степной черноземной биогеохимической зоны юга России",
-   "authors": "Мельченко Александр Иванович",
+   "authors": "Мельченко А.И.",
    "year": 2016,
    "publisher": null,
    "doi": null,
@@ -395,7 +395,7 @@
   "MELCHENKO2016": {
    "title": "Миграция радионуклидов в агроэкоценозах в условиях лесостепной и степной черноземной биогеохимической зоны юга России",
    "title_ru": "Миграция радионуклидов в агроэкоценозах в условиях лесостепной и степной черноземной биогеохимической зоны юга России",
-   "authors": "Мельченко Александр Иванович",
+   "authors": "Мельченко А.И.",
    "year": 2016,
    "publisher": null,
    "doi": null,
@@ -703,7 +703,7 @@
   "MARCHENKO2023": {
    "title": "Оценка мощности амбиентного эквивалента дозы на лесных участках в юго-западных районах Брянской области",
    "title_ru": "Оценка мощности амбиентного эквивалента дозы на лесных участках в юго-западных районах Брянской области",
-   "authors": "Марченко Т.А., Рadin А.И., Раздайводин А.Н.",
+   "authors": "Марченко Т.А., Радин А.И., Раздайводин А.Н.",
    "year": 2023,
    "publisher": "Радиация и риск 2023, т. 32, №4, с. 67-78",
    "doi": null,
@@ -773,8 +773,8 @@
    ]
   },
   "Uddin2019": {
-   "title": null,
-   "title_ru": null,
+   "title": "Assessment of loss of (210)Po from fish and shrimp by cooking and its effect on dose estimates to humans ingesting seafood",
+   "title_ru": "Оценка потери полония-210 из рыбы и креветок при приготовлении и её влияния на оценки доз при потреблении морепродуктов",
    "authors": "Uddin S. et al.",
    "year": 2019,
    "publisher": "J Environ Radioact 205-206 (2019) 1-6",
@@ -973,7 +973,7 @@
   },
   "EPA_FGR13": {
    "title": "Federal Guidance Report No. 13: Cancer Risk Coefficients for Environmental Exposure to Radionuclides (CD Supplement, FGR13PAK)",
-   "title_ru": "Федеральное руководство EPA № 13: коэффициенты дозы и риска рака при поступлении радионуклидов (приложение на CD, FGR13PAK)",
+   "title_ru": "Федеральный руководящий документ № 13 Агентства по охране окружающей среды США (EPA, FGR 13): коэффициенты дозы и риска рака при поступлении радионуклидов (приложение на CD, FGR13PAK)",
    "authors": "Eckerman K.F., Leggett R.W., Nelson C.B., Puskin J.S., Richardson A.C.B.",
    "year": 1999,
    "publisher": "U.S. Environmental Protection Agency, EPA 402-R-99-001",
@@ -1225,7 +1225,7 @@
   },
   "BARKOVSKY2021": {
    "title": "Barkovsky A.N., Akhmatdinov R.R., Akhmatdinov R.R., Baryshkov N.K. et al. Doses of exposure of the population of the Russian Federation in 2020. Radiatsionnaya Gygiena 2021;14(4):103-113",
-   "title_ru": "Барковский А.Н., Ахматдинов Р.Р., Ахматдинов Р.Р., Барышков Н.К. и др. Дозы облучения населения Российской Федерации в 2020 году. Радиационная гигиена, 2021, т. 14, № 4, с. 103–113",
+   "title_ru": "Барковский А.Н., Ахматдинов Р.Р., Барышков Н.К. и др. Дозы облучения населения Российской Федерации в 2020 году. Радиационная гигиена, 2021, т. 14, № 4, с. 103–113",
    "authors": "Барковский А.Н. и др.",
    "year": 2021,
    "publisher": "Радиационная гигиена",
@@ -1313,6 +1313,75 @@
    "kind": "база данных ВОЗ",
    "same_as": null,
    "evidence": ["audit/_lit_risks/who_ghe2023_deaths_global.xlsx, лист Global 2019, строки 7, 8, 10"]
+  },
+  "NRC1999": {
+   "title": "Risk Assessment of Radon in Drinking Water",
+   "title_ru": "Оценка риска от радона в питьевой воде",
+   "authors": "National Research Council (US), Committee on Risks of Radon in Drinking Water",
+   "year": 1999,
+   "publisher": "National Academies Press, Washington, DC",
+   "doi": "10.17226/6287",
+   "url": "https://nap.nationalacademies.org/catalog/6287/risk-assessment-of-radon-in-drinking-water",
+   "local": null,
+   "kind": "доклад Национального исследовательского совета США",
+   "same_as": null,
+   "evidence": [
+    "data-src/dose_coeff.yaml: записи nrc1999_rn222_ing_* (Table 4.5b, гл. 4, с. 76)",
+    "audit/fr126-radon-water-primary-2026-10-11.md:5-15 (таблица прочитана на nap.nationalacademies.org/read/6287/chapter/7)",
+    "UNSCEAR 2000, т. I, прил. B, п. 157: взрослые 3,5 нЗв/Бк (ссылка на NRC)"
+   ]
+  },
+  "EU_DIR_2013_51": {
+   "title": "Council Directive 2013/51/Euratom laying down requirements for the protection of the health of the general public with regard to radioactive substances in water intended for human consumption",
+   "title_ru": "Директива Совета 2013/51/Евратом об установлении требований по защите здоровья населения в отношении радиоактивных веществ в воде, предназначенной для потребления человеком",
+   "authors": "Council of the European Union",
+   "year": 2013,
+   "publisher": "Official Journal of the European Union, L 296, 07.11.2013",
+   "doi": null,
+   "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32013L0051",
+   "local": null,
+   "kind": "директива ЕС",
+   "same_as": null,
+   "evidence": [
+    "data-src/limits_foreign.yaml: записи eu_2013_51_rn222_param и eu_2013_51_rn222_remedial (Приложение I, примечание 1)",
+    "audit/fr126-radon-water-primary-2026-10-11.md:17-22 (текст прочитан по копии legislation.gov.uk/eudr/2013/51/annex/I)"
+   ]
+  },
+  "WHO_GDWQ2017": {
+   "title": "Guidelines for Drinking-water Quality, 4th edition incorporating the 1st addendum",
+   "title_ru": "Руководство по контролю качества питьевой воды, 4-е издание с первым дополнением",
+   "authors": "World Health Organization",
+   "year": 2017,
+   "publisher": "WHO, Geneva",
+   "doi": null,
+   "url": "https://www.who.int/publications/i/item/9789241549950",
+   "local": "библиотека оператора/WHO. Guidelines for Drinking-water Quality, 4th ed. incorporating the 1st addendum. - 2017.pdf",
+   "kind": "руководство ВОЗ",
+   "same_as": null,
+   "sha256": "455aa3fd03d988002bf22c9b7fd1e954b323afcb4dce29ae708ab89c5729471d",
+   "evidence": [
+    "sha256 455aa3fd03d988002bf22c9b7fd1e954b323afcb4dce29ae708ab89c5729471d (631 стр.)",
+    "гл. 9, Box 9.5 и разд. 9.7.4: audit/fr126-radon-water-primary-2026-10-11.md:24-30",
+    "data-src/risk.yaml: записи who_gdwq2017_rnw_*; data-src/limits_foreign.yaml: who_gdwq2017_rn222_no_guidance"
+   ]
+  },
+  "SANPIN_1_2_3685_21": {
+   "title": "SanPiN 1.2.3685-21 Hygienic standards and requirements for ensuring the safety and (or) harmlessness of environmental factors for humans",
+   "title_ru": "СанПиН 1.2.3685-21 «Гигиенические нормативы и требования к обеспечению безопасности и (или) безвредности для человека факторов среды обитания»",
+   "authors": "Главный государственный санитарный врач Российской Федерации",
+   "year": 2021,
+   "publisher": "Постановление от 28.01.2021 № 2",
+   "doi": null,
+   "url": null,
+   "local": "библиотека оператора/СанПиН 1.2.3685-21. Гигиенические нормативы и требования к безопасности факторов среды обитания. - 2021.pdf",
+   "kind": "норматив",
+   "same_as": null,
+   "sha256": "d515b75b10d10b9ce4708d9e3702d5965dec9d1e3d0d9d444edc30a68716743c",
+   "evidence": [
+    "sha256 d515b75b10d10b9ce4708d9e3702d5965dec9d1e3d0d9d444edc30a68716743c (1024 стр.)",
+    "п. 18 и таблица 3.12, PDF-страница 501: Радон (222Rn), 60 Бк/кг (уровень вмешательства)",
+    "data-src/risk.yaml: запись sanpin1_2_3685_21_t312_rn222_uv"
+   ]
   }
  }
 }

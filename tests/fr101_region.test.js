@@ -274,7 +274,7 @@ test('FR-101: переключатель региона на «Сводке», �
       assert.ok(reTrue.test(h));
       assert.ok(reFalse.test(h));
       const text = norm(h);
-      const caption = (tab === 'life') ? CAPTION[r].risk : CAPTION[r].dose;
+      const caption = ((tab === 'life') ? CAPTION[r].risk : CAPTION[r].dose).replace(/ /g, ' '); // #FR-124: экран в тестах нормализован
       assert.ok(text.includes(caption));
     }
   }
@@ -306,7 +306,7 @@ test('FR-101: диаграмма (а) — подписи региона и го�
     assert.ok(riskMatch);
     const doseText = norm(doseMatch[0]);
     const riskText = norm(riskMatch[0]);
-    assert.ok(doseText.includes(CAPTION[r].dose));
-    assert.ok(riskText.includes(CAPTION[r].risk));
+    assert.ok(doseText.includes(CAPTION[r].dose.replace(/ /g, ' ')));
+    assert.ok(riskText.includes(CAPTION[r].risk.replace(/ /g, ' ')));
   }
 });

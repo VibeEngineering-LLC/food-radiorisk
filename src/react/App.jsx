@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, useDeferredValue } from 'react';
 import { loadAll, browserFetch } from '../data/loader.js';
 import { computeScenario, listChoices } from '../calc/model.js';
-import { presetRadGear } from '../ui/form.js';
+import { presetRadGear, presetBilberry } from '../ui/form.js';
 import * as S from './formState.js';
 import { loadSaved, save, loadRegion, saveRegion } from './persist.js';
 import { FORMATS, buildReport } from '../ui/report.js';
@@ -91,8 +91,8 @@ export default function App() {
   }
 
   // Функция применения пресета
-  function onPreset() {
-    setRaw(S.rawFromInput(presetRadGear(), boot.choices));
+  function onPreset(kind) { // #FR-109: два примера — грибы (по умолчанию) и черника
+    setRaw(S.autoFill(S.rawFromInput(kind === 'bilberry' ? presetBilberry() : presetRadGear(), boot.choices), boot.choices)); // autoFill — группа ТР ТС, K сушки и сухое вещество по названию и виду, как при ручном вводе
   }
 
   return (
@@ -115,11 +115,10 @@ export default function App() {
       <footer className="statusbar">
         <span className="stat"><i className={'lvl ' + statusLevel(calc)} aria-hidden="true"></i><span className="txt" id="statusText">{statusText(calc)}</span></span>
         <span className="cmds">
-          <button type="button" id="preset" onClick={onPreset} disabled={!boot?.choices}>Пример</button>
+          <button type="button" id="preset" onClick={() => onPreset('mushrooms')} disabled={!boot?.choices} title="Пример: сушёные грибы, Cs-137">Пример: грибы</button>
+          <button type="button" id="presetBilberry" onClick={() => onPreset('bilberry')} disabled={!boot?.choices} title="Пример: сушёная черника, Cs-137 и Sr-90">Пример: черника</button>
           <select id="reportFormat" aria-label="Формат отчёта" value={format} onChange={e => setFormat(e.target.value)}>{FORMATS.map(f => <option key={f.id} value={f.id}>{f.label}</option>)}</select>
-          <button type="button" id="exportJson" onClick={onExport} disabled={!calc?.input}>Сохранить отчёт…</button>
-          <a className="btn" href="sources.html" title="Источники чисел и методика расчёта">Справка</a>
-        </span>
+          <button type="button" id="exportJson" onClick={onExport} disabled={!calc?.input}>Сохранить отчёт…</button>        </span>
       </footer>
     </div>
   );

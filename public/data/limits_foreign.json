@@ -5,14 +5,14 @@
  "source_parts": [
   "limits_foreign.yaml"
  ],
- "source_sha256": "18ad767a471836dfd241b60183116d9c161030bb2b12da5c663bc6c4fd37d4ab",
- "record_count": 55,
+ "source_sha256": "05ee3b16091b83eb97871287a5b2d1494bcb00a6b956baccb3580c3a4b9a7187",
+ "record_count": 58,
  "records": [
   {
    "id": "codex_cxs193_infant_pu_am",
    "jurisdiction": "Codex",
    "document": "CXS 193-1995 General Standard for Contaminants and Toxins in Food and Feed, Radionuclides, Table 1 (Guideline levels for radionuclides in foods contaminated following a nuclear or radiological emergency)",
-   "edition": "CXS 193-1995, принят 1995, пересмотр 1997/2006/2008/2009, поправки 2010-2024 (прочитаны: официальный файл FAO уровня 2015 и копия уровня 2024 на isdi.org; поправка CAC48 2025 -- редакционная, только Annex X, по вторичным источникам)",
+   "edition": "CXS 193-1995, принят 1995, пересмотр 1997/2006/2008/2009, поправки 2010-2024 (прочитаны: официальный файл FAO уровня 2015 и копия уровня 2024 на isdi.org; поправка CAC48 2025 —редакционная, только Annex X, по вторичным источникам)",
    "status": "действует (последняя поправка 2025 по странице списка стандартов Codex; официальный файл 2025 не читался, 403)",
    "nuclides": [
     "Pu-238",
@@ -25,7 +25,7 @@
    "food_category_ru": "Детское питание (пищевые продукты, предназначенные для потребления младенцами)",
    "value": 1,
    "unit": "Bq/kg",
-   "loc": "Table 1 (Radionuclides), CODEX STAN 193-1995 ред. 2015 стр. 50 (PDF-стр. 50); в ред. 2024 -- стр. 76; сноска о суммировании -- стр. 51 / стр. 77",
+   "loc": "Table 1 (Radionuclides), CODEX STAN 193-1995 ред. 2015 стр. 50 (PDF-стр. 50); в ред. 2024 —стр. 76; сноска о суммировании —стр. 51 / стр. 77",
    "url": "https://www.fao.org/input/download/standards/17/CXS_193e_2015.pdf",
    "quote": "Infant foods | 1 | Pu-238, Pu-239, Pu-240, Am-241 | | The GL applies to foods intended for consumption by infants.",
    "level": "✅",
@@ -38,7 +38,7 @@
    "id": "codex_cxs193_infant_sr90_group",
    "jurisdiction": "Codex",
    "document": "CXS 193-1995 General Standard for Contaminants and Toxins in Food and Feed, Radionuclides, Table 1",
-   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны (FAO 2015 + копия 2024); 2025 -- редакционная поправка Annex X",
+   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны (FAO 2015 + копия 2024); 2025 —редакционная поправка Annex X",
    "status": "действует (последняя поправка 2025 по странице списка стандартов Codex)",
    "nuclides": [
     "Sr-90",
@@ -47,7 +47,7 @@
     "I-131",
     "U-235"
    ],
-   "sum_rule": "Внутри группы активности складываются; группы независимы (сноска iii/3 Table 1: пример Cs-134 + Cs-137 -- «summed activity of both these radionuclides»)",
+   "sum_rule": "Внутри группы активности складываются; группы независимы (сноска iii/3 Table 1: пример Cs-134 + Cs-137 —«summed activity of both these radionuclides»)",
    "food_category": "Infant foods",
    "food_category_ru": "Детское питание",
    "value": 100,
@@ -65,7 +65,7 @@
    "id": "codex_cxs193_infant_cs_group",
    "jurisdiction": "Codex",
    "document": "CXS 193-1995 General Standard for Contaminants and Toxins in Food and Feed, Radionuclides, Table 1",
-   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны; 2025 -- редакционная поправка Annex X",
+   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны; 2025 —редакционная поправка Annex X",
    "status": "действует (последняя поправка 2025 по странице списка стандартов Codex)",
    "nuclides": [
     "S-35 (organically bound)",
@@ -77,7 +77,7 @@
     "Ce-144",
     "Ir-192"
    ],
-   "sum_rule": "Внутри группы активности складываются: «if 134Cs and 137Cs are contaminants in food, the guideline level of 1 000 Bq/kg refers to the summed activity of both these radionuclides»",
+   "sum_rule": "Внутри группы активности складываются: «если 134Cs и 137Cs присутствуют в пище, контрольный уровень 1 000 Бк/кг относится к суммарной активности обоих радионуклидов»",
    "food_category": "Infant foods",
    "food_category_ru": "Детское питание",
    "value": 1000,
@@ -95,7 +95,7 @@
    "id": "codex_cxs193_infant_h3_c14_tc99",
    "jurisdiction": "Codex",
    "document": "CXS 193-1995 General Standard for Contaminants and Toxins in Food and Feed, Radionuclides, Table 1",
-   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны; 2025 -- редакционная поправка Annex X",
+   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны; 2025 —редакционная поправка Annex X",
    "status": "действует (последняя поправка 2025 по странице списка стандартов Codex)",
    "nuclides": [
     "H-3 (organically bound)",
@@ -120,7 +120,7 @@
    "id": "codex_cxs193_other_pu_am",
    "jurisdiction": "Codex",
    "document": "CXS 193-1995 General Standard for Contaminants and Toxins in Food and Feed, Radionuclides, Table 1",
-   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны; 2025 -- редакционная поправка Annex X",
+   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны; 2025 —редакционная поправка Annex X",
    "status": "действует (последняя поправка 2025 по странице списка стандартов Codex)",
    "nuclides": [
     "Pu-238",
@@ -133,7 +133,7 @@
    "food_category_ru": "Пищевые продукты, кроме детского питания",
    "value": 10,
    "unit": "Bq/kg",
-   "loc": "Table 1, стр. 50 (ред. 2015) / стр. 76 (ред. 2024); фактор 10 для специй -- «Application», стр. 51 / стр. 76",
+   "loc": "Table 1, стр. 50 (ред. 2015) / стр. 76 (ред. 2024); фактор 10 для специй —«Application», стр. 51 / стр. 76",
    "url": "https://www.fao.org/input/download/standards/17/CXS_193e_2015.pdf",
    "quote": "Foods other than infant foods | 10 | Pu-238, Pu-239, Pu-240, Am-241",
    "level": "✅",
@@ -146,7 +146,7 @@
    "id": "codex_cxs193_other_sr90_group",
    "jurisdiction": "Codex",
    "document": "CXS 193-1995 General Standard for Contaminants and Toxins in Food and Feed, Radionuclides, Table 1",
-   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны; 2025 -- редакционная поправка Annex X",
+   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны; 2025 —редакционная поправка Annex X",
    "status": "действует (последняя поправка 2025 по странице списка стандартов Codex)",
    "nuclides": [
     "Sr-90",
@@ -173,7 +173,7 @@
    "id": "codex_cxs193_other_cs_group",
    "jurisdiction": "Codex",
    "document": "CXS 193-1995 General Standard for Contaminants and Toxins in Food and Feed, Radionuclides, Table 1",
-   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны; 2025 -- редакционная поправка Annex X",
+   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны; 2025 —редакционная поправка Annex X",
    "status": "действует (последняя поправка 2025 по странице списка стандартов Codex)",
    "nuclides": [
     "S-35 (organically bound)",
@@ -185,7 +185,7 @@
     "Ce-144",
     "Ir-192"
    ],
-   "sum_rule": "Внутри группы активности складываются: «if 134Cs and 137Cs are contaminants in food, the guideline level of 1 000 Bq/kg refers to the summed activity of both these radionuclides»",
+   "sum_rule": "Внутри группы активности складываются: «если 134Cs и 137Cs присутствуют в пище, контрольный уровень 1 000 Бк/кг относится к суммарной активности обоих радионуклидов»",
    "food_category": "Foods other than infant foods",
    "food_category_ru": "Пищевые продукты, кроме детского питания",
    "value": 1000,
@@ -203,7 +203,7 @@
    "id": "codex_cxs193_other_h3_c14_tc99",
    "jurisdiction": "Codex",
    "document": "CXS 193-1995 General Standard for Contaminants and Toxins in Food and Feed, Radionuclides, Table 1",
-   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны; 2025 -- редакционная поправка Annex X",
+   "edition": "CXS 193-1995, поправки до 2024 включительно прочитаны; 2025 —редакционная поправка Annex X",
    "status": "действует (последняя поправка 2025 по странице списка стандартов Codex)",
    "nuclides": [
     "H-3 (organically bound)",
@@ -229,11 +229,11 @@
    "jurisdiction": "EU",
    "document": "Council Regulation (Euratom) 2016/52 of 15 January 2016 laying down maximum permitted levels of radioactive contamination of food and feed following a nuclear accident or any other case of radiological emergency (OJ L 13, 20.1.2016, p. 2), Annex I",
    "edition": "OJ L 13/2016, вступил в силу на 20-й день после публикации; прочитан текст «as adopted» (копия National Archives, legislation.gov.uk)",
-   "status": "действует (нет данных об отмене; консолидированный текст EUR-Lex не читался -- сайт отдаёт JS-заглушку). Потолки применяются после принятия имплементирующего регламента Комиссии (ст. 3(1))",
+   "status": "действует (нет данных об отмене; консолидированный текст EUR-Lex не читался —сайт отдаёт JS-заглушку). Потолки применяются после принятия имплементирующего регламента Комиссии (ст. 3(1))",
    "nuclides": [
     "group: Sum of isotopes of strontium, notably Sr-90"
    ],
-   "sum_rule": "Сумма изотопов группы («Sum of isotopes of strontium»); для концентрированных/сухих продуктов -- по восстановленному продукту (сн. 1)",
+   "sum_rule": "Сумма изотопов группы («Sum of isotopes of strontium»); для концентрированных/сухих продуктов —по восстановленному продукту (сн. 1)",
    "food_category": "Infant food",
    "food_category_ru": "Детское питание (до 12 месяцев жизни, розничная упаковка, сн. 2)",
    "value": 75,
@@ -281,7 +281,7 @@
    ],
    "sum_rule": "Сумма изотопов группы",
    "food_category": "Other food except minor food",
-   "food_category_ru": "Прочие продукты, кроме малозначимых (minor food, Annex II)",
+   "food_category_ru": "Прочие продукты, кроме малозначимых (малозначимые продукты, приложение II)",
    "value": 750,
    "unit": "Bq/kg",
    "loc": "Annex I, таблица, OJ L 13/8",
@@ -304,7 +304,7 @@
    ],
    "sum_rule": "Сумма изотопов группы",
    "food_category": "Liquid food",
-   "food_category_ru": "Жидкие продукты (позиция 2009 и глава 22 КН; значения рассчитаны с учётом водопроводной воды и могут применяться к питьевой воде по решению компетентных органов, сн. 5); единица в таблице -- Bq/kg",
+   "food_category_ru": "Жидкие продукты (позиция 2009 и глава 22 КН; значения рассчитаны с учётом водопроводной воды и могут применяться к питьевой воде по решению компетентных органов, сн. 5); единица в таблице — Бк/кг",
    "value": 125,
    "unit": "Bq/kg",
    "loc": "Annex I, таблица, сн. (5), OJ L 13/8",
@@ -396,7 +396,7 @@
    ],
    "sum_rule": "Сумма изотопов группы",
    "food_category": "Liquid food",
-   "food_category_ru": "Жидкие продукты (единица в таблице -- Bq/kg)",
+   "food_category_ru": "Жидкие продукты (единица в таблице — Бк/кг)",
    "value": 500,
    "unit": "Bq/kg",
    "loc": "Annex I, таблица, сн. (5), OJ L 13/8",
@@ -488,7 +488,7 @@
    ],
    "sum_rule": "Сумма альфа-излучающих изотопов Pu и трансплутониевых элементов",
    "food_category": "Liquid food",
-   "food_category_ru": "Жидкие продукты (единица в таблице -- Bq/kg)",
+   "food_category_ru": "Жидкие продукты (единица в таблице — Бк/кг)",
    "value": 20,
    "unit": "Bq/kg",
    "loc": "Annex I, таблица, сн. (5), OJ L 13/8",
@@ -509,7 +509,7 @@
    "nuclides": [
     "group: Sum of all other nuclides of half-life greater than 10 days, notably Cs-134 and Cs-137"
    ],
-   "sum_rule": "Сумма всех прочих нуклидов с периодом полураспада более 10 суток; «Carbon-14, tritium and potassium-40 are not included in this group» (сн. 6)",
+   "sum_rule": "Сумма всех прочих радионуклидов с периодом полураспада более 10 суток; «Carbon-14, tritium and potassium-40 are not included in this group» (сн. 6)",
    "food_category": "Infant food",
    "food_category_ru": "Детское питание",
    "value": 400,
@@ -532,7 +532,7 @@
    "nuclides": [
     "group: Sum of all other nuclides of half-life greater than 10 days, notably Cs-134 and Cs-137"
    ],
-   "sum_rule": "Сумма всех прочих нуклидов с периодом полураспада более 10 суток; C-14, H-3 и K-40 не входят (сн. 6)",
+   "sum_rule": "Сумма всех прочих радионуклидов с периодом полураспада более 10 суток; C-14, H-3 и K-40 не входят (сн. 6)",
    "food_category": "Dairy produce",
    "food_category_ru": "Молочные продукты",
    "value": 1000,
@@ -555,7 +555,7 @@
    "nuclides": [
     "group: Sum of all other nuclides of half-life greater than 10 days, notably Cs-134 and Cs-137"
    ],
-   "sum_rule": "Сумма всех прочих нуклидов с периодом полураспада более 10 суток; C-14, H-3 и K-40 не входят (сн. 6)",
+   "sum_rule": "Сумма всех прочих радионуклидов с периодом полураспада более 10 суток; C-14, H-3 и K-40 не входят (сн. 6)",
    "food_category": "Other food except minor food",
    "food_category_ru": "Прочие продукты, кроме малозначимых",
    "value": 1250,
@@ -578,9 +578,9 @@
    "nuclides": [
     "group: Sum of all other nuclides of half-life greater than 10 days, notably Cs-134 and Cs-137"
    ],
-   "sum_rule": "Сумма всех прочих нуклидов с периодом полураспада более 10 суток; C-14, H-3 и K-40 не входят (сн. 6)",
+   "sum_rule": "Сумма всех прочих радионуклидов с периодом полураспада более 10 суток; C-14, H-3 и K-40 не входят (сн. 6)",
    "food_category": "Liquid food",
-   "food_category_ru": "Жидкие продукты (единица в таблице -- Bq/kg)",
+   "food_category_ru": "Жидкие продукты (единица в таблице — Бк/кг)",
    "value": 1000,
    "unit": "Bq/kg",
    "loc": "Annex I, таблица, сн. (5)-(6), OJ L 13/8",
@@ -603,7 +603,7 @@
    ],
    "sum_rule": "Сумма изотопов группы",
    "food_category": "Minor food (Annex II point 1: garlic, truffles, capers, manioc etc., pepper/spices, cocoa, vanilla, essential oils, caviar и др. по кодам КН)",
-   "food_category_ru": "Малозначимые продукты питания (чеснок, трюфели, каперсы, маниок, перец и специи, какао, ваниль, эфирные масла, икра и др. -- перечень по кодам КН)",
+   "food_category_ru": "Малозначимые продукты питания (чеснок, трюфели, каперсы, маниок, перец и специи, какао, ваниль, эфирные масла, икра и др. —перечень по кодам КН)",
    "value": 7500,
    "unit": "Bq/kg",
    "loc": "Annex II point 2, OJ L 13/10",
@@ -670,7 +670,7 @@
    "nuclides": [
     "group: Sum of all other nuclides of half-life greater than 10 days, notably Cs-134 and Cs-137"
    ],
-   "sum_rule": "Сумма всех прочих нуклидов с периодом полураспада более 10 суток; C-14, H-3 и K-40 не входят",
+   "sum_rule": "Сумма всех прочих радионуклидов с периодом полураспада более 10 суток; C-14, H-3 и K-40 не входят",
    "food_category": "Minor food",
    "food_category_ru": "Малозначимые продукты питания",
    "value": 12500,
@@ -688,7 +688,7 @@
    "id": "eu_2020_1158_cs137_milk_infant",
    "jurisdiction": "EU",
    "document": "Commission Implementing Regulation (EU) 2020/1158 of 5 August 2020 on the conditions governing imports of food and feed originating in third countries following the accident at the Chernobyl nuclear power station (OJ L 257, 6.8.2020), Article 3(2)(a)",
-   "edition": "OJ L 257/2020; изменён Implementing Regulation (EU) 2024/256 от 17.01.2024 (в силу 07.02.2024; расширен перечень продуктов, добавлена сноска о восстановленном продукте в ст. 3). Прочитан текст 2020 г.; консолидированная версия 07.02.2024 не читалась (EUR-Lex -- JS-заглушка)",
+   "edition": "OJ L 257/2020; изменён Implementing Regulation (EU) 2024/256 от 17.01.2024 (в силу 07.02.2024; расширен перечень продуктов, добавлена сноска о восстановленном продукте в ст. 3). Прочитан текст 2020 г.; консолидированная версия 07.02.2024 не читалась (EUR-Lex —JS-заглушка)",
    "status": "действует; заменил Council Regulation (EC) No 733/2008 (истёк 31.03.2020) и Reg. (EC) 1635/2006 и 1609/2000. Применение подтверждено вторичными источниками: Livsmedelsverket (стр. обновлена 2025-12-04, граничный контроль Cs-137 20 %) и AGRINFO 14.02.2024 (после 2024/256 уровни 370/600 те же); первоисточник консолидации не читался; пересмотр не позднее 31.03.2030 (ст. 7)",
    "nuclides": [
     "Cs-137"
@@ -698,7 +698,7 @@
    "food_category_ru": "Молоко и молочные продукты; продукты для младенцев и детей раннего возраста",
    "value": 370,
    "unit": "Bq/kg",
-   "loc": "Article 3(2)(a); преамбула (4), (6); Article 5(2) -- физические проверки 20 %",
+   "loc": "Article 3(2)(a); преамбула (4), (6); Article 5(2) —физические проверки 20 %",
    "url": "https://www.abcfoodlaw.co.uk/files/documents/Chernobyl%20Regulation.pdf",
    "quote": "370 Bq/kg for milk and milk products and for food for infants and young children as defined in Article 2(2)(a) and (b) of Regulation (EU) No 609/2013;",
    "level": "✅",
@@ -716,7 +716,7 @@
    "nuclides": [
     "Cs-137"
    ],
-   "sum_rule": "Только Cs-137. Область: продукты (food, включая minor food, и feed по ст. 1 Euratom 2016/52) из третьих стран Annex I (Албания, Беларусь, Босния и Герцеговина, Косово, Северная Македония, Молдова, Черногория, Россия, Сербия, Швейцария, Турция, Украина, Великобритания без Сев. Ирландии -- по вторичным источникам 2024 г.); обязательный сертификат и контроль для продуктов Annex II (грибы, ягоды Vaccinium и др.)",
+   "sum_rule": "Только Cs-137. Область: продукты (food, включая minor food, и feed по ст. 1 Euratom 2016/52) из третьих стран Annex I (Албания, Беларусь, Босния и Герцеговина, Косово, Северная Македония, Молдова, Черногория, Россия, Сербия, Швейцария, Турция, Украина, Великобритания без Сев. Ирландии —по вторичным источникам 2024 г.); обязательный сертификат и контроль для продуктов Annex II (грибы, ягоды Vaccinium и др.)",
    "food_category": "All other products concerned",
    "food_category_ru": "Все прочие продукты, попадающие в область регламента (в т.ч. корма)",
    "value": 600,
@@ -735,14 +735,14 @@
    "jurisdiction": "EU",
    "document": "Council Regulation (EC) No 733/2008 of 15 July 2008 on the conditions governing imports of agricultural products originating in third countries following the accident at the Chernobyl nuclear power station (codified version), Article 2(2)(a)",
    "edition": "OJ L 201, 30.7.2008, p. 1",
-   "status": "заменён Commission Implementing Regulation (EU) 2020/1158 (733/2008 истёк 31.03.2020 -- преамбула (1) Reg. 2020/1158); в 2020/1158 норматив только по Cs-137",
+   "status": "заменён Commission Implementing Regulation (EU) 2020/1158 (733/2008 истёк 31.03.2020 —преамбула (1) Reg. 2020/1158); в 2020/1158 норматив только по Cs-137",
    "nuclides": [
     "Cs-134",
     "Cs-137"
    ],
-   "sum_rule": "«The accumulated maximum radioactive level in terms of caesium-134 and -137»; сн. 5: для концентрированных/сухих продуктов -- по восстановленному продукту",
+   "sum_rule": "«The accumulated maximum radioactive level in terms of caesium-134 and -137»; сн. 5: для концентрированных/сухих продуктов —по восстановленному продукту",
    "food_category": "Milk and milk products listed in Annex II and foodstuffs intended for the special feeding of infants during the first four to six months of life",
-   "food_category_ru": "Молоко и молочные продукты (КН 0401-0404) и продукты для специального питания младенцев первых 4-6 месяцев жизни",
+   "food_category_ru": "Молоко и молочные продукты (КН 0401–0404) и продукты для специального питания младенцев первых 4–6 месяцев жизни",
    "value": 370,
    "unit": "Bq/kg",
    "loc": "Article 2(2)(a), OJ L 201/2; Annex II",
@@ -775,6 +775,73 @@
    "level": "✅",
    "retrieved": "2026-09-30",
    "unit_norm": "Bq/kg",
+   "unit_factor": 1.0,
+   "unit_inferred": false
+  },
+  {
+   "id": "eu_2013_51_rn222_param",
+   "jurisdiction": "EU",
+   "document": "Council Directive 2013/51/Euratom of 22 October 2013 laying down requirements for the protection of the health of the general public with regard to radioactive substances in water intended for human consumption, Annex I (параметрическое значение для радона)",
+   "edition": "OJ L 296, 07.11.2013; текст Приложения I прочитан по копии legislation.gov.uk/eudr/2013/51/annex/I (EUR-Lex отдаёт роботам заглушку)",
+   "status": "действует (директива Совета ЕС, обязательна для государств-членов после включения в национальное право)",
+   "nuclides": [
+    "Rn-222"
+   ],
+   "sum_rule": "Параметрическое значение 100 Бк/л; значение, установленное государством-членом, может быть выше 100 Бк/л, но ниже 1 000 Бк/л (примечание 1(a) Приложения I)",
+   "food_category": "Water intended for human consumption",
+   "food_category_ru": "Питьевая вода",
+   "value": 100,
+   "unit": "Bq/L",
+   "loc": "Приложение I, таблица «Radon», примечание 1(a)",
+   "url": "https://www.legislation.gov.uk/eudr/2013/51/annex/I",
+   "quote": "Radon | 100 | Bq/l | (Note 1). Note 1 (a): The level set by a Member State may be higher than 100 Bq/l but lower than 1 000 Bq/l.",
+   "level": "✅",
+   "retrieved": "2026-10-11",
+   "unit_norm": "Bq/L",
+   "unit_factor": 1.0,
+   "unit_inferred": false
+  },
+  {
+   "id": "eu_2013_51_rn222_remedial",
+   "jurisdiction": "EU",
+   "document": "Council Directive 2013/51/Euratom of 22 October 2013 (Water intended for human consumption), Annex I, примечание 1(b): меры по снижению радона",
+   "edition": "OJ L 296, 07.11.2013; текст Приложения I прочитан по копии legislation.gov.uk/eudr/2013/51/annex/I",
+   "status": "действует; при превышении 1 000 Бк/л меры по снижению считаются оправданными без дальнейшего обоснования",
+   "nuclides": [
+    "Rn-222"
+   ],
+   "sum_rule": "Верхняя граница: выше 1 000 Бк/л меры по снижению радона обязательны (примечание 1(b))",
+   "food_category": "Water intended for human consumption",
+   "food_category_ru": "Питьевая вода",
+   "value": 1000,
+   "unit": "Bq/L",
+   "loc": "Приложение I, примечание 1(b)",
+   "url": "https://www.legislation.gov.uk/eudr/2013/51/annex/I",
+   "quote": "Note 1 (b): Remedial action is deemed to be justified on radiation protection grounds without further analysis where radon concentrations exceed 1 000 Bq/l.",
+   "level": "✅",
+   "retrieved": "2026-10-11",
+   "unit_norm": "Bq/L",
+   "unit_factor": 1.0,
+   "unit_inferred": false
+  },
+  {
+   "id": "who_gdwq2017_rn222_no_guidance",
+   "jurisdiction": "WHO",
+   "document": "WHO. Guidelines for Drinking-water Quality, 4th ed. incorporating the 1st addendum (2017), гл. 9 «Radiological aspects»",
+   "edition": "2017; текст гл. 9 прочитан на NCBI Bookshelf NBK442362; PDF книги (631 стр.) сверен с текстом главы",
+   "status": "числового руководящего уровня для радона в воде ВОЗ не устанавливает; уровни скрининга — национальные, от референсного уровня радона в воздухе помещений (100 Бк/м³, не выше 300 Бк/м³)",
+   "nuclides": [],
+   "sum_rule": "Числа нет: значение «100 Бк/л» к ВОЗ во вторичных источниках приписывается ошибочно",
+   "food_category": "Drinking water",
+   "food_category_ru": "Питьевая вода",
+   "value": null,
+   "unit": "Bq/L",
+   "loc": "гл. 9, вводная часть и Box 9.5",
+   "url": "https://www.ncbi.nlm.nih.gov/books/NBK442362/",
+   "quote": "the setting of screening levels and guidance levels to limit the dose from ingestion of radon ... is not usually necessary",
+   "level": "✅",
+   "retrieved": "2026-10-11",
+   "unit_norm": "Bq/L",
    "unit_factor": 1.0,
    "unit_inferred": false
   },
@@ -814,7 +881,7 @@
    ],
    "sum_rule": "Норматив на «радиоактивный цезий» (Cs-134 и Cs-137)",
    "food_category": "Milk",
-   "food_category_ru": "Молоко (категория «牛乳»: молоко и молочные напитки по приказу о молоке и молочных продуктах; кисломолочные продукты, сыры сюда не входят)",
+   "food_category_ru": "Молоко (молоко и молочные напитки по приказу о молоке и молочных продуктах; кисломолочные продукты, сыры сюда не входят)",
    "value": 50,
    "unit": "Bq/kg",
    "loc": "CAA English PDF слайд 4; слайд 10 «The range of Milk and limits for Milk and Infant Foods»",
@@ -841,7 +908,7 @@
    "food_category_ru": "Общие (прочие) пищевые продукты",
    "value": 100,
    "unit": "Bq/kg",
-   "loc": "CAA English PDF слайд 4; MHLW Q&A: «一般食品の100ベクレル/kgの基準値»",
+   "loc": "CAA English PDF слайд 4; MHLW Q&A: пояснение о пределе 100 Бк/кг для пищевых продуктов общего назначения",
    "url": "https://www.caa.go.jp/policies/policy/standards_evaluation/food_pollution/criterion/assets/standards_cms105_260626_02.pdf",
    "quote": "General Foods | 100",
    "level": "✅",
@@ -862,7 +929,7 @@
    ],
    "sum_rule": "Норматив на «радиоактивный цезий» (Cs-134 и Cs-137)",
    "food_category": "Infant Foods",
-   "food_category_ru": "Детское питание (乳児用食品: сухие смеси для младенцев, детское питание до 1 года и иные продукты, продаваемые как питание младенцев)",
+   "food_category_ru": "Детское питание (сухие смеси для младенцев, детское питание до 1 года и иные продукты, продаваемые как питание младенцев)",
    "value": 50,
    "unit": "Bq/kg",
    "loc": "CAA English PDF слайд 4, слайд 10; MHLW Q&A (qanda_00001.html), Q1",
@@ -885,7 +952,7 @@
    ],
    "sum_rule": "«The DIL for each radionuclide group is applied independently. Each DIL applies to the sum of the concentrations of the radionuclides in the group at the time of measurement.»",
    "food_category": "Food in domestic commerce and food offered for import (all components of the diet), foods as prepared for consumption",
-   "food_category_ru": "Все пищевые продукты во внутренней торговле и на импорт (единая норма, без отдельной категории для младенцев); для сухих/концентрированных -- поправка на восстановление; для специй фактор разбавления 10",
+   "food_category_ru": "Все пищевые продукты во внутренней торговле и на импорт (единая норма, без отдельной категории для младенцев); для сухих/концентрированных —поправка на восстановление; для специй фактор разбавления 10",
    "value": 160,
    "unit": "Bq/kg",
    "loc": "CPG 555.880, разд. IV, таблица «Derived Intervention Levels (DILs) for Each Radionuclide Group...», стр. 2-3 и сн. a, b; 1998 doc Table 2 стр. 14 (PDF-стр. 14)",
@@ -906,7 +973,7 @@
    "nuclides": [
     "I-131"
    ],
-   "sum_rule": "Каждая группа применяется независимо; внутри группы -- сумма",
+   "sum_rule": "Каждая группа применяется независимо; внутри группы —сумма",
    "food_category": "Food in domestic commerce and food offered for import",
    "food_category_ru": "Все пищевые продукты (без категории для младенцев)",
    "value": 170,
@@ -979,7 +1046,7 @@
     "Ru-103",
     "Ru-106"
    ],
-   "sum_rule": "Не простая сумма, а критерий: (C3 / 6800) + (C6 / 450) < 1, где C3 и C6 -- концентрации Ru-103 и Ru-106 на момент измерения (сн. c). Значение 6800 -- знаменатель для Ru-103",
+   "sum_rule": "Не простая сумма, а критерий: (C3 / 6800) + (C6 / 450) < 1, где C3 и C6 —концентрации Ru-103 и Ru-106 на момент измерения (сн. c). Значение 6800 —знаменатель для Ru-103",
    "food_category": "Food in domestic commerce and food offered for import",
    "food_category_ru": "Все пищевые продукты (без категории для младенцев)",
    "value": 6800,
@@ -1002,7 +1069,7 @@
    "nuclides": [
     "Ru-106"
    ],
-   "sum_rule": "Критерий: (C3 / 6800) + (C6 / 450) < 1; значение 450 -- знаменатель для Ru-106 (см. us_fda_dil_ru103)",
+   "sum_rule": "Критерий: (C3 / 6800) + (C6 / 450) < 1; значение 450 —знаменатель для Ru-106 (см. us_fda_dil_ru103)",
    "food_category": "Food in domestic commerce and food offered for import",
    "food_category_ru": "Все пищевые продукты (без категории для младенцев)",
    "value": 450,
@@ -1025,7 +1092,7 @@
    "nuclides": [
     "I-131"
    ],
-   "sum_rule": "Одиночный нуклид",
+   "sum_rule": "Одиночный радионуклид",
    "food_category": "Infant Food (FDA LOC)",
    "food_category_ru": "Детское питание",
    "value": 55,
@@ -1048,7 +1115,7 @@
    "nuclides": [
     "I-131"
    ],
-   "sum_rule": "Одиночный нуклид",
+   "sum_rule": "Одиночный радионуклид",
    "food_category": "Other Food (FDA LOC)",
    "food_category_ru": "Прочие продукты",
    "value": 300,
@@ -1188,12 +1255,12 @@
    "edition": "GSR Part 3 (2014), файл Pub1578_web-57265295.pdf",
    "status": "действует",
    "nuclides": [],
-   "sum_rule": "Числовых уровней активности (Бк/кг) для продуктов питания в GSR Part 3 нет: para 5.22 -- справочный уровень по годовой эффективной дозе представителя населения, «generally does not exceed a value of about 1 mSv»; para 5.23 отсылает к Codex (уровни для международной торговли после аварии) и к WHO (питьевая вода). Schedule III GSR Part 3 -- это коэффициенты дозы (Sv/Bq), а не уровни для пищи; Schedule I -- изъятие и высвобождение (Бк/г), Schedule IV -- дозовые критерии для аварийного реагирования",
+   "sum_rule": "Числовых уровней активности (Бк/кг) для продуктов питания в GSR Part 3 нет: para 5.22 —справочный уровень по годовой эффективной дозе представителя населения, «generally does not exceed a value of about 1 mSv»; para 5.23 отсылает к Codex (уровни для международной торговли после аварии) и к WHO (питьевая вода). Schedule III GSR Part 3 —это коэффициенты дозы (Sv/Bq), а не уровни для пищи; Schedule I —изъятие и высвобождение (Бк/г), Schedule IV —дозовые критерии для аварийного реагирования",
    "food_category": "Commodities: food and feed, drinking water, construction materials (existing exposure situations)",
    "food_category_ru": "Товары/продукты (пища, корма, питьевая вода, стройматериалы) в существующей ситуации облучения",
    "value": null,
    "unit": "Bq/kg",
-   "loc": "Requirement 51, paras 5.22-5.23, printed p. 101 (PDF-стр. 131); Schedule III -- Table III.2D (PDF-стр. 254 и след.): dose coefficients (Sv/Bq)",
+   "loc": "Requirement 51, paras 5.22-5.23, printed p. 101 (PDF-стр. 131); Schedule III —Table III.2D (PDF-стр. 254 и след.): dose coefficients (Sv/Bq)",
    "url": "https://www-pub.iaea.org/MTCD/Publications/PDF/Pub1578_web-57265295.pdf",
    "quote": "5.22. The regulatory body or other relevant authority shall establish specific reference levels for exposure due to radionuclides in commodities such as construction materials, food and feed, and in drinking water, each of which shall typically be expressed as, or be based on, an annual effective dose to the representative person that generally does not exceed a value of about 1 mSv.",
    "level": "✅",
@@ -1261,7 +1328,7 @@
     "Cs-137",
     "U-238"
    ],
-   "sum_rule": "Строка таблицы даёт один и тот же уровень для каждого нуклида строки; суммирование -- по дозам; уран контролируется по химической токсичности (сн. ***, 30 мкг/л)",
+   "sum_rule": "Строка таблицы даёт один и тот же уровень для каждого нуклида строки; суммирование —по дозам; уран контролируется по химической токсичности (сн. ***, 30 мкг/л)",
    "food_category": "Drinking water",
    "food_category_ru": "Питьевая вода",
    "value": 10,
@@ -1290,7 +1357,7 @@
     "Pu-239",
     "Am-241"
    ],
-   "sum_rule": "Уровень для каждого нуклида строки; суммирование -- по дозам",
+   "sum_rule": "Уровень для каждого нуклида строки; суммирование —по дозам",
    "food_category": "Drinking water",
    "food_category_ru": "Питьевая вода",
    "value": 1,
@@ -1315,7 +1382,7 @@
     "Po-210",
     "Ra-228"
    ],
-   "sum_rule": "Уровень для каждого нуклида строки; суммирование -- по дозам",
+   "sum_rule": "Уровень для каждого нуклида строки; суммирование —по дозам",
    "food_category": "Drinking water",
    "food_category_ru": "Питьевая вода",
    "value": 0.1,

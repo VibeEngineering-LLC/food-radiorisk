@@ -32,7 +32,7 @@ export default function LifeRisks({ life, input, radonC = NaN, radonIsDefault = 
   const cancerRow = main.find((r) => r.id === 'cs_1026');
   const shr = sub0 ? radonSubShares(sub0, Number.isFinite(lungP) ? lungP : cancerRow?.p, 1) : null; // громкая проверка: подсектор не больше смертей от рака лёгкого
   const sub = shr && !shr.bad ? sub0 : null;
-  const origin = radonIsDefault ? 'по умолчанию' : 'по вашему вводу';
+  const origin = radonIsDefault ? 'по умолчанию' : 'введено пользователем';
 
   return (
     <>
@@ -70,7 +70,7 @@ export default function LifeRisks({ life, input, radonC = NaN, radonIsDefault = 
               <th>{T.LIFE_COL_CAUSE}</th>
               <th
                 className="num"
-                title="на 1 млн — на 1 000 000 человек"
+                title="значения даны на 1 000 000 человек"
               >
                 {fill(lt.capped ? T.LIFE_COL_P_CAPPED : T.LIFE_COL_P, {
                   n,
@@ -85,7 +85,7 @@ export default function LifeRisks({ life, input, radonC = NaN, radonIsDefault = 
               <tr key={r.id} className={r.kind === 'product' ? 'cmp-me' : undefined}>
                 <td className="life-cause">
                   {r.kind === 'product' ? (
-                    <b title={T.LIFE_PRODUCT}>{pname ? `Этот продукт: ${pname}` : 'Этот продукт'} — рак от облучения</b>
+                    <b title={T.LIFE_PRODUCT}>{pname ? `Этот продукт: ${pname}` : 'Этот продукт'} — радиационно-индуцированный рак</b>
                   ) : (
                     <span title={RISK_LABEL[r.id]?.[1] ?? (r.kind === 'other' ? r.label : undefined)}>{riskLabel(r.id, r.label)}</span>
                   )}
@@ -100,7 +100,7 @@ export default function LifeRisks({ life, input, radonC = NaN, radonIsDefault = 
               r.id === 'cs_1026' && sub ? (
                 <tr key="sub_radon" className="life-sub" data-sub="radon">
                   <td className="life-cause">{fill(T.LIFE_SUB_RADON, { C: fmtNum(sub.C), origin })}</td>
-                  <td className="num">{fill(T.LIFE_SUB_VALUE, { never: fmtPerMillion(sub.neverB) })}</td>
+                  <td className="num">{fmtPerMillion(sub.neverB)}</td>
                   <td className="life-bar"></td>
                 </tr>
               ) : null,

@@ -1,4 +1,4 @@
-import { fmtNum } from './fmt.js';
+import { fmtNum, nb } from './fmt.js';
 import { REGION_NAME, CAPTION, normRegion } from '../calc/region.js';
 
 // #FR-101 (D-031): тексты подсказок, зависящие от региона данных. parts — comparison.parts (region_parts.js); все числа берутся из parts (данные), в коде чисел нет.
@@ -29,7 +29,7 @@ export function ctNote(parts) {
   if (!parts || !parts.ct || !parts.rad) return '';
   const ct = parts.ct;
   const rad = parts.rad;
-  return `КТ: ${fmtNum(ct.freq * 1000)} на 1000 жителей в год${ct.share != null ? `, из них грудной клетки ${fmtNum(ct.share * 100)} %` : ', доли грудной клетки для региона нет — взяты все КТ'}, доза процедуры ${fmtNum(ct.doseProc)} мЗв${ct.derived ? ' (средняя на одну КТ)' : ''}; рентгенография и флюорография: ${fmtNum(rad.freq * 1000)} на 1000 жителей в год, доза процедуры ${fmtNum(rad.doseProc)} мЗв${rad.derived ? ' (средняя на один снимок)' : ''}.`;
+  return nb(`КТ: ${fmtNum(ct.freq * 1000)} на 1 000 жителей в год${ct.share != null ? `, из них грудной клетки ${fmtNum(ct.share * 100)} %` : ', доли грудной клетки для региона нет — взяты все КТ'}, доза процедуры ${fmtNum(ct.doseProc)} мЗв${ct.derived ? ' (средняя на одну КТ)' : ''}; рентгенография и флюорография: ${fmtNum(rad.freq * 1000)} на 1 000 жителей в год, доза процедуры ${fmtNum(rad.doseProc)} мЗв${rad.derived ? ' (средняя на один снимок)' : ''}.`);
 }
 
 // Пояснение к умолчанию радона для подсказки полей: возвращает строку, начинающуюся с пробела и заключённую в скобки, либо пустую строку.
@@ -38,7 +38,7 @@ export function ctNote(parts) {
 export function radonDefaultNote(parts) {
   if (!parts) return '';
   if (parts.radonEec) {
-    return ` (средняя ЭРОА по России ${fmtNum(parts.radonEec.eec)} Бк/м³, делённая на коэффициент равновесия ${fmtNum(parts.radonEec.f)}, принятый нормативно в РФ — МР 2.6.1.0333-23)`;
+    return nb(` (средняя эквивалентная равновесная объёмная активность (ЭРОА) по России ${fmtNum(parts.radonEec.eec)} Бк/м³, делённая на коэффициент равновесия ${fmtNum(parts.radonEec.f)}, установленный нормативными документами РФ — методические рекомендации МР 2.6.1.0333-23)`);
   }
   if (parts.radonDefaultC != null) {
     return ` (среднее по миру, НКДАР ООН 2000; ${radonFNote(parts)})`;
@@ -51,7 +51,7 @@ export function radonDefaultNote(parts) {
 export function dwellDefaultText(parts) {
   if (!parts) return 'не задано (среднее для мира не подтверждено; в расчёте берётся среднее внешнее облучение от земли и стройматериалов)';
   if (parts.dwellDefaultU != null) {
-    return `${fmtNum(parts.dwellDefaultU)} мкЗв/ч (среднее по региону; в расчёте, пока вы не введёте своё значение, берётся среднее внешнее облучение от земли и стройматериалов)`;
+    return nb(`${fmtNum(parts.dwellDefaultU)} мкЗв/ч (среднее по региону; в расчёте, пока значение не введено, берётся среднее внешнее облучение от земли и стройматериалов)`);
   }
   return 'не задано (среднее для мира не подтверждено; в расчёте берётся среднее внешнее облучение от земли и стройматериалов)';
 }

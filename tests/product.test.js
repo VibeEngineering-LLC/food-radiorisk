@@ -37,19 +37,19 @@ test("список продуктов без повторов", () => {
 
 
 test("подпись: среднее и диапазон", () => {
-  assert.strictEqual(transferValueText(choices.transfer[0]), "0,00311 м²/кг (0,0012–0,0064)");
+  assert.strictEqual(transferValueText(choices.transfer[0]), "0,00311 м²/кг (0,0012–0,0064)");
 });
 
 test("подпись: только диапазон вместо «нет среднего»", () => {
-  assert.strictEqual(transferValueText(choices.transfer[3]), "0,005–0,02 м²/кг");
+  assert.strictEqual(transferValueText(choices.transfer[3]), "0,005–0,02 м²/кг");
 });
 
 test("подпись: одна граница", () => {
-  assert.strictEqual(transferValueText(choices.transfer[4]), "≥ 0,002 м²/кг");
+  assert.strictEqual(transferValueText(choices.transfer[4]), "≥ 0,002 м²/кг");
 });
 
 test("подпись целиком", () => {
-  assert.strictEqual(transferLabel(choices.transfer[6]), "косуля — КП нет значения · основа не указана · ⚠️");
+  assert.strictEqual(transferLabel(choices.transfer[6]), "косуля — КП нет значения · основа не указана · требует уточнения"); // #FR-124: значок уровня заменён словом
 });
 
 test("список КП фильтруется по продукту", () => {
@@ -115,7 +115,7 @@ test("таблица оценки загрязнения", () => {
   assert.ok(html.includes("∞"));
   assert.ok(html.includes("&lt;script&gt;"));
   assert.ok(!html.includes("<script>"));
-  assert.ok(html.includes("сырая"));
+  assert.ok(html.includes("свежая"));
 });
 
 // #FR-85 v11: слова сравниваются по основам Snowball целых слов; лишние слова шифра — «частично», ключи КП — после подтверждения записи

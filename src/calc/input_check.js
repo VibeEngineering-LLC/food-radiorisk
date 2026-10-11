@@ -19,13 +19,13 @@ export function checkInputRanges(input) {
   }
   if (!validDate(input.eatDate)) errs.push(`Дата «${input.eatDate}» указана неверно — введите дату в формате ГГГГ-ММ-ДД`);
   for (const n of input.nuclides ?? []) {
-    if (!validDate(n.sampleDate)) errs.push(`${n.nuclide}: Дата «${n.sampleDate}» указана неверно — введите дату в формате ГГГГ-ММ-ДД`);
-    if (!validDate(n.depositionDate)) errs.push(`${n.nuclide}: Дата «${n.depositionDate}» указана неверно — введите дату в формате ГГГГ-ММ-ДД`);
+    if (!validDate(n.sampleDate)) errs.push(`${n.nuclide}: дата «${n.sampleDate}» указана неверно — введите дату в формате ГГГГ-ММ-ДД`);
+    if (!validDate(n.depositionDate)) errs.push(`${n.nuclide}: дата «${n.depositionDate}» указана неверно — введите дату в формате ГГГГ-ММ-ДД`);
     if (n.source === 'deposition') {
       if (!fin(n.depositionKBqPerM2) || n.depositionKBqPerM2 < 0) errs.push(`${n.nuclide}: укажите плотность загрязнения, кБк/м² (число не меньше 0)`);
       else if (n.depositionKBqPerM2 > LIMITS.depositionKBqPerM2) errs.push(`${n.nuclide}: плотность загрязнения больше 10⁹ кБк/м² — проверьте число и единицу`);
     } else {
-      if (fin(n.measuredBqPerKg) && n.measuredBqPerKg > LIMITS.activityBqPerKg) errs.push(`${n.nuclide}: активность больше 10¹² Бк/кг — проверьте число и единицу`);
+      if (fin(n.measuredBqPerKg) && n.measuredBqPerKg > LIMITS.activityBqPerKg) errs.push(`${n.nuclide}: удельная активность больше 10¹² Бк/кг — проверьте число и единицу`);
       const u = n.measuredUncertaintyBqPerKg;
       // #FR-88 v22 (D-2): при некорректной активности ошибка — в поле активности (её даст расчёт строки), а не в производной неопределённости
       const actOk = fin(n.measuredBqPerKg) && n.measuredBqPerKg >= 0;

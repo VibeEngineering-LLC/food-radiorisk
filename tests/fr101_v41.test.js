@@ -66,8 +66,8 @@ test('FR-101 v41: подпись F в подсказке радона и в «П
   assert.ok(norm(worldCmp).includes('F = 0,4 (МКРЗ 126)'), 'World cmp tab should contain F = 0,4 (МКРЗ 126)');
   assert.ok(norm(ruCmp).includes('F = 0,5 (МР 2.6.1.0333-23)'), 'Ru cmp tab should contain F = 0,5 (МР 2.6.1.0333-23)');
 
-  const worldCalc = await tab('world', 'calc');
-  const ruCalc = await tab('ru', 'calc');
+  const worldCalc = await tab('world', 'spec'); // #FR-112: справочные величины — на вкладке «Для специалиста»
+  const ruCalc = await tab('ru', 'spec');
 
   assert.ok(norm(worldCalc).includes('F = 0,4 (МКРЗ 126)'), 'World calc tab should contain F = 0,4 (МКРЗ 126)');
   assert.ok(norm(ruCalc).includes('F = 0,5 (МР 2.6.1.0333-23)'), 'Ru calc tab should contain F = 0,5 (МР 2.6.1.0333-23)');

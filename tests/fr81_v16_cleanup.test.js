@@ -26,7 +26,8 @@ async function walk(dir) {
 }
 
 test('V16: удалённые имена не встречаются в исходниках src/', async () => {
-  const names = ['RISK_TXT', 'logPos', 'riskCoeffNote', 'riskAssessment', 'riskAvg5', 'negligibleShare', 'RiskBlock', 'RiskBox', 'budgetShare1mSv\\b'];
+  // #FR-116 (решение оператора 2026-10-11): шкала рисков возвращена — logPos и riskAssessment (src/calc/risk_zone.js) из списка удалённых имён исключены
+  const names = ['RISK_TXT', 'riskCoeffNote', 'riskAvg5', 'negligibleShare', 'RiskBlock', 'RiskBox', 'budgetShare1mSv\\b'];
   const files = await walk(root);
   const excludeSuffix = 'ui' + path.sep + 'form.js';
   

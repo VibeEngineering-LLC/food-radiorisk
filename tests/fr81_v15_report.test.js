@@ -14,8 +14,8 @@ const S1 = () => inputFor('mushrooms_dried', 'грибы сушёные', [['Cs-
 const S2 = () => inputFor('milk', 'молоко', [['Cs-137', 50, 5], ['Sr-90', 10, 1]], { age: '5y', portionKg: 0.5, portionsPerYear: 365, years: 10, lifetime: { fromAge: 3, toAge: 13 } });
 const S5 = () => inputFor('mushrooms_fresh', 'грибы свежие', [['Cs-137', 400, 40]], { portionKg: 0.3, portionsPerYear: 60, years: 1 });
 const report = (input, fmt = 'md') => { const result = computeScenario(data, input); return buildReport(fmt, { input, result }, META, ISO).text; };
-const itog = (text) => text.slice(text.indexOf('## Итог'), text.indexOf('## Расчёт по нуклидам'));
-const lines = (input) => { const p = summaryParts(computeScenario(data, input), input); return [p.head, p.number, p.caption, p.equiv, p.verbal, ...p.notes, p.link, p.verdict.title, ...p.verdict.lines.map(l => l.text), p.verdict.sep, p.dose.head, ...p.dose.lines].filter(Boolean); };
+const itog = (text) => text.slice(text.indexOf('## Итог'), text.indexOf('## Расчёт по радионуклидам'));
+const lines = (input) => { const p = summaryParts(computeScenario(data, input), input); return [p.headShort, p.termCap, p.number, p.life?.cap, p.life?.number, p.caption, p.equiv, p.verbal, ...p.notes, p.link, p.verdict.title, ...p.verdict.lines.map(l => l.text), p.verdict.sep, p.dose.head, ...p.dose.lines].filter(Boolean); };
 
 test('V15: в «Итоге» нет Ē₅, риска «с учётом вреда» и «1 млн»', async () => {
   for (const S of [S1, S2, S5]) {

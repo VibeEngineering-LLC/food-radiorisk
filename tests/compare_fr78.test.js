@@ -48,7 +48,7 @@ test('строка в таблице: после природного фона, 
   const s = row(c, 'bg_street');
   assert.equal(s.kind, 'horizon');
   close(s.doseSv, 0.16504e-3 * 50);
-  assert.ok(s.label.includes('Фон на улице') && s.label.includes('20 %') && s.label.includes('1760 ч/год') && s.label.includes('ОА 10 Бк/м³'));
+  assert.ok(s.label.includes('Фон на улице') && s.label.includes('20 %') && s.label.includes('1 760 ч в год') && s.label.includes('ОА 10 Бк/м³'));
   close(row(c, 'w26_natural_total').doseSv / s.doseSv, 3.0 / 0.16504);
   const k = buildComparison(data.compare, totals, inp({ age: '5y' }), 0.05);
   close(row(k, 'bg_street').doseSv, 0.16504e-3 * 65);

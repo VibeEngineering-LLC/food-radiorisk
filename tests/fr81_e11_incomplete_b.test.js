@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { run } from './fr81_helpers.js';
 
-const W = /B рассчитан не по всем нормируемым нуклидам/;
+const W = /B рассчитан не по всем нормируемым радионуклидам/;
 test('E11: молоко, введён только Cs-137 → предупреждение о Sr-90', () => {
   const r = run('milk', 'Молоко', [['Cs-137', 90]]);
   assert.equal(r.limits.compliance.verdict, 'conforms');

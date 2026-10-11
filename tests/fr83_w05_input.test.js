@@ -82,5 +82,5 @@ test('подсказка рациона: масса из данных за ср�
     const rec = data.diet.find(r => r.id === 'diet_bal2025_potato');
     const h = S.hints(mk('Картофель', { years: '5' }), ch).diet;
     assert.match(h, new RegExp(String(rec.value)));
-    assert.match(h, /за 5 г\./);
+    assert.match(h, /за 5 лет/);
 });

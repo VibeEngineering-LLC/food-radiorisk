@@ -9,15 +9,17 @@ import { normCodeFor } from './catalog.js';
 import { interventionLevels } from './intervention.js';
 import { pickNormRecord, isP4, groupLabel, T044_PREFIX } from './norms.js';
 import { resolveProcessing, ANOMALY_NOTE } from './processing.js';
+import { levelWord } from '../ui/fmt.js';
 // #FR-106 v46: название записи перехода для сообщений — продукт (и нуклид), не внутренний id данных
 // #FR-106 v46: сообщения sample.js — английские и с внутренним id записи; на экран — по-русски без id (прежний вывод e.message показывал «coefficient unit not established (trs472_…)»)
 const depErrRu = (e) => /unit not established/.test(e?.message || '') ? 'у выбранного коэффициента перехода единица измерения не установлена' : /no coefficient value/.test(e?.message || '') ? 'у выбранного коэффициента перехода нет значения' : 'выбранный коэффициент перехода не подходит для оценки загрязнения';
 const tName =(r) => [r.item_ru, r.nuclide].filter(Boolean).join(', ') || 'запись перехода';
 import { isNatural, LIMIT_YEAR_SV, LIMIT_LIFE_SV } from './origin.js';
+import { RN, isContinuousSupply, isWaterInput, isUnpackedWater, radonUvExtra, radonWater } from './radon_water.js'; // #FR-126: радон-222 в питьевой воде
 import { AGE_BANDS, periodYears } from './lifetime.js';
 import { yearPlan, DAYS_PER_YEAR, NOMINAL_AGE, avg5, sumSeries } from './years.js';
 import { yearlySeries, bandsOf } from './series.js';
-import { buildComparison } from './compare.js';
+import { buildComparison, startAge, horizonYears } from './compare.js';
 import { recordsFor } from './region.js';
 import { organDoses } from './organ.js';
 import { organRisk } from './organ_risk.js';
@@ -25,6 +27,10 @@ import { lifeRisks } from './life_risks.js';
 import { isDryNorm, adjustForForm } from './form_norm.js';
 import { makeLifeTable, causeProb, BG_CODE } from './life_table.js';
 import { T, fill } from '../ui/texts_v.js';
+import { riskAssessmentOf } from './risk_zone.js';
+const LIMIT_MAX_YEAR_SV = 5e-3; // НРБ-99/2009 табл. 3.1: не более 5 мЗв в один год (записи в наборе risk нет; значение прежнее, вынесено в именованную константу)
+const RN_NO_DECAY = T.RN_NO_DECAY; // v53: в rowFor имя T занято периодом полураспада
+const EAT_BEFORE_SAMPLE_WARN =T.EAT_BEFORE_SAMPLE_WARN; // #FR-108: в rowFor имя T занято периодом полураспада
 import { checkDietInput, dietWarnText, dietProvenance, dietResult } from './diet.js';
 import { checkInputRanges } from './input_check.js';
 import { fmtDose2 } from '../ui/fmt.js';
@@ -72,20 +78,22 @@ export function listChoices(data) {
 }
 
 // #FR-81 D18: дни от даты пробы (выпадений) до даты начала питания; питание не может начаться раньше пробы
-function daysBetween(from, to, what) {
+// #FR-108: для пробы питание раньше пробы допустимо (отрицательные дни → пересчёт назад); для выпадений — нет (allowNegative=false)
+function daysBetween(from, to, what, allowNegative = false) {
   const d = (new Date(to) - new Date(from)) / 86400000;
-  if (!(d >= 0)) throw Object.assign(new Error(`Дата начала питания (${to}) раньше даты ${what} (${from}) или указана неверно — исправьте даты`), { plain: true });
+  if (!Number.isFinite(d)) throw Object.assign(new Error(`Дата начала потребления (${to}) или дата ${what} (${from}) указана неверно — исправьте даты`), { plain: true });
+  if (!allowNegative && d < 0) throw Object.assign(new Error(`Дата начала потребления (${to}) предшествует дате ${what} (${from}), что не согласуется с моделью; исправьте даты`), { plain: true });
   return d;
 }
 
-const NO_AGE_BANDS = 'В НРБ-99/2009 коэффициенты e(g) даны только для критической группы, а не по возрастам, поэтому режим «с возраста a до возраста b» недоступен. Выберите источник «МКРЗ (ICRP 119)»';
+const NO_AGE_BANDS = 'В НРБ-99/2009 коэффициенты e(g) даны только для критической группы, а не по возрастам, поэтому режим «с возраста a до возраста b» недоступен. Выберите источник «МКРЗ, Публикация 119»';
 
 /** @param {object} data @param {object} input */
 export function computeScenario(data, input) {
   const errors = [], warnings = [], rows = [];
   // #FR-65: питание «всю жизнь» — рацион одинаков во все годы, e(g) по возрасту в момент поступления
   // #FR-81 D-021: коэффициенты 4,1·10⁻² / 4,2·10⁻² (взрослые работники, МКРЗ 103 табл. 1) убраны из выбора — считаем население; предупреждение о них снято
-  if (input.lifetime) warnings.push(`режим «${input.lifetime.fromAge}–${input.lifetime.toAge} лет»: рацион принят одинаковым во все годы, коэффициент e(g) берётся по возрастной группе в момент поступления (ICRP 119)`);
+  if (input.lifetime) warnings.push(`режим «${input.lifetime.fromAge}–${input.lifetime.toAge} лет»: рацион принят одинаковым во все годы, коэффициент e(g) берётся по возрастной группе в момент поступления (МКРЗ, Публикация 119)`);
   // #FR-81 D14/D15: пустой или недопустимый срок и пустые поля рациона — ошибка ввода, а не молчаливая 1 и не доза 0
   // #FR-81 V11: вид продукта обязателен; неуказанный (undefined, вызов API) считается свежим
   if (input.product?.state !== undefined && !['fresh', 'dried', 'cooked'].includes(input.product.state)) errors.push(T.FORM_STATE_REQUIRED);
@@ -97,13 +105,13 @@ export function computeScenario(data, input) {
   const lt = input.lifetime;
   if (lt && !(Number.isFinite(lt.fromAge) && lt.fromAge >= 0 && Number.isFinite(lt.toAge) && lt.toAge > lt.fromAge && lt.toAge <= 120)) errors.push('Режим «с возраста a до возраста b»: укажите начальный возраст (не меньше 0) и конечный возраст — больше начального и не более 120 лет');
   else if (lt && !AGE_BANDS.every(b => data.dose_coeff.some(r => r.source === input.doseSource && r.age === b.age))) errors.push(NO_AGE_BANDS);
-  else if (periodYears(input) === null) errors.push('Срок питания: укажите число лет от 1 до 120');
+  else if (periodYears(input) === null) errors.push('Срок потребления: укажите число лет от 1 до 120');
   // #FR-83 W06: потребление по умолчанию — ядро не верит числу формы, сверяет его с набором diet; нет значения — ошибка с причиной, а не «укажите массу порции»
   errors.push(...checkInputRanges(input)); // #FR-88 v18: огромные и недопустимые значения — сообщение, а не доза
   const dietCk = checkDietInput(data.diet, input, data.products);
   errors.push(...dietCk.errors);
   if (!dietCk.blocked && (!Number.isFinite(input.portionKg) || input.portionKg < 0)) errors.push('Рацион: укажите массу порции, г');
-  if (!dietCk.blocked && (!Number.isFinite(input.portionsPerYear) || input.portionsPerYear < 0)) errors.push('Рацион: укажите, как часто едите продукт (раз в день, дней в неделю, недель в месяц, месяцев в году)');
+  if (!dietCk.blocked && (!Number.isFinite(input.portionsPerYear) || input.portionsPerYear < 0)) errors.push('Рацион: укажите, как часто потребляется продукт (раз в день, дней в неделю, недель в месяц, месяцев в году)');
   let riskCoeff = null;
   try { riskCoeff = riskCoeffOf(data); } catch (e) { errors.push(e.message); }
   if (errors.length > 0) return { ok: false, errors, warnings, rows, totals: {}, limits: {} };
@@ -111,7 +119,7 @@ export function computeScenario(data, input) {
   const period = { years: periodYears(input) };
   input = { ...input, years: period.years };
   for (const n of input.nuclides) {
-    try { rows.push(rowFor(data, input, n, warnings, riskCoeff)); } catch (e) { errors.push(e.plain ? e.message : `${n.nuclide}: ${e.message}`); }
+    try { rows.push(rowFor(data, input, n, warnings, riskCoeff)); } catch (e) { const msg = e.plain ? e.message : `${n.nuclide}: ${e.message}`; if (!errors.includes(msg)) errors.push(msg); } // #FR-108: одинаковая ошибка дат — один раз на весь расчёт
   }
   if (errors.length > 0) return { ok: false, errors, warnings, rows, totals: {}, limits: {} };
   // #FR-83 W06: умолчание всегда видно — предупреждение, шаг «рацион» в провенансе каждой строки нуклида, поле result.diet
@@ -119,6 +127,10 @@ export function computeScenario(data, input) {
     warnings.push(dietWarnText(dietCk.rec, dietCk.group));
     for (const r of rows) r.provenance.unshift(dietProvenance(dietCk.rec, dietCk.group));
   }
+  // #FR-126: радон-222 в воде — ингаляция выделившегося радона отдельной строкой (в суммы доз не входит) и нормативы; параметры ингаляции — в провенанс строки нуклида
+  const radon = radonWater(data, input, rows, period.years);
+  if (radon) rows.find(r => r.nuclide === RN).provenance.push(...radon.provenance);
+  else if (rows.some(r => r.nuclide === RN) && !isWaterInput(data, input)) warnings.push(T.RN_NOT_WATER);
 
   const doseY = rows.reduce((s, r) => s + (r.doseSvPerYear || 0), 0);
   const doseT = rows.reduce((s, r) => s + (r.doseSvTotal || 0), 0);
@@ -128,9 +140,9 @@ export function computeScenario(data, input) {
   const tech = rows.filter(r => !r.natural);
   // #FR-81 D13: пределы доз и ПГП — только для техногенных нуклидов (НРБ-99/2009 п. 3.1.3); природные показаны, но не нормируются
   const nat = rows.filter(r => r.natural).map(r => r.nuclide);
-  if (nat.length) warnings.push(`для природных нуклидов (${nat.join(', ')}) предел 1 мЗв/год и ПГП не применяются (НРБ-99/2009 п. 3.1.3); их доза и риск показаны, в долю предела и в ПГП не входят`);
+  if (nat.length) warnings.push(`для природных радионуклидов (${nat.join(', ')}) предел 1 мЗв/год и ПГП не применяются (НРБ-99/2009 п. 3.1.3); их доза и риск показаны, в долю предела и в ПГП не входят`);
   // #FR-81 D08: пометка на экране (формулировка оператора 05.10)
-  if (!input.constantActivity && period.years > 1) warnings.push('Многолетнее питание: учтён только радиоактивный распад; очищение почвы и продуктов не учтено — оценка консервативна. Для лесных грибов и ягод активность новых урожаев может не снижаться — отметьте «активность постоянна».');
+  if (!input.constantActivity && period.years > 1) warnings.push('Многолетнее потребление: учтён только радиоактивный распад; очищение почвы и продуктов не учтено — оценка консервативна. Для лесных грибов и ягод удельная активность новых урожаев может не снижаться — отметьте поле «Удельная активность продукта постоянна во все годы».');
   // #FR-81 D10: ряды доз по годам; Ē₅ — наибольшая средняя за 5 лет подряд (окно с нулями за пределами срока), максимум года — для предела 5 мЗв
   const yearsAll = sumSeries(rows.map(r => r.yearly.map(y => y.doseSv))), yearsTech = sumSeries(tech.map(r => r.yearly.map(y => y.doseSv)));
   const doseAvg5 = avg5(yearsAll), techAvg5 = avg5(yearsTech), doseMaxYear = Math.max(...yearsAll), techMaxYear = Math.max(0, ...yearsTech);
@@ -157,18 +169,19 @@ export function computeScenario(data, input) {
       riskPerYear: rows.length ? riskY : null,
       doseSvAvg5: rows.length ? doseAvg5 : null, doseSvMaxYear: rows.length ? doseMaxYear : null,
       riskNominal: tech.length ? riskFromDose(techT, riskCoeff) : null, // R: смерть от рака, номинально, техногенные нуклиды, весь срок
+      riskAssessment: tech.length ? riskAssessmentOf(data.risk, riskFromDose(techT, riskCoeff)) : null, // #FR-116: зона риска по уровням НРБ п. 2.3 (цвет блока и маркер шкалы)
       doseMaxYearTech: tech.length ? techMaxYear : null, doseMaxYearIndex: maxIdx >= 0 ? maxIdx + 1 : null,
       doseMaxYearAge: maxIdx >= 0 && input.lifetime ? input.lifetime.fromAge + maxIdx : null, doseMaxYearUniform: uniformYears,
-      doseTechAvg5: tech.length ? techAvg5 : null, doseClass, riskMaxYear: tech.length ? riskFromDose(techMaxYear, riskCoeff) : null, maxYearShare5mSv: tech.length ? techMaxYear / 5e-3 : null,
+      doseTechAvg5: tech.length ? techAvg5 : null, doseClass, riskMaxYear: tech.length ? riskFromDose(techMaxYear, riskCoeff) : null, maxYearShare5mSv: tech.length ? techMaxYear / LIMIT_MAX_YEAR_SV : null,
       techDoseSvPerYear: tech.length ? techY : null,
       techDoseSvTotal: tech.length ? techT : null,
       techNuclides: tech.map(r => r.nuclide),
       naturalNuclides: rows.filter(r => r.natural).map(r => r.nuclide),
       budgetShareMaxYear: tech.length ? techMaxYear / lim0.yearSv : null, budgetShare1mSvAvg5: tech.length ? techAvg5 / lim0.yearSv : null,
       lifeShare70mSv: tech.length ? techT / lim0.lifeSv : null,
-      optimNegligibleSv: lim0.optimNegligibleSv, optimNegligibleLoc: lim0.optimNegligibleLoc, limitYearSv: lim0.yearSv, limitYearLoc: lim0.yearLoc, limitLifeLoc: lim0.lifeLoc
+      limitMaxYearSv: LIMIT_MAX_YEAR_SV, optimNegligibleSv: lim0.optimNegligibleSv, optimNegligibleLoc: lim0.optimNegligibleLoc, limitYearSv: lim0.yearSv, limitYearLoc: lim0.yearLoc, limitLifeLoc: lim0.lifeLoc
     },
-    limits,
+    limits, radon,
     diet: dietCk.rec ? dietResult(input.diet.mode, dietCk.rec, dietCk.group, dietCk.manual) : null, // #FR-83 W06
     // #FR-73: сравнение с другими источниками облучения
     comparison: rows.length ? buildComparison(data.compare, { doseSvPerYear: doseY, doseSvTotal: doseT, naturalNuclides: rows.filter(r => r.natural).map(r => r.nuclide) }, input, riskCoeff) : null,
@@ -178,7 +191,18 @@ export function computeScenario(data, input) {
   result.lifeRisks = rows.length ? lifeRisks(result, input, data.life_risks) : null;
   // #FR-81 V07: строка A4 главного экрана
   result.background = tech.length ? backgroundOf(recordsFor(data.life_risks, input.region), input) : null; // #FR-101: фон рака — по таблице выбранного региона
+  // #FR-117: второе число — риск, если питаться так всю жизнь (режим «с возраста a до a+H» этой же модели, без второй реализации)
+  result.eating = !input.lifetime && !input._noEating && tech.length ? eatingForLife(data, input) : null;
   return result;
+}
+
+// #FR-117: пожизненное питание = тот же расчёт в режиме lifetime (a = возраст начала, H = горизонт «Сводки»); недоступно, если у источника нет e(g) по возрастам
+function eatingForLife(data, input) {
+  const a = startAge(input), H = horizonYears(input), base = { fromAge: a, toAge: a + H, H };
+  const r = computeScenario(data, { ...input, lifetime: { fromAge: a, toAge: a + H }, years: H, _noEating: true });
+  if (!r.ok) return { ok: false, ...base, reason: r.errors[0] };
+  const risk = r.totals.riskNominal;
+  return { ok: true, ...base, riskNominal: risk, doseTechSvTotal: r.totals.techDoseSvTotal, doseSvTotal: r.totals.doseSvTotal, riskAssessment: riskAssessmentOf(data.risk, risk) };
 }
 
 function rowFor(data, input, n, warnings, riskCoeff) {
@@ -189,12 +213,12 @@ function rowFor(data, input, n, warnings, riskCoeff) {
   const isWater = input.foodGroupCode === 'water';
   const dcRec = pickDose(data.dose_coeff, n.nuclide, input.age, input.doseSource, isWater);
   if (!dcRec) throw doseMissing(data.dose_coeff, n.nuclide, input.age, input.doseSource, isWater);
-  prov.push({ step: 'доза', what: `коэффициент ожидаемой эффективной дозы при поступлении с ${dcRec.source === 'NRB2009_App2a' ? 'питьевой водой (НРБ-99/2009, прил. 2а)' : 'пищей'}`, id: dcRec.id, source: dcRec.source, loc: dcRec.loc, level: dcRec.level, value: dcRec.value, unit: dcRec.unit });
+  prov.push({ step: 'доза', what: `дозовый коэффициент ожидаемой эффективной дозы при поступлении с ${dcRec.source === 'NRB2009_App2a' ? 'питьевой водой (НРБ-99/2009, прил. 2а)' : 'пищей'}`, id: dcRec.id, source: dcRec.source, loc: dcRec.loc, level: dcRec.level, value: dcRec.value, unit: dcRec.unit });
 
   // 2. Raw activity
   let rawBqPerKg = null, atSampleBqPerKg = null;
   if (n.source === 'measured') {
-    if (!Number.isFinite(n.measuredBqPerKg) || n.measuredBqPerKg < 0) throw new Error('измеренная активность некорректна');
+    if (!Number.isFinite(n.measuredBqPerKg) || n.measuredBqPerKg < 0) throw new Error('измеренная удельная активность некорректна');
     rawBqPerKg = n.measuredBqPerKg;
     // проба могла быть сконцентрирована (высушена, озолена): A_продукта = A_счётного образца / K
     const K = n.samplePrep?.concentrationFactor;
@@ -205,20 +229,26 @@ function rowFor(data, input, n, warnings, riskCoeff) {
       prov.push({ step: 'проба', id: null, source: null, loc: null, level: null, value: K, unit: '', note: `коэффициент концентрирования (${n.samplePrep.mode || 'не указан'})${Number.isFinite(n.samplePrep.rawMassG) && Number.isFinite(n.samplePrep.probeMassG) ? `: m сырья ${n.samplePrep.rawMassG} г / m пробы ${n.samplePrep.probeMassG} г` : ''}` });
     }
     atSampleBqPerKg = rawBqPerKg;
-    if (n.sampleDate && input.eatDate) {
+    if (n.sampleDate && input.eatDate && n.nuclide === RN && isUnpackedWater(data, input)) {
+      // v53 (оператор: «Неупакованная — без распада»): источник непрерывный, активность радона в неупакованной воде принята как измерена
+      prov.push({ step: 'распад', id: null, source: null, loc: null, level: null, value: null, unit: null, note: RN_NO_DECAY });
+    } else if (n.sampleDate && input.eatDate) {
       const halfRec = data.nuclides.find(r => r.nuclide === n.nuclide && r.recommended);
       if (!halfRec) { warn('нет периода полураспада — поправка на распад не применена'); prov.push({ step: 'распад', id: null, source: null, loc: null, level: null, value: null, unit: null, note: 'нет периода полураспада' }); }
       else {
-        const days = daysBetween(n.sampleDate, input.eatDate, 'пробы');
-        rawBqPerKg *= decayFactor(halfRec.half_life_days, days);
-        prov.push({ step: 'распад', what: 'период полураспада', id: halfRec.id, source: halfRec.source, loc: null, level: null, value: halfRec.half_life_days, unit: 'days' });
+        const days = daysBetween(n.sampleDate, input.eatDate, 'пробы', true);
+        rawBqPerKg *= decayFactor(halfRec.half_life_days, days); // days < 0 → 2^(+|Δt|/T): пересчёт назад
+        if (days < 0) {
+          if (!warnings.includes(EAT_BEFORE_SAMPLE_WARN)) warnings.push(EAT_BEFORE_SAMPLE_WARN); // #FR-108: одно предупреждение, не по нуклиду
+          prov.push({ step: 'распад назад', what: 'период полураспада; удельная активность пересчитана назад к началу потребления', id: halfRec.id, source: halfRec.source, loc: null, level: null, value: halfRec.half_life_days, unit: 'days', note: `${-days} сут. до даты пробы` });
+        } else prov.push({ step: 'распад', what: 'период полураспада', id: halfRec.id, source: halfRec.source, loc: null, level: null, value: halfRec.half_life_days, unit: 'days' });
       }
     }
   } else { // deposition
     const tRec = data.transfer.find(r => r.id === n.transferId);
     if (!tRec) throw new Error(`нет записи перехода ${n.transferId}`);
     if (tRec.unit_norm !== 'm2/kg') throw new Error('единица коэффициента не установлена');
-    if (!Number.isFinite(tRec.unit_factor)) throw new Error('unit_factor не установлен');
+    if (!Number.isFinite(tRec.unit_factor)) throw new Error('множитель единицы измерения не установлен');
     
     let c = pickTransferValue(tRec, n.variant);
     if (c === null) throw new Error(`нет значения для варианта ${n.variant}`);
@@ -244,12 +274,12 @@ function rowFor(data, input, n, warnings, riskCoeff) {
     if (input.product?.state === 'dried') {
       if (!(Number.isFinite(input.dryingFactor) && input.dryingFactor >= 1)) throw new Error('сушёный продукт — нужен коэффициент концентрирования при сушке (≥ 1)');
       rawBqPerKg *= input.dryingFactor;
-      prov.push({ step: 'концентрирование при сушке', what: 'коэффициент концентрирования при сушке', id: null, source: null, loc: null, level: null, value: input.dryingFactor, unit: '', note: 'активность свежего продукта × коэффициент концентрирования при сушке' });
+      prov.push({ step: 'концентрирование при сушке', what: 'коэффициент концентрирования при сушке', id: null, source: null, loc: null, level: null, value: input.dryingFactor, unit: '', note: 'удельная активность свежего продукта × коэффициент концентрирования при сушке' });
     }
     basisNote(tRec, 'переход');
     if (tRec.level !== '✅' || tRec.source_anomaly) {
-      warn(`коэффициент перехода «${tName(tRec)}»: уровень проверки ${tRec.level}${tRec.source_anomaly ? ', аномалия источника' : ''}`);
-      prov.push({ step: 'переход', id: tRec.id, source: tRec.source, loc: tRec.loc, level: tRec.level, value: null, unit: null, note: tRec.source_anomaly ? ANOMALY_NOTE : 'уровень не ✅' });
+      warn(`коэффициент перехода «${tName(tRec)}»: уровень проверки — ${levelWord(tRec.level)}${tRec.source_anomaly ? ', аномалия источника' : ''}`);
+      prov.push({ step: 'переход', id: tRec.id, source: tRec.source, loc: tRec.loc, level: tRec.level, value: null, unit: null, note: tRec.source_anomaly ? ANOMALY_NOTE : 'уровень проверки: не «сверено с источником»' });
     }
   }
 
@@ -260,9 +290,9 @@ function rowFor(data, input, n, warnings, riskCoeff) {
     if (st !== 'inferred' && st !== 'assumed') return;
     // #FR-44: «выведена косвенно» — число надёжное, основа следует из методики источника: пояснение в провенансе простыми словами, без жёлтого предупреждения;
     // «принята» — в источнике опоры нет, предупреждение остаётся
-    const basis = tRec.mass_basis === 'dry' ? 'сухую' : 'свежую';
-    if (st === 'assumed') warn(`КП «${tName(tRec)}»: в источнике не сказано, на какую массу он дан; принята ${basis} масса без опоры на текст источника`);
-    const what = st === 'inferred' ? `в источнике прямо не сказано, на какую массу дан КП; принята ${basis} масса по методике автора` : `в источнике не сказано, на какую массу дан КП; принята ${basis} масса без опоры на текст`;
+    const basis = tRec.mass_basis === 'dry' ? 'сухая' : 'свежая'; // #FR-124 (G1): им. падеж, «принята сухая масса»
+    if (st === 'assumed') warn(`КП «${tName(tRec)}»: в источнике не указано, на какую массу он дан; принята ${basis} масса без опоры на текст источника`);
+    const what = st === 'inferred' ? `в источнике прямо не указано, на какую массу дан КП; принята ${basis} масса по методике автора` : `в источнике не указано, на какую массу дан КП; принята ${basis} масса без опоры на текст`;
     prov.push({ step, id: tRec.id, source: tRec.source, loc: tRec.loc, level: st === 'assumed' ? '⚠️' : null, value: null, unit: null, note: `${what}. ${tRec.mass_basis_note}` });
   }
   let depEst = null;
@@ -308,7 +338,7 @@ function rowFor(data, input, n, warnings, riskCoeff) {
         depEst.itemName = tName(tRec); // #FR-106 v46: название вместо внутреннего id записи в таблице «Оценка плотности загрязнения»
         prov.push({ step: 'оценка загрязнения', what: tRec.item_ru, id: tRec.id, source: tRec.source, loc: tRec.loc, level: tRec.level, value: depEst.coeffM2PerKg.central ?? depEst.coeffM2PerKg.min ?? depEst.coeffM2PerKg.max, unit: 'm2/kg' });
         basisNote(tRec, 'оценка загрязнения');
-        if (tRec.level !== '✅' || tRec.source_anomaly) warn(`оценка загрязнения: КП «${tName(tRec)}», уровень проверки ${tRec.level}`);
+        if (tRec.level !== '✅' || tRec.source_anomaly) warn(`оценка загрязнения: КП «${tName(tRec)}», уровень проверки — ${levelWord(tRec.level)}`);
       } catch (e) {
         // сообщения ядра — на английском; пользователю — причина по-русски
         const dried = (input.product?.state || 'fresh') === 'dried' && !Number.isFinite(input.dryingFactor);
@@ -329,7 +359,8 @@ function rowFor(data, input, n, warnings, riskCoeff) {
   // #FR-81 D08: поступление года k — A₀·m·Fr с физическим распадом продукта (среднее за год); доза = Σ_k I_k·e(g_k)
   const intakeStart = intakeBq(rawBqPerKg, input.portionKg * input.portionsPerYear, frUsed); // Бк/год на начало питания
   const hl = data.nuclides.find(r => r.nuclide === n.nuclide && r.recommended); // тот же период полураспада, что у поправки от даты пробы
-  const T = hl && !input.constantActivity ? hl.half_life_days / DAYS_PER_YEAR : null;
+  // #FR-126: радон-222 поступает из водоисточника непрерывно — распад по годам срока не применяется (распад от даты пробы — выше, как у всех нуклидов)
+  const T = hl && !input.constantActivity && !isContinuousSupply(n.nuclide) ? hl.half_life_days / DAYS_PER_YEAR : null;
   if (T && input.years > 1) prov.push({ step: 'распад по годам', what: 'период полураспада', id: hl.id, source: hl.source, loc: null, level: null, value: hl.half_life_days, unit: 'days' });
   const eByAge = {};
   for (const b of AGE_BANDS) { const rec = pickDose(data.dose_coeff, n.nuclide, b.age, input.doseSource); if (rec) eByAge[b.age] = rec.value; }
@@ -390,6 +421,8 @@ export function doseClassOf(doseSv, lim) {
 
 function pickDose(list, nuclide, age, source, water = false) {
   const hits = list.filter(r => r.nuclide === nuclide && r.age === age && (r.source === source || (source === 'NRB2009_App2' && water && r.source === 'NRB2009_App2a')));
+  // #FR-126: у радона-222 коэффициент есть только в NRC 1999 (Table 4.5b); при любом выбранном источнике e(g) берётся он (МКРЗ 119 и НРБ-99/2009 радон не содержат)
+  if (!hits.length && nuclide === RN) return list.find(r => r.nuclide === nuclide && r.age === age && r.source === 'NRC1999');
   return (water && hits.find(r => r.source === 'NRB2009_App2a')) || hits[0];
 }
 
@@ -399,7 +432,7 @@ function doseMissing(list, nuclide, age, source, water) {
   let msg = `нет коэффициента e(g) для ${nuclide} (возраст «${AGE_RU[age] || age}»)`;
   if (source === 'NRB2009_App2') {
     const have = [...new Set(list.filter(r => r.nuclide === nuclide && (r.source === source || (water && r.source === 'NRB2009_App2a'))).map(r => AGE_RU[r.age] || r.age))];
-    msg = `В НРБ-99/2009 (прил. 2) для возраста «${AGE_RU[age] || age}» коэффициента для ${nuclide} нет: документ даёт его только для критической группы${have.length ? ` («${have.join('», «')}»)` : ' (для этого нуклида в документе значения нет)'}. Выберите источник «МКРЗ (ICRP 119)»`;
+    msg = `В НРБ-99/2009 (прил. 2) для возраста «${AGE_RU[age] || age}» коэффициента для ${nuclide} нет: документ даёт его только для критической группы${have.length ? ` («${have.join('», «')}»)` : ' (для этого радионуклида в документе значения нет)'}. Выберите источник «МКРЗ, Публикация 119»`;
   }
   return Object.assign(new Error(msg), { plain: true });
 }
@@ -459,15 +492,15 @@ function calcLimits(data, input, rows, warnings) {
       return n && n.source === 'measured' && Number.isFinite(n.measuredUncertaintyBqPerKg) ? n.measuredUncertaintyBqPerKg : 0;
     };
     const items = itemsWithLim.map(x => ({ a: x.activity, da: daOf(x.nuclide) / (x.converted?.K ?? 1), h: x.H }));
-    if (hasDeposition) warnings.push("расчётная (не измеренная) активность: правило B ± ΔB применимо только к измеренным значениям");
+    if (hasDeposition) warnings.push("расчётная (не измеренная) удельная активность: правило B ± ΔB применимо только к измеренным значениям");
     compliance = complianceB(items);
     // #FR-81 E11: B = A/H по Cs-137 + A/H по Sr-90 (МУК п. 6.1, СанПиН п. 3.20): не введён нормируемый нуклид — B неполон
     const required = isWaterB ? data.limits_ru.filter(x => x.food_group_code === 'water' && x.id.startsWith(T044_PREFIX) && Number.isFinite(x.value)).map(x => x.nuclide) : ['Cs-137', 'Sr-90'];
     const missing = required.filter(n => !rows.some(r => r.nuclide === n) && pickNormRecord(data.limits_ru, input.foodGroupCode, n, normOf(n), pstate).rec);
     // #FR-88 v22 (D-7б): оговорка про «соответствует» нужна только при вердикте «соответствует»; при «не соответствует» превышение не зависит от недостающих нуклидов
-    const incompleteTail = compliance.verdict === 'nonconforms' ? '' : '; вердикт «соответствует» неполон';
-    if (missing.length && isWaterB) warnings.push(`B рассчитан не по всем нормируемым нуклидам: не введены ${missing.join(', ')} (ТР ЕАЭС 044/2017, табл. 4: условие — сумма A/УВ по всем радионуклидам таблицы ≤ 1)${incompleteTail}`);
-    else if (missing.length) warnings.push(`B рассчитан не по всем нормируемым нуклидам: не введён ${missing.join(', ')} (МУК 2.6.1.1194-03 п. 6.1, СанПиН 2.3.2.1078-01 п. 3.20: B = A/H по цезию-137 + A/H по стронцию-90)${incompleteTail}`);
+    const incompleteTail = compliance.verdict === 'nonconforms' ? '' : '; заключение «соответствует» неполно';
+    if (missing.length && isWaterB) warnings.push(`B рассчитан не по всем нормируемым радионуклидам: не введены ${missing.join(', ')} (ТР ЕАЭС 044/2017, табл. 4: условие — сумма A/УВ по всем радионуклидам таблицы ≤ 1)${incompleteTail}`);
+    else if (missing.length) warnings.push(`B рассчитан не по всем нормируемым радионуклидам: не введён ${missing.join(', ')} (МУК 2.6.1.1194-03 п. 6.1, СанПиН 2.3.2.1078-01 п. 3.20: B = A/H по цезию-137 + A/H по стронцию-90)${incompleteTail}`);
   }
 
   const EMERGENCY_DOC = /2016\/52|CXS 193|555\.880|560\.750/;
@@ -521,7 +554,7 @@ function calcLimits(data, input, rows, warnings) {
     if (p) { p.activity += e.activity; p.nuclides.push(...e.nuclides); } else merged.set(k, { ...e, nuclides: [...e.nuclides] });
   }
   foreign = [...merged.values()].map(e => ({ ...e, ratio: e.activity / e.value }));
-  if (dried && recon === 1 && foreign.length) warnings.push('зарубежные нормы заданы для продукта в готовом (восстановленном) виде (Codex CXS 193 стр. 50; FDA CPG 555.880 сн. b; Euratom 2016/52 прил. I сн. 1), а продукт введён сушёным. Коэффициент из подсказки ТР ТС (он для норм РФ) в зарубежное сравнение сам не подставляется: введите его в поле «Коэффициент концентрирования при сушке» — пока поле пусто, пересчёта на готовый вид нет и A/норматив завышен');
+  if (dried && recon === 1 && foreign.length) warnings.push('зарубежные нормы заданы для продукта в готовом (восстановленном) виде (Codex CXS 193 стр. 50; FDA CPG 555.880 сн. b; Евратом 2016/52 прил. I сн. 1), а продукт введён сушёным. Коэффициент из подсказки ТР ТС (он для норм РФ) в зарубежное сравнение сам не подставляется: введите его в поле «Коэффициент концентрирования при сушке» — пока поле пусто, пересчёта на готовый вид нет и A/норматив завышен');
   // #FR-81 E09: в одном документе для одной группы нуклидов действует норма самой узкой категории продукта (молоко — молочная, а не «прочие»)
   const best = new Map();
   for (const e of foreign) best.set(e.key, Math.min(best.get(e.key) ?? Infinity, e.classRank));
@@ -534,6 +567,6 @@ function calcLimits(data, input, rows, warnings) {
   // #FR-85 v11: у распознанного продукта нет строки норматива РФ (садовые фрукты, яйца …) — в результате «норматив РФ не установлен», а не «выберите группу»
   const ruNone = !!prodEntry && !normIdFor(prodEntry, 'fresh') && !normIdFor(prodEntry, 'dried');
   // #FR-85 v14 п. 7: вода колодцев и скважин — не упакованная; норматива B нет, сравнение с уровнями вмешательства НРБ-99/2009 Прил. 2а
-  const intervention = prodEntry?.intervention === 'nrb2009_app2a' ? interventionLevels(data.dose_coeff, rows) : null;
+  const intervention = prodEntry?.intervention === 'nrb2009_app2a' ? interventionLevels(data.dose_coeff, rows, radonUvExtra(data)) : null; // #FR-126: УВ радона-222 — из набора risk (НРБ-99/2009 п. 5.3.5), в Прил. 2а его нет
   return { ru, compliance, foreign, foreignClasses: pcs, formNote: adj.note, ruNone, intervention, productName: prodEntry?.name_ru ?? null, productCaption: prodEntry?.caption ?? null };
 }

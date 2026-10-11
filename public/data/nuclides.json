@@ -5,8 +5,8 @@
  "source_parts": [
   "nuclides.yaml"
  ],
- "source_sha256": "c88b31fe78020a5a43a6142d0aca2758d12fba6c070b35e85229684e43fb0056",
- "record_count": 60,
+ "source_sha256": "00d04fdd87dd47579fa0b83b89e051296ec889fc23cdd9fe219fb0a933bb4af0",
+ "record_count": 62,
  "records": [
   {
    "id": "hl_cs137_ddep",
@@ -1220,6 +1220,47 @@
    "level": "📗",
    "note": "ICRP 107 неопределённостей не даёт; единица источника — минуты (m). Прочитано из перепаковки RadData.",
    "unit_norm": "min",
+   "unit_factor": 1.0,
+   "unit_inferred": false
+  },
+  {
+   "id": "hl_rn222_ddep",
+   "nuclide": "Rn-222",
+   "half_life": 3.8232,
+   "unit": "d",
+   "half_life_days": 3.8232,
+   "uncertainty": 0.0008,
+   "uncertainty_days": 0.0008,
+   "source": "DDEP / LNE-LNHB/CEA Table de Radionucleides, монография Ra-226 (eval. 01/12/1983-01/06/2007), раздел 2 Nuclear Data, дочерний нуклид Rn-222",
+   "loc": "PDF p.1, section 2 Nuclear Data",
+   "url": "http://www.lnhb.fr/nuclides/Ra-226_tables.pdf",
+   "retrieved": "2026-10-11",
+   "quote": "T1/2(222Rn ) : 3,8232 (8) d",
+   "checked_against": "DDEP 3,8232(8) d; EPA FGR 13 (данные ICRP 38/72) 3,8235 d (отличие 0,0003 d = 0,008 %, в пределах 0,4 сигма DDEP). Отдельной карточки Rn-222 LNHB (Rn-222_tables.pdf) прочитать не удалось: сайт отдаёт заглушку роботам",
+   "level": "✅",
+   "recommended": true,
+   "note": "Рекомендовано для расчёта: значение из карточки Ra-226 (раздел «Nuclear Data»), отдельная карточка Rn-222 недоступна. Распад от даты пробы до даты потребления считается так же, как у остальных нуклидов.",
+   "unit_norm": "d",
+   "unit_factor": 1.0,
+   "unit_inferred": false
+  },
+  {
+   "id": "hl_rn222_fgr13",
+   "nuclide": "Rn-222",
+   "half_life": 3.8235,
+   "unit": "d",
+   "half_life_days": 3.8235,
+   "uncertainty": null,
+   "uncertainty_days": null,
+   "source": "EPA Federal Guidance Report No. 13 (CD Supplement, FGR13PAK), таблица периодов полураспада (данные ICRP 38/72)",
+   "loc": "fgr13.pdf.txt, строки 22750-22752 (аудит food-radiorisk/audit/_lit_dcf)",
+   "url": "https://www.epa.gov/radiation/federal-guidance-report-no-13-cd-supplement",
+   "retrieved": "2026-10-11",
+   "quote": "Rn-222 3.8235 d",
+   "checked_against": "DDEP 3,8232(8) d; отличие 0,0003 d",
+   "level": "📗",
+   "note": "Для сравнения; неопределённость в источнике не указана.",
+   "unit_norm": "d",
    "unit_factor": 1.0,
    "unit_inferred": false
   }

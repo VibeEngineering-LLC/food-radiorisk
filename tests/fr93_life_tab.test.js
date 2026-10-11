@@ -34,7 +34,7 @@ test('FR-93: горизонт вкладки и диаграммы — H, а н�
             }
         }
         assert.ok(text.includes(`Бытовые риски за ${H} `));
-        assert.ok(text.includes(`За ${H} лет, на 1 млн`));
+        assert.ok(text.includes(`За ${H} лет, на 1 000 000 человек`));
         if (input === CHILD()) {
             assert.notEqual(result.period.years, H);
         }
@@ -183,7 +183,7 @@ test('FR-93: заголовки: шкала линейная, без логар�
     const riskFig = html.substring(riskFigStart, riskFigEnd);
     
     assert.ok(riskFig.includes('<th>Причина</th>'));
-    assert.ok(riskFig.includes('Риск смерти (на 1 млн)'));
+    assert.ok(riskFig.includes('Риск смерти (на 1 000 000 человек)'));
     
     const doseFigStart = html.indexOf('data-chart="dose"');
     const doseFigEnd = html.indexOf('</figure>', doseFigStart);

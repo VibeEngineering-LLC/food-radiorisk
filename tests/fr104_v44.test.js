@@ -11,7 +11,7 @@ const META = { datasets: 0, records: 0, sha: '00000000' };
 const norm = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&nbsp;|\s+/g, ' ');
 const scen = (region, over = {}) => inputFor('milk', 'молоко', [['Cs-137', 100, 10]], { portionKg: 0.5, portionsPerYear: 365, years: 1, region, ...over });
 const tab = (input, t) => renderJsx('src/react/Result.jsx', 'default', { result: computeScenario(data, input), input, meta: META, initialTab: t });
-const TABS = ['sum', 'norms', 'calc', 'cmp', 'life', 'src'];
+const TABS = ['sum', 'cmp', 'life', 'norms', 'calc', 'site', 'spec', 'src']; // #FR-112/#FR-113/#FR-118: 8 вкладок в порядке экрана
 const DOTNUM = /\d\.\d/;
 const dried = (region, over = {}) => inputFor('mushrooms_dried', 'белые грибы', [['Cs-137', 2000]], { product: { name: 'белые грибы', state: 'dried' }, region, ...over });
 
@@ -77,15 +77,15 @@ test('FR-104 п.3: сушёный продукт — на «Соответств
     const res = computeScenario(data, input);
     assert.ok(res.limits.foreign.length > 0, 'зарубежные нормы есть');
     const text = norm(await tab(input, 'norms'));
-    assert.ok(/по свежему продукту: измеренное значение ÷ коэффициент сушки \(5\)/.test(text), `${region}: пояснения нет`);
+    assert.ok(/по свежему продукту: измеренное значение ÷ коэффициент концентрирования при сушке \(5\)/.test(text), `${region}: пояснения нет`);
   }
   const t7 = norm(await tab(dried('world', { dryingFactor: 7 }), 'norms'));
-  assert.ok(/коэффициент сушки \(7\)/.test(t7) && !/коэффициент сушки \(5\)/.test(t7));
+  assert.ok(/при сушке \(7\)/.test(t7) && !/÷ коэффициент концентрирования при сушке \(5\)/.test(t7));
 });
 
 test('FR-104 п.3: свежий продукт и сушёный без коэффициента — пояснения нет', async () => {
   const fresh = norm(await tab(inputFor('mushrooms_fresh', 'белые грибы', [['Cs-137', 2000]], { region: 'world' }), 'norms'));
-  assert.ok(!/коэффициент сушки/.test(fresh));
+  assert.ok(!/÷ коэффициент концентрирования при сушке/.test(fresh));
   const noK = norm(await tab(dried('world', { dryingFactor: null }), 'norms'));
-  assert.ok(!/коэффициент сушки/.test(noK));
+  assert.ok(!/÷ коэффициент концентрирования при сушке/.test(noK));
 });

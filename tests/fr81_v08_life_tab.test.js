@@ -37,7 +37,7 @@ test('V08: значения — S1 (20→30), S2 (3→13), срок за 85 ле
   close(pick(life), REF.s1, '(1) values');
   assert.deepEqual(life.rows.slice(1).map(r => r.label), LABELS, '(1) labels');
   // #FR-93 v31: вкладка считает на пожизненном горизонте H (20→70 лет, 50 лет), числа — causeProb(a, a+H) независимо от экрана
-  assert.ok(a.text.includes('За 50 лет, на 1 млн'), '(1) header');
+  assert.ok(a.text.includes('За 50 лет, на 1 000 000 человек'), '(1) header');
   assert.ok(a.text.includes('Дорожно-транспортные происшествия 6900'), '(1) road text'); // #FR-100: названия причин для населения
   assert.ok(a.text.includes('Злокачественные и другие новообразования (рак) 73 000'), '(1) cancer text');
   assert.ok(a.text.includes('Утопления 1400'), '(1) drown text');
@@ -45,7 +45,7 @@ test('V08: значения — S1 (20→30), S2 (3→13), срок за 85 ле
   assert.ok(a.text.includes('Случайные отравления 7500'), '(1) poison text');
   assert.ok(a.text.includes('Падения 2000'), '(1) fall text');
   assert.ok(a.text.includes('за 50 лет — от 20 лет до 70 лет'), '(1) caption');
-  assert.ok(a.text.includes('а не за срок питания'), '(1) подпись честно говорит о горизонте');
+  assert.ok(a.text.includes('а не за срок потребления'), '(1) подпись честно говорит о горизонте');
 
   // (2) S2
   const b = await draw(S2());
@@ -66,14 +66,14 @@ test('V08: значения — S1 (20→30), S2 (3→13), срок за 85 ле
   assert.equal(lifeC.capped, true, '(3) life.capped');
   close(pick(lifeC), REF.cap, '(3) values');
   // срок питания 70 лет заходит за 85, но пожизненный горизонт (20→70) — нет: заметки об обрезке в таблице больше нет (обрезка осталась в life.capped для срока питания)
-  assert.ok(c.text.includes('За 50 лет, на 1 млн'), '(3) header');
+  assert.ok(c.text.includes('За 50 лет, на 1 000 000 человек'), '(3) header');
   assert.ok(!c.text.includes('таблица дожития определена до 85 лет'), '(3) no cap note on lifetime table');
   assert.ok(c.text.includes('Злокачественные и другие новообразования (рак) 73 000'), '(3) cancer text');
 });
 
 test('V08: тексты вкладки и запрещённые слова', async () => {
   const { text } = await draw(S1());
-  assert.ok(text.includes('Гибель в дорожном происшествии или при пожаре наступает сразу.'), 'text: immediate death');
+  assert.ok(text.includes('Гибель в дорожном происшествии или при пожаре наступает, как правило, непосредственно в момент происшествия.'), 'text: immediate death');
   assert.ok(text.includes('лейкоз — через 2 года, другие виды рака — через 10 лет и позже'), 'text: latency');
   assert.ok(text.includes('Эти сравнения показывают масштаб чисел, а не то, какой риск считать приемлемым.'), 'text: disclaimer');
   assert.ok(text.includes('Россия, 2019 г. — последний год до пандемии; оба пола вместе'), 'text: source year');

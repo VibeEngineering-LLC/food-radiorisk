@@ -42,10 +42,10 @@ function NuclideRow({ n, choices, sel, onSelect, onField }) {
   const cell = (name, cls, props) => <td><input className={cls} value={n[name]} onFocus={onSelect} onChange={e => onField(name, e.target.value)} {...props} /></td>;
   return (
     <tr className={sel ? 'sel' : undefined} onClick={onSelect}>
-      <td><select className="n-nuclide" aria-label="Нуклид" value={n.nuclide} onFocus={onSelect} onChange={e => onField('nuclide', e.target.value)}>{choices.nuclides.map(x => <option key={x} value={x}>{x}</option>)}</select></td>
-      {cell('measured', 'n-measured', { type: 'number', min: 0, step: 'any', 'aria-label': 'Активность пробы (протокол), Бк/кг' })}
+      <td><select className="n-nuclide" aria-label="Радионуклид" value={n.nuclide} onFocus={onSelect} onChange={e => onField('nuclide', e.target.value)}>{choices.nuclides.map(x => <option key={x} value={x}>{x}</option>)}</select></td>
+      {cell('measured', 'n-measured', { type: 'number', min: 0, step: 'any', 'aria-label': 'Удельная активность пробы (протокол), Бк/кг' })}
       {cell('unc', 'n-unc', { type: 'number', min: 0, step: 'any', 'aria-label': '± неопределённость, % (P = 0,95)' })}
-      {cell('sampleDate', 'n-sampleDate', { type: 'date', 'aria-label': 'Дата, на которую дана активность' })}
+      {cell('sampleDate', 'n-sampleDate', { type: 'date', 'aria-label': 'Дата, на которую дана удельная активность' })}
     </tr>
   );
 }
@@ -114,11 +114,11 @@ export default function Form({ choices, raw, setRaw, tab, setTab, onPreset, onEx
 
       <fieldset className="gbox"><legend>Измерение</legend>
         <div className="nucgrid" id="nuclides">
-          <table><thead><tr><th style={{ width: '30%' }}>Нуклид</th><th className="num">Бк/кг</th><th className="num" style={{ width: '16%' }}>± %</th><th className="num" style={{ width: '30%' }}>Дата пробы</th></tr></thead>
+          <table><thead><tr><th style={{ width: '30%' }}>Радионуклид</th><th className="num">Бк/кг</th><th className="num" style={{ width: '16%' }}>± %</th><th className="num" style={{ width: '30%' }}>Дата пробы</th></tr></thead>
             <tbody>{raw.nuclides.map((n, i) => <NuclideRow key={i} n={n} choices={choices} sel={i === cur} onSelect={() => setSel(i)} onField={(name, v) => setRaw(r => S.setNuclideField(r, i, name, v))} />)}</tbody></table>
         </div>
         <div className="btnrow">
-          <button type="button" id="addNuclide" className="btn" onClick={() => { setRaw(r => S.addNuclide(r, choices)); setSel(raw.nuclides.length); }}>+ нуклид</button>
+          <button type="button" id="addNuclide" className="btn" onClick={() => { setRaw(r => S.addNuclide(r, choices)); setSel(raw.nuclides.length); }}>+ радионуклид</button>
           <button type="button" id="delNuclide" className="btn" disabled={raw.nuclides.length < 2} onClick={() => { setRaw(r => S.removeNuclide(r, cur)); setSel(Math.max(0, cur - 1)); }}>удалить</button>
         </div>
         <TransferPick n={raw.nuclides[cur]} view={tv(cur)} onField={(name, v) => setRaw(r => S.setNuclideField(r, cur, name, v))} />
@@ -139,12 +139,12 @@ export default function Form({ choices, raw, setRaw, tab, setTab, onPreset, onEx
         {raw.measuredForm === 'cooked' ? <p className="hint">{T.FORM_COOKED_FR}</p> : <>
         <div className="procmodes" id="procMode" role="radiogroup" aria-label="Способ обработки">
           <label className="opt"><input type="radio" name="procMode" value="none" checked={raw.procMode === 'none'} onChange={set('procMode')} />без обработки (Fr = 1)</label>
-          <div className="optrow"><label className="opt"><input type="radio" name="procMode" value="fr" checked={raw.procMode === 'fr'} onChange={set('procMode')} />свой Fr</label>
+          <div className="optrow"><label className="opt"><input type="radio" name="procMode" value="fr" checked={raw.procMode === 'fr'} onChange={set('procMode')} />собственное значение Fr</label>
             <input id="procFr" type="number" min="0" max="1" step="any" aria-label="Fr — доля активности сырья, оставшаяся в блюде" value={raw.procFr} disabled={raw.procMode !== 'fr'} onChange={set('procFr')} /></div>
           <label className="opt"><input type="radio" name="procMode" value="record" checked={raw.procMode === 'record'} onChange={set('procMode')} />из справочника (можно отметить несколько)</label>
           <div className="indent" id="procRecWrap">
             <div id="procRec" className="checklist">
-              {pv.options.length === 0 && <p className="hint">Введите продукт — здесь появятся способы обработки для него. Для продукта вне справочника задайте свой Fr.</p>}
+              {pv.options.length === 0 && <p className="hint">Введите продукт — здесь появятся способы обработки для него. Для продукта вне справочника задайте собственное значение Fr.</p>}
               {pv.options.map(o => <label className={'check' + (raw.procMode !== 'record' ? ' dis' : '')} key={o.value}><input type="checkbox" value={o.value} disabled={raw.procMode !== 'record'} checked={pv.checked.includes(o.value)} onChange={e => setRaw(r => ({ ...r, procRecs: e.target.checked ? [...pv.checked, o.value] : pv.checked.filter(x => x !== o.value) }))} /> {o.label}</label>)}
             </div>
             <label className={'r132' + (raw.procMode !== 'record' ? ' dis' : '')}>Значение Fr <select id="procVar" value={raw.procVar} disabled={raw.procMode !== 'record'} onChange={set('procVar')}>
@@ -182,21 +182,21 @@ export default function Form({ choices, raw, setRaw, tab, setTab, onPreset, onEx
           <label className={'r3' + dis}>Дней в неделю <input id="daysPerWeek" type="number" min="0" max="7" step="any" disabled={dietAuto} value={raw.daysPerWeek} onChange={set('daysPerWeek')} /></label>
           <label className={'r3' + dis}>Недель в месяц <input id="weeksPerMonth" type="number" min="0" max="4.35" step="any" disabled={dietAuto} value={raw.weeksPerMonth} onChange={set('weeksPerMonth')} /></label>
           <label className={'r3' + dis}>Месяцев в году <input id="monthsPerYear" type="number" min="0" max="12" step="any" disabled={dietAuto} value={raw.monthsPerYear} onChange={set('monthsPerYear')} /></label>
-          <label className={'r3' + (raw.lifeMode ? ' dis' : '')}>Сколько лет <input id="years" type="number" min="1" step="1" disabled={!!lifetimeOf(raw)} value={yearsShown(raw)} onChange={set('years')} /></label>
+          <label className={'r3' + (raw.lifeMode ? ' dis' : '')}>Срок потребления, лет <input id="years" type="number" min="1" step="1" disabled={!!lifetimeOf(raw)} value={yearsShown(raw)} onChange={set('years')} /></label>
         </div>
         {/* #FR-81 шаг 4а: Y-90 при Sr-90 — отдельная добавка, по умолчанию не включена */}
         <label className="check"><input type="checkbox" id="includeY90" checked={!!raw.includeY90} onChange={(e) => setRaw(r => S.setField(r, choices, 'includeY90', e.target.checked))} /> Добавить Y-90 в равновесии с Sr-90 (верхняя оценка для хранившегося продукта)</label>
         {/* #FR-81 D18: распад от даты пробы до даты начала питания, затем по годам питания (D08) */}
-        <label className="r3 rdate">Дата начала питания<input id="eatDate" type="date" value={raw.eatDate} onChange={set('eatDate')} /></label>
+        <label className="r3 rdate">Дата начала потребления<input id="eatDate" type="date" value={raw.eatDate} onChange={set('eatDate')} /></label>
         {/* #FR-81 D08: физический распад продукта по годам учитывается всегда, кроме явной отметки */}
-        <label className="check"><input type="checkbox" id="constAct" checked={!!raw.constAct} onChange={(e) => setRaw(r => S.setField(r, choices, 'constAct', e.target.checked))} /> Активность продукта постоянна во все годы (распад не учитывать) — для лесных грибов и ягод</label>
+        <label className="check"><input type="checkbox" id="constAct" checked={!!raw.constAct} onChange={(e) => setRaw(r => S.setField(r, choices, 'constAct', e.target.checked))} /> Удельная активность продукта постоянна во все годы (распад не учитывать) — для лесных грибов и ягод</label>
         {/* #FR-65: питание с начального возраста до 70 лет, коэффициент e(g) меняется с возрастом (нужны все шесть групп ICRP 119) */}
         <label className="check">
-          <input type="checkbox" id="lifeMode" checked={!!raw.lifeMode} onChange={(e) => setRaw(r => S.setField(r, choices, 'lifeMode', e.target.checked))} /> Питание с возраста a до возраста b (по возрастным группам)
+          <input type="checkbox" id="lifeMode" checked={!!raw.lifeMode} onChange={(e) => setRaw(r => S.setField(r, choices, 'lifeMode', e.target.checked))} /> Потребление с возраста a до возраста b (по возрастным группам)
         </label>
         <label className={'r3' + (raw.lifeMode ? '' : ' dis')}>С возраста <input id="startAge" type="number" min="0" max="119" step="any" disabled={!raw.lifeMode} value={raw.startAge} onChange={set('startAge')} /> <span>лет</span></label>
         <label className={'r3' + (raw.lifeMode ? '' : ' dis')}>До возраста <input id="endAge" type="number" min="1" max="120" step="any" disabled={!raw.lifeMode} value={raw.endAge} onChange={set('endAge')} /> <span>лет</span></label>
-        {raw.lifeMode && !lifeOk && <p className="msg warn">Режим «с возраста a до возраста b» требует коэффициентов по возрастным группам: в НРБ-99/2009 они даны только для критической группы. Выберите источник «МКРЗ (ICRP 119)» — с НРБ расчёт не выполняется.</p>}
+        {raw.lifeMode && !lifeOk && <p className="msg warn">Режим «с возраста a до возраста b» требует коэффициентов по возрастным группам: в НРБ-99/2009 они даны только для критической группы. Выберите источник «МКРЗ, Публикация 119» — с НРБ расчёт не выполняется.</p>}
         <p className="ration" id="dietHint">{h.diet}</p>
       </fieldset>
       </div>
@@ -205,7 +205,7 @@ export default function Form({ choices, raw, setRaw, tab, setTab, onPreset, onEx
       <fieldset className="gbox"><legend>Потребитель</legend>
         <div className="grid2">
           <label>Возраст <select id="age" value={raw.age} onChange={set('age')}>{agesFor(choices, raw.doseSource).map(o => <option key={o.value} value={o.value}>{o.label}</option>)}</select></label>
-          <label>Коэффициенты дозы e(g) <select id="doseSource" value={raw.doseSource} onChange={set('doseSource')}>{doseSourceOptions(choices).map(o => <option key={o.value} value={o.value}>{o.label}</option>)}</select></label>
+          <label>Дозовые коэффициенты e(g) <select id="doseSource" value={raw.doseSource} onChange={set('doseSource')}>{doseSourceOptions(choices).map(o => <option key={o.value} value={o.value}>{o.label}</option>)}</select></label>
         </div>
       </fieldset>
 

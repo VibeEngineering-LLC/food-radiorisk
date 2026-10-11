@@ -5,6 +5,7 @@ import { normCodeFor, dryMatterFor, dryingFactorFor } from '../calc/catalog.js';
 import { matchProduct, productEntry, normIdFor } from '../calc/products.js';
 import { transferHint } from '../ui/form.js';
 import { fmtNum } from '../ui/fmt.js';
+import { yearsWord } from '../ui/render.js';
 import { variantOffers } from '../calc/processing.js';
 import { T, fill } from '../ui/texts_v.js';
 import { dietPickFor } from '../ui/diet_view.js';
@@ -156,7 +157,7 @@ export function hints(raw, choices) {
     if (raw.measuredForm === 'dried') {
       dfTxt = df ? `; коэффициент концентрирования при сушке по нормативу ТР ТС 021/2011: ${fmtNum(df.dried)} / ${fmtNum(df.fresh)} = ${fmtNum(df.value)}` : '; коэффициент концентрирования при сушке задайте вручную (в нормативе нет пары свежий/сушёный)';
     }
-    auto = `Продукт: ${entry.name_ru}${entry.caption ? ` (${entry.caption})` : ''}; нормы ТР ТС: ${groupLabel}` + (dm ? `; сухое вещество ${dm.item} ${fmtNum(dm.value)} % (${SOURCE_SHORT[dm.source] || dm.source})` : '') + dfTxt;
+    auto = `Продукт: ${entry.name_ru}${entry.caption ? ` (${entry.caption})` : ''}; нормы ТР ТС: ${groupLabel}` + (dm ? `; сухое вещество ${dm.item} ${fmtNum(dm.value)} % (${SOURCE_SHORT[dm.source] || dm.source})` : '') + dfTxt;
   }
   const c = kFor(raw);
   const prep = c.note || 'K = масса сырья / масса пробы после подготовки; A продукта = A пробы / K.';
@@ -167,11 +168,11 @@ export function hints(raw, choices) {
   let diet = '';
   const dp = dietPickFor(raw, choices); // #FR-83 W05: при умолчании — масса из данных, тот же срок, что считается
   if (dp) {
-    if (dp.status === 'default' && y) diet = fill(T.DIET_HINT, { value: fmtNum(dp.rec.value), total: fmtNum(dp.rec.value * y), years: fmtNum(y) });
+    if (dp.status === 'default' && y) diet = fill(T.DIET_HINT, { value: fmtNum(dp.rec.value), total: fmtNum(dp.rec.value * y), years: fmtNum(y), yearsWord: yearsWord(y) });
   } else if (pm !== null && m !== null) {
     diet = `= ${fmtNum(pm)} порц. в месяц, ${fmtNum(pm * m)} в год`;
     if (g !== null) diet += `, ${fmtNum(pm * m * g / 1000)} кг в год`;
-    if (y) diet += `, ${fmtNum(pm * m * g * y / 1000)} кг за ${fmtNum(y)} г.`;
+    if (y) diet += `, ${fmtNum(pm * m * g * y / 1000)} кг за ${fmtNum(y)} ${yearsWord(y)}`;
   }
   return { auto, prep, diet };
 }

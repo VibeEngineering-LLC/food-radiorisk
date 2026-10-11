@@ -161,9 +161,9 @@ test('v24 п.3: тексты MIT для react, react-dom, scheduler дослов
     const copyrightCount = lic.split('Copyright (c) Meta Platforms, Inc. and affiliates.').length - 1;
     assert.ok(copyrightCount >= 3, `Ожидалось >= 3 упоминания Copyright Meta, найдено ${copyrightCount}`);
 
-    // Копирование файла в dist проверяет предыдущий тест: адрес ссылки из sources.html обязан быть среди cpSync в vite.config.js
-    // Проверка ссылки в sources.html
-    assert.match(read('sources.html'), /<a href="THIRD_PARTY_LICENSES\.txt">/, 'Отсутствует ссылка на THIRD_PARTY_LICENSES.txt в sources.html');
+    // #FR-121: ссылка на лицензии — на вкладке «Источники» (Limits.jsx); файл копируется в dist через cpSync в vite.config.js
+    assert.match(read('src/react/Limits.jsx'), /<a href="THIRD_PARTY_LICENSES\.txt">/, 'Отсутствует ссылка на THIRD_PARTY_LICENSES.txt на вкладке «Источники»');
+    assert.ok(read('vite.config.js').includes("'dist/THIRD_PARTY_LICENSES.txt'"));
 });
 
 test('v24 п.6: README описывает, как сайт попадает в docs/ для GitHub Pages', () => {

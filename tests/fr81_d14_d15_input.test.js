@@ -11,7 +11,7 @@ test('D14: срок 0, меньше 1 и пустой — ошибка с соо
     for (const years of [0, 0.5, null, NaN]) {
         const r = run(null, 'молоко', nuc, { years });
         assert.equal(r.ok, false, `Ожидалась ошибка для years=${String(years)}`);
-        assert.match(r.errors[0], /Срок питания: укажите число лет/);
+        assert.match(r.errors[0], /Срок потребления: укажите число лет/);
     }
 });
 

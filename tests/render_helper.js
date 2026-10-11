@@ -62,7 +62,10 @@ export async function loadJsx(relPath, exportName) {
     }
 
     // Рендерим компонент в статическую HTML-строку
-    return { render: (props) => renderToStaticMarkup(createElement(Comp, props)), done: () => rm(tmpFile, { force: true }) };
+    // #FR-124: на экране число и единица разделены неразрывным пробелом (U+00A0); прежние тесты сверяют текст с обычным пробелом — render их нормализует,
+    // renderRaw отдаёт разметку как есть (его использует tests/fr124_text_style.test.js, где неразрывный пробел проверяется)
+    const renderRaw = (props) => renderToStaticMarkup(createElement(Comp, props));
+    return { render: (props) => renderRaw(props).replace(/ /g, ' '), renderRaw, done: () => rm(tmpFile, { force: true }) };
   } catch (e) {
     // Удаляем временный файл при ошибке загрузки
     await rm(tmpFile, { force: true });

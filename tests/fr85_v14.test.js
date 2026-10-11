@@ -247,7 +247,7 @@ test('п. 7: вода колодезная', async () => {
     assert.equal(r.entry.id, 'p_voda_kolodeznaya', n);
     assert.equal(r.entry.norm.fresh, null, n);
     assert.equal(r.entry.intervention, 'nrb2009_app2a', n);
-    assert.ok(r.entry.name_ru.includes('не упакованная'), n);
+    assert.ok(r.entry.name_ru.includes('неупакованная'), n);
     assert.equal(pick(n).group.code, 'water', n);
     assert.equal(pick(n).status, 'not_established', n);
   }

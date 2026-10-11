@@ -18,5 +18,5 @@ test('отчёт по умолчанию: единица «кг/год», сло
 });
 test('грибы: ни предупреждение, ни отчёт не содержат внутреннего локатора, есть МУ и таблица', () => {
     const w = computeScenario(data, input).warnings.find(x => x.includes('7,3')) || '';
-    for (const s of [w, md()]) { assert.ok(!/\.md\b|doc_\d/.test(s)); assert.ok(s.includes('табл. 8.6') || s.includes('Табл. 8.6')); }
+    for (const s of [w, md()]) { assert.ok(!/\.md\b|doc_\d/.test(s)); const flat = s.replace(/ /g, ' '); assert.ok(flat.includes('табл. 8.6') || flat.includes('Табл. 8.6')); }
 });

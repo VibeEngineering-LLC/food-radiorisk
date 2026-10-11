@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { data, inputFor } from './fr81_helpers.js';
 import { computeScenario } from '../src/calc/model.js';
 import { renderJsx } from './render_helper.js';
+import { nb } from '../src/ui/fmt.js';
 import { buildBibliography, usedSourceIds, plainSource, RISK_COEFF_SOURCE } from '../src/ui/bibliography.js';
 
 const META = { datasets: 0, records: 0, sha: '00000000' };
@@ -53,7 +54,7 @@ test('каждый источник использованных записей 
         const bib = buildBibliography(result);
 
         for (const id of ids) {
-            const t = plainSource(id);
+            const t = nb(plainSource(id)); // #FR-124: в списке литературы стоят неразрывные пробелы
             const count = bib.filter(e => e.text === t).length;
             assert.equal(count, 1, `Source ${id} (text: ${t}) should appear exactly once, found ${count}`);
         }
@@ -110,7 +111,7 @@ test('список без дублей, пронумерован, кирилли
 test('нормативные документы из записей норм в списке', () => {
     const { result } = run(A());
     if (result.limits && result.limits.ru && result.limits.ru.length > 0) {
-        const doc = result.limits.ru[0].document;
+        const doc = nb(result.limits.ru[0].document); // #FR-124
         const bib = buildBibliography(result);
         const count = bib.filter(e => e.text === doc).length;
         assert.equal(count, 1, `Document "${doc}" should appear exactly once in bibliography`);
@@ -127,15 +128,16 @@ test('вкладка Источники = список литературы, т�
         assert.ok(text.includes(snippet), `Bibliography entry snippet "${snippet}" should be in 'src' tab text`);
     }
 
-    assert.ok(text.includes('Описание каждого документа и методика расчёта'), 'Should contain description header');
+    assert.ok(text.includes('Известные ограничения'), 'Should contain limits section (#FR-121: страница «Справка» убрана)');
     assert.ok(!text.includes('Величина Значение Источник'), 'Should NOT contain values table header');
 });
 
 test('таблица значений на Подробном расчёте ниже плотности загрязнения', async () => {
     const { input, result } = run(B());
-    const text = await tab({ input, result }, 'calc');
+    // #FR-112/#FR-113: цепочка вкладок «Подробный расчёт» → «Место сбора и величины» → «Для специалиста»
+    const text = (await tab({ input, result }, 'calc')) + ' ' + (await tab({ input, result }, 'site')) + ' ' + (await tab({ input, result }, 'spec'));
 
-    const idxDensity = text.indexOf('Расчёт по нуклидам'); // блок плотности — в сценарии fr92_calc_move (там порядок проверен); здесь — ниже блока нуклидов
+    const idxDensity = text.indexOf('Расчёт по радионуклидам'); // блок плотности — в сценарии fr92_calc_move (там порядок проверен); здесь — ниже блока нуклидов
 
     const idxValuesHeader = text.indexOf('Значения величин и их источники');
     assert.ok(idxValuesHeader > idxDensity, 'Values header should be after density assessment');
@@ -149,7 +151,7 @@ test('таблица значений на Подробном расчёте н�
 
 test('числа и ссылки без потерь', async () => {
     const { input, result } = run(B());
-    const text = await tab({ input, result }, 'calc');
+    const text = await tab({ input, result }, 'site'); // #FR-113: таблица значений — на вкладке «Место сбора и величины»
 
     const firstRow = result.rows[0];
     for (const p of firstRow.provenance) {

@@ -90,14 +90,13 @@ test('FR-89 v27: ОА радона из поля вкладки «Сравнен
     assert.ok(shares[1] > shares[0], 'Доля радона при 400 Бк/м³ должна быть больше, чем при 50');
     
     const textA = (await summary(data, input, 50, NaN)).text;
-    assert.ok(textA.includes('введено вами'), 'Текст должен указывать на ввод пользователя');
-    assert.ok(textA.includes('по вашему вводу'), 'Текст должен указывать на ввод пользователя');
+    assert.ok(textA.includes('введено пользователем'), 'Текст должен указывать на ввод пользователя');
     assert.ok(textA.includes('50 Бк/м³'), 'Текст должен содержать значение 50');
     
     const textD = (await summary(data, input, NaN, NaN)).text; // #FR-101: NaN = «не введено» → умолчание региона
     assert.ok(textD.includes('значение по умолчанию'), 'Текст должен указывать на значение по умолчанию');
     assert.ok(textD.includes('по умолчанию'), 'Текст должен указывать на значение по умолчанию');
-    assert.ok(!textD.includes('по вашему вводу'), 'Текст не должен указывать на ввод пользователя');
+    assert.ok(!textD.includes('введено пользователем'), 'Текст не должен указывать на ввод пользователя');
 });
 
 test('FR-89 v27: показание дозиметра в жилище заменяет остальной фон на диаграмме', async () => {
@@ -115,14 +114,14 @@ test('FR-89 v27: показание дозиметра в жилище заме�
     const ds = doseSlices(cmp, null, { dwellingSv: expectedSv });
     const terr = ds.slices.find(s => s.id === 'terrestrial');
     assert.ok(close(terr.doseSv, rec('ru_outdoor_rate').value * (8760 - rec('dwell_hours').value) / 1000 * 1e-3 * horizonYears(input) + expectedSv, 1e-9), 'Излучение в помещении заменяется дозой от дозиметра (улица остаётся средней)');
-    assert.ok(terr.label.includes('по вашему дозиметру'), 'Метка должна указывать на дозиметр');
+    assert.ok(terr.label.includes('по показанию дозиметра'), 'Метка должна указывать на дозиметр');
     
     const textU = (await summary(data, input, 100, U)).text;
     assert.ok(textU.includes('0,12 мкЗв/ч'), 'Текст должен содержать значение дозиметра');
-    assert.ok(textU.includes('по вашему дозиметру'), 'Текст должен указывать на дозиметр');
+    assert.ok(textU.includes('по показанию дозиметра'), 'Текст должен указывать на дозиметр');
     
     const textN = (await summary(data, input, 100, NaN)).text;
-    assert.ok(!textN.includes('по вашему дозиметру'), 'Текст не должен указывать на дозиметр при NaN');
+    assert.ok(!textN.includes('по показанию дозиметра'), 'Текст не должен указывать на дозиметр при NaN');
 });
 
 test('FR-89 v27: на вкладке «Сравнение» оба поля ввода на месте и состояние общее', async () => {
@@ -131,7 +130,7 @@ test('FR-89 v27: на вкладке «Сравнение» оба поля вв
     const html = await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: { datasets: 0, records: 0, sha: '00000000' }, initialTab: 'cmp' });
     const text = norm(html);
     
-    assert.ok(text.includes('Мощность дозы в жилище, мкЗв/ч'), 'Текст должен содержать поле дозиметра');
+    assert.ok(text.includes('Мощность амбиентного эквивалента дозы H*(10) в жилище, мкЗв/ч'), 'Текст должен содержать поле дозиметра');
     assert.ok(text.includes('Объёмная активность радона-222 в жилище, Бк/м³'), 'Текст должен содержать поле радона');
     
     const inputCount = (html.match(/<input[^>]*type="number"/g) || []).length;

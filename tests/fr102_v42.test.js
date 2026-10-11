@@ -52,7 +52,7 @@ test('FR-102 v42: R4: в тексте КП (mass_basis_note) нет слов «�
   assert.deepEqual(violators, []);
   const rec = data.transfer.find(r => r.mass_basis_status === 'assumed' && r.nuclide === 'Cs-137' && (Number.isFinite(r.am) || Number.isFinite(r.gm)) && r.mass_basis === 'fresh');
   const input = scen('ru', { nuclides: [{ nuclide: 'Cs-137', source: 'deposition', measuredBqPerKg: null, measuredUncertaintyBqPerKg: 0, sampleDate: null, depositionKBqPerM2: 10, depositionDate: null, transferId: rec.id, variant: 'central' }] });
-  const html = norm(await renderJsx('src/react/Result.jsx', 'default', { result: computeScenario(data, input), input, meta: META, initialTab: 'calc' }));
+  const html = norm(await renderJsx('src/react/Result.jsx', 'default', { result: computeScenario(data, input), input, meta: META, initialTab: 'site' })); // #FR-113: плотность загрязнения — на вкладке «Место сбора и величины»
   assert.ok(html.includes(rec.mass_basis_note.slice(0, 30)), 'заметка основы массы показана');
   assert.ok(!BAD.test(html));
 });
@@ -132,8 +132,8 @@ test('FR-102 v42: Р-9: режим «Мир» — НКДАР 2008 в списк�
 test('FR-102 v42: Р-1: на «Сводке» есть пометка о причине различия радона', async () => {
   for (const region of REGIONS) {
     const html = norm(await tab(region, 'sum'));
-    assert.ok(html.includes('Сектор «Радон в жилище» считает модуль радона'), `${region}: нет пометки о радоне`);
-    assert.ok(html.includes('складывать их нельзя'), `${region}: нет «складывать их нельзя»`);
+    assert.ok(html.includes('Сектор «Радон в жилище» рассчитывается по модели радона'), `${region}: нет пометки о радоне`);
+    assert.ok(html.includes('их суммирование не имеет смысла'), `${region}: нет пометки «их суммирование не имеет смысла»`); // #FR-124 (E2): было «складывать их нельзя»
   }
 });
 

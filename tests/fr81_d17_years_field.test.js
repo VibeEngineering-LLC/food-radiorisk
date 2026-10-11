@@ -17,5 +17,5 @@ test('D17: источник НРБ режим не выключает (срок 
 });
 test('D17: подсказка рациона в режиме «с N до M» считает кг за 50 лет', () => {
   const raw = { ...life('20'), dietMode: 'own', portionG: '100', timesPerDay: '1', daysPerWeek: '1', weeksPerMonth: '1', monthsPerYear: '1' };
-  assert.match(hints(raw, ch).diet, /кг за 50 г\./);
+  assert.match(hints(raw, ch).diet, /кг за 50 лет/);
 });

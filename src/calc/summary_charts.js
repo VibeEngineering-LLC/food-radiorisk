@@ -57,7 +57,7 @@ export function riskSlices(life) {
   const total = rows.reduce((sum, row) => sum + row.p, 0);
   const slices = rows.map(row => ({
     id: row.id,
-    label: row.kind === 'product' ? 'Этот продукт — рак от облучения' : riskLabel(row.id, row.label),
+    label: row.kind === 'product' ? 'Этот продукт — радиационно-индуцированный рак' : riskLabel(row.id, row.label),
     hint: RISK_LABEL[row.id]?.[1],
     p: row.p,
     share: total > 0 ? row.p / total : 0,
@@ -70,8 +70,8 @@ export function riskSlices(life) {
 export function fmtShare(frac) {
   if (typeof frac !== 'number' || !Number.isFinite(frac)) return '—';
   const x = frac * 100;
-  if (x === 0) return '0 %';
-  return `${fmtNum(x, 2)} %`;
+  if (x === 0) return '0 %';
+  return `${fmtNum(x, 2)} %`;
 }
 
 // #FR-89: масштаб ЛИНЕЙНЫЙ (решение оператора): угол сектора строго пропорционален доле, без логарифма и без раздувания малых долей;

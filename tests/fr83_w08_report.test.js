@@ -35,7 +35,7 @@ test('отчёт при вводе «знаю»: «введено пользов
 test('главный экран при умолчании: первой строкой оговорок — расчёт для стандартного потребления', () => {
     const result = computeScenario(data, defIn());
     const p = summaryParts(result, defIn());
-    assert.ok(p.notes[0].includes('Расчёт для стандартного потребления'));
+    assert.ok(p.notes[0].includes('Расчёт выполнен для стандартного потребления'));
     assert.ok(p.notes[0].includes(fmtNum(P.value)));
     assert.ok(p.notes[0].includes(String(P.year)));
 

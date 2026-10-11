@@ -499,7 +499,7 @@ body[data-view="poster"] .poster {
 /* #FR-81 V04: главный экран — блок A без цвета (безопасно/опасно цветом не сообщается), цвет только у плашки B */
 .rs-number { font-weight: 700; font-size: 2rem; font-family: var(--mono); margin: .2rem 0; }
 .rs-caption, .rs-bg, .rs-eq, .rs-verbal { max-width: none; margin: .4rem 0; }
-.rs-notes { font-size: .85em; color: var(--muted); margin: .4rem 0; padding-left: 1.1rem; }
+.rs-notes { font-size: 12px; color: var(--muted); margin: .4rem 0; padding-left: 1.1rem; } /* #FR-123: примечания — шрифт основных абзацев блока, 12 px (было .85em ≈ 11 px) */
 .dose-block { margin-top: .8rem; font-size: .92em; }
 .dose-block h4 { margin: .2rem 0; }
 .risk-negligible { background: var(--ok-bg); } .risk-negligible .n, .risk-negligible b { color: var(--ok); }
@@ -510,14 +510,24 @@ body[data-view="poster"] .poster {
 .kpi.risk-negligible .v { color: var(--ok); } .kpi.risk-within .v { color: var(--warn); } .kpi.risk-exceeds .v { color: var(--bad); }
 .riskscale { position: relative; height: 12px; margin: .6rem 0 .2rem; border-radius: 6px;
   background: linear-gradient(90deg, var(--ok) 0 40%, var(--warn) 40% 74%, var(--bad) 74% 100%); opacity: .85; }
+.risk-negligible .rs-number { color: var(--ok); } .risk-within .rs-number { color: var(--warn); } .risk-exceeds .rs-number { color: var(--bad); } /* #FR-116: цвет главного числа по зоне риска */
+.rs-label { margin: .4rem 0 0; max-width: none; font-weight: 600; } /* #FR-117: подписи двух чисел */
+/* #FR-123: два числа в одну строку (две колонки; на узком экране — друг под другом), короткие подписи у чисел */
+.rs-nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: .4rem 1.2rem; align-items: end; }
+.rs-nums > .rs-num { min-width: 0; }
+.rs-cap { font-weight: 600; color: var(--muted); }
+.rs-nums .rs-number { font-size: 1.6rem; overflow-wrap: anywhere; }
+.rs-nums .rs-number-life { font-size: 1.9rem; }
+.rs-legend { max-width: none; margin: .5rem 0 0; } /* легенда кружков — отдельной строкой под подписями отметок */
+.riskscale .dot.dot2 { top: -1px; width: 14px; height: 14px; margin-left: -7px; border-width: 3px; background: transparent; }
 .riskscale .tick { position: absolute; top: -3px; width: 2px; height: 18px; background: var(--ink); }
 .riskscale .dot { position: absolute; top: -5px; width: 22px; height: 22px; margin-left: -11px; border-radius: 50%; background: var(--panel); border: 4px solid var(--ink); }
 td.cond { min-width: 14rem; max-width: 26rem; }
 td.cond details summary { cursor: pointer; color: var(--muted); font-size: .85em; }
 td.cond details p { margin: .3rem 0 0; }
 .risk .n2 { margin-top: .6rem; }
-.riskbox p.risksrc { max-width: none; margin: .5rem 0 0; }
-.scalelbl { position: relative; height: 1.1rem; font-size: .75rem; color: var(--muted); }
+.riskbox p.risksrc { max-width: none; margin: .5rem 0 0; font-size: 12px; } /* #FR-123: пояснение под шкалой — как основные абзацы блока (12 px) */
+.scalelbl { position: relative; height: 1.5rem; margin-top: .15rem; font-size: 12px; line-height: 1.3; color: var(--muted); }
 .scalelbl span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
 .scalelbl span:first-child { transform: none; } .scalelbl span:last-child { transform: translateX(-100%); }
 
@@ -564,14 +574,18 @@ details.prov[open] > summary { margin-bottom: .5rem; }
 /* #FR-40: утративший силу норматив — приглушённо */
 td.muted { color: var(--muted); font-style: italic; }
 /* Итоги: строки «1 год / период», столбцы «доза / риск / доля нормы» */
-.kgrid { display: grid; grid-template-columns: max-content repeat(3, minmax(0, 1fr)); gap: 6px; align-items: stretch; }
-.kgrid.one { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* #FR-115: две колонки на всю ширину (доза | доля нормы); колонки подписей строк нет — название строки внутри карточки (.krow) */
+.kgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; align-items: stretch; }
 .kgrid .kh { font-size: .8rem; color: var(--muted); align-self: end; }
-.kgrid .kr { font-weight: 600; align-self: center; padding-right: 4px; white-space: nowrap; }
+.kpi .krow { font-size: .8rem; font-weight: 600; color: var(--muted); }
 .kpi .v .u { font-size: .75em; font-weight: 400; }
 /* #FR-73: вкладка «Сравнение» */
 .cmpbar { display: block; width: 100%; min-width: 120px; height: 10px; border-radius: 5px; background: var(--line); }
-.cmpbar i { display: block; height: 100%; min-width: 3px; border-radius: 5px; background: var(--muted); }
+/* #FR-110: столбцы таблицы сравнения — текст и числа по содержимому, свободное место отдано шкале */
+table.cmp-table { width: 100%; }
+table.cmp-table th:last-child, table.cmp-table td:last-child { width: 45%; }
+table.cmp-table td:not(:last-child) { padding-right: .75rem; }
+.cmpbar i { display: block; height: 100%; min-width: 2px; border-radius: 5px; background: var(--muted); }
 td.cmp-me { font-weight: 600; background: color-mix(in srgb, var(--warn) 14%, transparent); }
 td.cmp-me .cmpbar i { background: var(--warn); }
 td.org-hi { font-weight: 600; background: color-mix(in srgb, var(--warn) 14%, transparent); }
@@ -580,12 +594,16 @@ td.org-hi .cmpbar i { background: var(--warn); }
 .cmp-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .75rem; margin: .5rem 0 .5rem; align-items: end; } /* #FR-91 v33: подписи сверху, поля внизу на одной линии (align-items: end), 4 поля в ряд на десктопе, 2×2 / в столбик на узком */
 .cmp-inputs label { display: flex; flex-direction: column; justify-content: flex-end; gap: .25rem; font-weight: 700; color: var(--ink); }
 .cmp-inputs input { font-weight: 400; width: 100%; max-width: 20rem; }
-@media (max-width: 640px) { .kgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .kgrid:not(.one) > div:first-child { display: none; } .kgrid .kr { grid-column: 1 / -1; white-space: normal; } .kgrid:not(.one) { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } } /* #FR-105: inline-стиль Result.jsx «max-content repeat(2, …)» перебивал media — первая (скрытая) колонка max-content брала ширину подписи ~490 px; на узком экране колонок две (доза, доля нормы) */
+/* #FR-115: inline-стиля сетки и колонки подписей больше нет — отдельные правила сетки для узкого экрана не нужны: две колонки и на 360 px */
 /* #FR-105 v45: ячейки сетки итогов не раздувают дорожки (min-width: auto у элемента, охватывающего несколько fr-дорожек, брал ширину nowrap-подписи ~500 px на 360 px) — текст переносится */
 .kgrid, .kgrid > *, .kpis, .kpis > .kpi { min-width: 0; max-width: 100%; }
-.kgrid .kpi, .kpis .kpi, .kgrid .kh, .kgrid .kr { overflow-wrap: anywhere; }
+.kgrid .kpi, .kpis .kpi, .kgrid .kh { overflow-wrap: anywhere; }
 /* #FR-105 v45: длинные URL и названия в списках источников и в тексте вкладок переносятся, а не растягивают страницу вбок */
 .tabbody a, ol.biblio, ol.biblio li, ol.biblio a, .science a { overflow-wrap: anywhere; word-break: break-word; }
+/* #FR-111: список литературы — на всю ширину вкладки (общий предел p, li 78ch снят), выравнивание по левому краю */
+ol.biblio, ol.biblio li { max-width: none; text-align: left; }
+/* #FR-122: списки и примечания в блоках и вкладках результата — на всю ширину блока, как абзацы над ними, по левому краю */
+.riskbox ul, .riskbox li, .rs-notes, .rs-notes li, .tabbody ul, .tabbody li, .science li { max-width: none; text-align: left; }
 /* #FR-105 v45: заголовок числового столбца легенды переносится в границах max-width: 10rem (правило .pie-legend th.num с nowrap перебивало его и давало +15 px вбок на 1280 px) */
 .pie-legend thead th.num { white-space: normal; }
 /* #FR-101: переключатель региона данных */

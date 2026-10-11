@@ -2,12 +2,12 @@ import { RiskSummary } from './Summary.jsx';
 import Pie from './Pie.jsx';
 import { radonLungSub, radonSubShares } from '../calc/cancer_sub.js';
 import { doseSlices, riskSlices, homeRadonDoseSv, homeDwellingDoseSv, fmtShare, DEFAULT_FLIGHT_PER_YEAR } from '../calc/summary_charts.js';
-import { effectiveInputs } from '../calc/ext_inputs.js';
+import { summarySets } from '../calc/summary_sets.js';
 import { DEFAULT_COEFFS } from '../vendor/radon_risk/radonRisk.mjs';
 import { normRegion } from '../calc/region.js';
 import { regionName, doseCaption, riskCaption, lifeTableName, ctNote } from '../ui/region_notes.js';
 import RegionSwitch from './RegionSwitch.jsx';
-import { fmtNum, fmtDose, fmtPerMillion, esc } from '../ui/fmt.js';
+import { fmtNum, fmtDose, fmtPerMillion, esc, nb } from '../ui/fmt.js';
 import { yearsWord, sourceFull } from '../ui/render.js';
 import { locRu } from '../ui/ru.js';
 import { T, fill, timesVars } from '../ui/texts_v.js';
@@ -17,11 +17,8 @@ import { T, fill, timesVars } from '../ui/texts_v.js';
 // radonC и dwellU — то же состояние, что поля вкладки «Сравнение с облучением» (поднято в Result.jsx)
 export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, ctN = NaN, xrayN = NaN, flightN = DEFAULT_FLIGHT_PER_YEAR, onRegion }) {
   // Сравнение и срезы для диаграмм; #FR-101: умолчания полей — по региону (введённое пользователем сохраняется при смене региона)
-  const cmp = result.comparison;
   const region = normRegion(input.region);
-  const ei = cmp ? effectiveInputs(cmp.parts, { radonC, dwellU, ctN, xrayN, flightN }) : null;
-  const ds = cmp ? doseSlices(cmp, homeRadonDoseSv(input, cmp, ei.radonC), { dwellingSv: ei.dwellU != null ? homeDwellingDoseSv(cmp, ei.dwellU) : null, radonC: ei.radonC, radonIsDefault: ei.radonIsDefault, dwellU: ei.dwellU, ctN: ei.ctIsDefault ? null : ei.ctN, xrayN: ei.xrayIsDefault ? null : ei.xrayN, flightN: ei.flightN, flightDefault: ei.flightIsDefault }) : null;
-  const rs = riskSlices(result.lifeRisks);
+  const { cmp, ei, ds, rs } = summarySets(result, input, { radonC, dwellU, ctN, xrayN, flightN }); // #FR-114: те же срезы получает «Подробный расчёт»
   const radonCEff = ei ? ei.radonC : radonC;
   const radonSub = rs && Number.isFinite(radonCEff) ? radonLungSub(input, rs.H, radonCEff, rs.b) : null; // #FR-99 (Б-2): подсектор — радон у НЕкурящего на горизонте круга (до возраста b)
   const cancerP = rs?.slices.find(s => s.id === 'cs_1026')?.p;
@@ -29,9 +26,9 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
   const subSh = radonSub && rs ? radonSubShares(radonSub, Number.isFinite(lungP) ? lungP : cancerP, rs.total) : null;
   const subOk = !!subSh && !subSh.bad;
   const adultStart = radonSub && radonSub.s >= 18; // курящему ребёнку строка не показывается
-  const radonOrigin = !ei || ei.radonIsDefault ? 'по умолчанию' : 'по вашему вводу';
+  const radonOrigin = !ei || ei.radonIsDefault ? 'по умолчанию' : 'введено пользователем';
   // подсектор (сплошной) и строка легенды «в т. ч.»; курящий — не сектор круга, а строка текста под диаграммой
-  const lblNever = radonSub ? fill(T.LIFE_SUB_RADON_NEVER, { C: fmtNum(radonSub.C), origin: radonOrigin }) : '';
+  const lblNever = radonSub ? fill(T.LIFE_SUB_RADON, { C: fmtNum(radonSub.C), origin: radonOrigin }) : '';
   const cancerInner = subOk ? [{ id: 'radon_never', label: lblNever, share: subSh.never, valueText: fmtPerMillion(radonSub.neverB), hatch: false }] : [];
   const cancerSubs = !radonSub || !subOk ? [] : cancerInner.map(u => ({ ...u, short: T.LIFE_SUB_RADON_NEVER_SHORT, shareText: fmtShare(u.share), sw: true }));
   // #FR-98: подсектора «от загрязнения воздуха» (набор «Россия», точки) внутри причин; рядом с подсектором радона, не поверх; превышение родителя — не рисуем и предупреждаем
@@ -50,8 +47,8 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
   const trunc = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
   const nucl = (result.rows || []).map(r => r.nuclide).join(', ');
   const prod = (s, kind) => s.id !== 'product' ? {} : pname
-    ? (() => { const label = kind === 'risk' ? `Этот продукт: ${pname} — рак от облучения` : `Этот продукт: ${pname}${nucl ? ` (${nucl})` : ''} — по вашему расчёту`; return { label, short: pname.length <= 24 ? label : `Этот продукт: ${trunc(pname, 24)}`, callout: `Этот продукт (${trunc(pname, 26)})` }; })()
-    : { label: kind === 'risk' ? 'Этот продукт — рак от облучения' : 'Этот продукт — по вашему расчёту', short: 'Этот продукт', callout: 'Этот продукт' };
+    ? (() => { const label = kind === 'risk' ? `Этот продукт: ${pname} — радиационно-индуцированный рак` : `Этот продукт: ${pname}${nucl ? ` (${nucl})` : ''} — по расчёту`; return { label, short: pname.length <= 24 ? label : `Этот продукт: ${trunc(pname, 24)}`, callout: `Этот продукт (${trunc(pname, 26)})` }; })()
+    : { label: kind === 'risk' ? 'Этот продукт — радиационно-индуцированный рак' : 'Этот продукт — по расчёту', short: 'Этот продукт', callout: 'Этот продукт' };
 
   // Есть ли доля продукта в срезах
   const hasProductDose = !!(ds && ds.slices.some(s => s.id === 'product'));
@@ -89,7 +86,7 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
             <Pie
               id="dose"
               title={fill(T.SUM_CHART_A_TITLE, { H: fmtNum(ds.H), years: yearsWord(ds.H) }) + ' — ' + doseCaption(region)}
-              valueHead="Доза; риск (на 1 млн)"
+              valueHead="Доза; риск (на 1 000 000 человек)"
               slices={ds.slices.map(s => ({
                 id: s.id,
                 ci: s.ci,
@@ -116,7 +113,7 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
             {ds.medicine && !ds.medicineBad ? <p className="hint" id="sumMedNote">{fill(T.SUM_MED_NOTE, { region: regionName(region), med: fmtNum(ds.parts.medicine.msv), ctNote: ctNote(ds.parts) })}</p> : null}
             <p className="hint" id="sumRadonSrc">
               {fill(T.SUM_RADON_SRC, { r: fmtNum(ds.radonBgMsvPerYear), region: regionName(region), src: '' })}
-              <span dangerouslySetInnerHTML={{ __html: sourceFull(ds.parts.radon.source) + (locRu(ds.parts.radon.loc) ? ', ' + esc(locRu(ds.parts.radon.loc)) : '') }} />.
+              <span dangerouslySetInnerHTML={{ __html: nb(sourceFull(ds.parts.radon.source) + (locRu(ds.parts.radon.loc) ? ', ' + esc(locRu(ds.parts.radon.loc)) : '')) }} />.
             </p>
             {cmp.natural && cmp.natural.length ? (
               <p className="hint">{fill(T.SUM_NATURAL_IN_A, { list: cmp.natural.join(', ') })}</p>
@@ -132,7 +129,7 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
             <Pie
               id="risk"
               title={fill(T.SUM_CHART_B_TITLE, { a: fmtNum(rs.a), b: fmtNum(rs.b) }) + ' — ' + riskCaption(region)}
-              valueHead="Риск смерти (на 1 млн)"
+              valueHead="Риск смерти (на 1 000 000 человек)"
               labelHead="Причина"
               slices={rs.slices.map(s => ({
                 id: s.id,
@@ -149,7 +146,7 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
             />
             <p className="hint">
               {fill(T.SUM_CHART_B_NOTE, { a: fmtNum(rs.a), b: fmtNum(rs.b), tab: lifeTableName(region) })}
-              {rs.capped ? ` ${T.SUM_CHART_B_CAPPED}` : ''} {T.SUM_UNIT}
+              {rs.capped ? ` ${T.SUM_CHART_B_CAPPED}` : ''}
             </p>
             {airBad ? <p className="msg warn" id="sumAirBad">{T.LIFE_AIR_BAD}</p> : null}
             {air && !airBad ? <p className="hint" id="sumAirNote">{fill(T.LIFE_AIR_NOTE, { year: air.year, a: fmtNum(rs.a), b: fmtNum(rs.b) })}</p> : null}

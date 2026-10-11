@@ -37,5 +37,5 @@ test('a→b: конечный возраст не больше начально�
   const nrb = go({ fromAge: 3, toAge: 13 }, { doseSource: 'NRB2009_App2' }, [['Sr-90', 20], ['Cs-137', 10]]);
   assert.equal(nrb.ok, false);
   assert.equal(nrb.errors.length, 1);
-  assert.match(nrb.errors[0], /только для критической группы.*МКРЗ \(ICRP 119\)/);
+  assert.match(nrb.errors[0], /только для критической группы.*МКРЗ, Публикация 119/);
 });

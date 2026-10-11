@@ -9,7 +9,7 @@ export const ORGAN_OF_SITE = { thyroid: ['Thyroid'], leukemia: ['R_Marrow'], bon
 export const SITE_FORMULAS = {
   colon: { label: 'Толстая кишка (0,568·верхний отдел + 0,432·нижний отдел)', parts: [['ULI_Wall', 0.568], ['LLI_Wall', 0.432]] },
   esophagus: { label: 'Пищевод (по вилочковой железе)', parts: [['Thymus', 1]] },
-  lung: { label: 'Лёгкие (бронхи и альвеолы, веса FGR 13)', parts: [['BBi-bas', 1 / 6], ['BBi-sec', 1 / 6], ['bbe-sec', 1 / 3], ['AI', 1 / 3]] },
+  lung: { label: 'Лёгкие (бронхи и альвеолы, взвешивающие коэффициенты FGR 13)', parts: [['BBi-bas', 1 / 6], ['BBi-sec', 1 / 6], ['bbe-sec', 1 / 3], ['AI', 1 / 3]] },
   residual: { label: 'Прочие органы (среднее: мышцы, поджелудочная, надпочечники)', parts: [['Muscle', 1 / 3], ['Pancreas', 1 / 3], ['Adrenals', 1 / 3]] }
 };
 export function siteOrganDose(siteId, organs) {

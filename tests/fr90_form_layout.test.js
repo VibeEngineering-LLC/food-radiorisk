@@ -39,10 +39,10 @@ test('FR-90: галочка и её текст внутри одного label, 
 test('FR-90: поле даты начала питания имеет класс rdate и тип date', async () => {
   const html = await formHtml();
   // Проверяем наличие label с классом rdate и текстом
-  assert.ok(html.includes('<label class="r3 rdate">Дата начала питания'), 'label.rdate с текстом не найден');
-  
+  assert.ok(html.includes('<label class="r3 rdate">Дата начала потребления'), 'label.rdate с текстом не найден');
+
   // Находим первый input после этого текста
-  const idx = html.indexOf('<label class="r3 rdate">Дата начала питания');
+  const idx = html.indexOf('<label class="r3 rdate">Дата начала потребления');
   const after = html.slice(idx);
   const inputMatch = after.match(/<input[^>]*>/);
   assert.ok(inputMatch, 'input не найден после label.rdate');

@@ -85,7 +85,7 @@ test('V11: форма — три варианта вида продукта; п�
     })]
   })).html;
   assert.ok(html1.includes(T.FORM_COOKED_FR));
-  assert.ok(!html1.includes('свой Fr'));
+  assert.ok(!html1.includes('собственное значение Fr'));
 
   const raw2 = S.setField(S.setField(S.initialRaw(ch), ch, 'product', 'молоко'), ch, 'measuredForm', 'fresh');
   const html2 = (await screen({
@@ -100,5 +100,5 @@ test('V11: форма — три варианта вида продукта; п�
     })]
   })).html;
   assert.ok(!html2.includes(T.FORM_COOKED_FR));
-  assert.ok(html2.includes('свой Fr'));
+  assert.ok(html2.includes('собственное значение Fr'));
 });

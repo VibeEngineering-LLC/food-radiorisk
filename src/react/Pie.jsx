@@ -1,5 +1,6 @@
 import { linearAngles, fmtShare } from '../calc/summary_charts.js';
 import { calloutLayout } from './pie_callout.js';
+import { nb } from '../ui/fmt.js';
 
 // вспомогательные функции: полярные координаты и округление
 const rad = (deg) => (deg * Math.PI) / 180;
@@ -13,7 +14,8 @@ export default function Pie({ id, title, slices, valueHead = 'Значение',
   // защита от пустых/некорректных данных
   if (!Array.isArray(slices) || slices.length === 0) return null;
 
-  const tip = (s) => `${s.label}: ${fmtShare(s.share)}; ${s.valueText}${s.hint ? ' — ' + s.hint : ''}`; // полная подсказка сектора
+  const N = (v) => (typeof v === 'string' ? nb(v) : v); // #FR-124: число и единица в подписях — неразрывным пробелом
+  const tip = (s) => N(`${s.label}: ${fmtShare(s.share)}; ${s.valueText}${s.hint ? ' — ' + s.hint : ''}`); // полная подсказка сектора
   const cx = 300, cy = 200, r = 170; // #FR-89: крупная диаграмма (оператор); поля слева/справа 130 px — под текст выноски
   // углы в градусах, сумма 360, каждый ненулевой срез не меньше 3°
   const angles = linearAngles(slices.map((s) => s.share)); // линейный масштаб: угол = доля × 360°
@@ -105,17 +107,17 @@ export default function Pie({ id, title, slices, valueHead = 'Значение',
                 <td>
                   <span className={`pie-sw pie-s${(s.ci ?? i) % 12}` + (s.me ? ' pie-me' : '')} aria-hidden="true" />
                 </td>
-                <td title={s.hint ? `${s.label} — ${s.hint}` : s.label}>{s.short || s.label}</td>
+                <td title={N(s.hint ? `${s.label} — ${s.hint}` : s.label)}>{N(s.short || s.label)}</td>
                 <td className="num">{fmtShare(s.share)}</td>
-                <td className="num">{s.valueText}</td>
+                <td className="num">{N(s.valueText)}</td>
               </tr>,
               // подстроки «в т. ч.»: без сектора, без доли, в сумму не входят (они часть строки выше)
               ...(s.subs || []).map((u) => (
                 <tr key={s.id + '-' + u.id} className="pie-sub" data-sub={u.id}>
                   <td>{u.sw ? <span className={u.dots ? `pie-sw pie-s${u.ci} pie-air` : 'pie-sw pie-sub-solid'} aria-hidden="true" /> : null}</td>
-                  <td title={u.label}>{u.short || u.label}</td>
-                  <td className="num">{u.shareText ?? '—'}</td>
-                  <td className="num">{u.valueText}</td>
+                  <td title={N(u.label)}>{N(u.short || u.label)}</td>
+                  <td className="num">{N(u.shareText ?? '—')}</td>
+                  <td className="num">{N(u.valueText)}</td>
                 </tr>
               )),
             ])}

@@ -37,7 +37,7 @@ npm run dev
 GitHub Pages отдаёт каталог `docs/` ветки `main` (адрес сайта: https://vibeengineering-llc.github.io/food-radiorisk/).
 Автоматической сборки в `docs/` нет, каталог обновляется вручную при публикации:
 
-1. `npm run build` — результат в `dist/`: `index.html`, `sources.html`, `assets/` (JS и CSS с хешами в именах), `public/data/*.json`,
+1. `npm run build` — результат в `dist/`: `index.html`, `assets/` (JS и CSS с хешами в именах), `public/data/*.json`,
    `src/ui/` (стили и два справочника, которые читает страница источников), `THIRD_PARTY_LICENSES.txt` (тексты лицензий стороннего кода).
 2. Содержимое `dist/` целиком заменяет содержимое `docs/` (старые `assets/index-*` удаляются, иначе в каталоге копятся устаревшие файлы).
 3. В `docs/` лежит пустой файл `.nojekyll`: без него Pages запускает Jekyll, а сайту нужны файлы как есть.

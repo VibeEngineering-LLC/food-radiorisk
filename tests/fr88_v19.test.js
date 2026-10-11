@@ -6,6 +6,7 @@ import { data, inputFor } from './fr81_helpers.js';
 import { computeScenario } from '../src/calc/model.js';
 import { pickNormRecord } from '../src/calc/norms.js';
 import { combineFr } from '../src/calc/processing.js';
+import { renderJsx } from './render_helper.js';
 
 test('А-1: Сравнение списков норм для Sr-90 в разных видах воды', () => {
   const r1 = computeScenario(data, inputFor(null, 'вода из крана', [['Sr-90', 9.8]]));
@@ -95,8 +96,11 @@ test('Q5: Оценка депонирования и фильтрация зап
   assert.equal(e3.central, Math.sqrt(kl.min * kl.max));
 });
 
-test('Q6: Проверка HTML-справки и данных по EU 2016/52', () => {
-  const html = readFileSync(new URL('../sources.html', import.meta.url), 'utf8');
+test('Q6: Проверка ограничений на вкладке «Источники» и данных по EU 2016/52', async () => {
+  // #FR-121: текст ограничений — на вкладке «Источники»; здесь проверяется пункт про Регламент 2016/52 в её отрисовке
+  const input = inputFor('milk', 'молоко', [['Cs-137', 100, 10]], {});
+  const full = await renderJsx('src/react/Result.jsx', 'default', { result: computeScenario(data, input), input, meta: { datasets: 1, records: 1, sha: 'abcdefgh' }, initialTab: 'src' });
+  const html = full.slice(full.indexOf('<h2 id="limits"'));
   const list = html.match(/<ul id="limits-list">([\s\S]*?)<\/ul>/)[1];
   const items = [...list.matchAll(/<li>([\s\S]*?)<\/li>/g)].map(m => m[1]);
   const target = items.find(item => item.includes('2016/52') && /10 суток/.test(item) && item.includes('H-3, C-14 и K-40') && !item.includes('[текст'));

@@ -1,5 +1,5 @@
 // #FR-81 V15 (D-022): строки главного экрана одной функцией — для экрана (Summary.jsx) и отчёта (report.js)
-import { T, fill, plural, WORDS, nuclideRu, ageWord } from './texts_v.js';
+import { T, fill, plural, WORDS, nuclideRu, ageWord, deathsPhrase, yearsGen } from './texts_v.js';
 import { fmtNum, fmtNear, fmtBpm, fmtPerMillion, riskOverOne, fmtCount, fmtDose, fmtPct2, verdictText } from './fmt.js'; // #FR-99: одна величина — одно округление на экране (fmtDose, 3 значащие), не fmtDose2
 import { unitRu } from './ru.js';
 import { regionName } from './region_notes.js';
@@ -62,6 +62,7 @@ export function summaryParts(result, input) {
   if (result.diet) notes.unshift(dietSummaryText(result.diet)); // #FR-83 W08: расчёт для стандартного потребления — первой строкой, в том числе для природных нуклидов
 
   // Фон (A4)
+  const termPhrase = input.lifetime ? `с ${input.lifetime.fromAge} до ${input.lifetime.toAge} лет` : `в течение ${input.years} ${yearsGen(input.years)}`; // #FR-123: срок со склонением
   let background = null;
   if (!natural && !riskOverOne(totals.riskNominal) && result.background && Number.isFinite(result.background.F)) {
     const { a, F, year } = result.background;
@@ -69,10 +70,11 @@ export function summaryParts(result, input) {
       who: a >= 18 ? 'человек' : 'детей',
       age: a,
       yearsWord: ageWord(a),
-      horizon: a > 0 ? 'всю оставшуюся жизнь (до конца жизни, без границы по возрасту)' : 'всю жизнь', // #FR-99 (Б-3): срок назван явно — не путать с диаграммой «с a до 70 лет»
+      horizon: a > 0 ? 'всю оставшуюся жизнь (без ограничения возрастом 70 лет)' : 'всю жизнь', // #FR-99 (Б-3): срок назван явно — не путать с диаграммой «с a до 70 лет»
       F: fmtCount(1e6 * F),
-      src: ` (${regionName(input.region)}, ${year} г.)`, // #FR-101: фон — по таблице дожития выбранного региона
-      k: (kk => /^меньше/.test(kk) ? kk : 'около ' + kk)(fmtPerMillion(totals.riskNominal)), // #FR-85 v17 (B4-11): «около меньше 0,01» -> «меньше 0,01»
+      src: ` (${regionName(input.region)}, ${year} г.)`, // #FR-101: фон — по таблице дожития выбранного региона
+      // #FR-123: единица названа («смерти от рака»), число людей — целым с «около», точное значение «N на 1 000 000» в скобках; «меньше одной смерти», если меньше единицы
+      k: result.eating && result.eating.ok ? fill(T.BG_CANCER_TERM, { k: deathsPhrase(totals.riskNominal, fmtCount, fmtPerMillion), term: termPhrase }) : deathsPhrase(totals.riskNominal, fmtCount, fmtPerMillion),
     });
   }
 
@@ -138,7 +140,26 @@ export function summaryParts(result, input) {
     doseLines.push(fill(T.DOSE_TOTAL, { E_N: fmtDose(totals.techDoseSvTotal), w: fmtPct2(totals.lifeShare70mSv) }));
   }
 
+  // #FR-117: два числа — риск за введённый срок (подписан точно) и риск, если питаться так всю жизнь (режим «с a до a+H» той же модели)
+  const eat = result.eating;
+  const termLabel = natural ? null : fill(T.EAT_TERM_LABEL, { term: termPhrase, horizon: input.age === 'adult' ? '50 лет' : 'до 70 лет возраста' });
+  const lifeVars = eat ? { H: eat.H, years: yearsGen(eat.H), a: eat.fromAge, b: eat.toAge } : null;
+  const life = natural || !eat ? null : {
+    head: fill(T.EAT_LIFE_HEAD, lifeVars),
+    number: eat.ok ? (riskOverOne(eat.riskNominal) ? T.MAIN_NUMBER_OVER : fill(T.MAIN_NUMBER, { k: fmtPerMillion(eat.riskNominal) })) : null,
+    unavailable: eat.ok ? null : fill(T.EAT_LIFE_UNAVAIL, { reason: eat.reason }),
+    cap: fill(T.EAT_CAP_LIFE, lifeVars),
+  };
+  // #FR-123: одна фраза «Для сравнения …» с обоими числами (вместо двух отдельных предложений)
+  if (life && eat.ok && background && !riskOverOne(eat.riskNominal)) {
+    const kk = eat.riskNominal * 1e6, n = fmtCount(kk);
+    const k2 = Number(kk.toPrecision(2)) < 1 ? 'меньше одной смерти' : `около ${n}`;
+    background = background.replace(/\.$/, fill(T.BG_CANCER_AND_LIFE, { k2, H: eat.H, years: yearsGen(eat.H) }));
+  }
+  const termCap = fill(T.EAT_CAP_TERM, { term: termPhrase });
+  const legend = eat && eat.ok ? { text: fill(T.EAT_LEG, { H: eat.H, years: yearsGen(eat.H), term: termPhrase }), life: fill(T.EAT_LEG_LIFE, { H: eat.H, years: yearsGen(eat.H) }), term: fill(T.EAT_LEG_TERM, { term: termPhrase }) } : null;
   return {
+    termLabel, termCap, legend, headShort: T.RS_HEAD_SHORT, life,
     head,
     natural: natural ? fill(T.VERBAL_NATURAL, { list: totals.naturalNuclides.join(', ') }) : null,
     number: natural ? null : riskOverOne(totals.riskNominal) ? T.MAIN_NUMBER_OVER : fill(T.MAIN_NUMBER, { k: fmtPerMillion(totals.riskNominal) }),

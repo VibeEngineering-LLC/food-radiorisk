@@ -15,7 +15,7 @@ export const SCENARIOS = {
   S5: () => inputFor('mushrooms_fresh', 'грибы свежие', [['Cs-137', 400, 40]], { portionKg: 0.3, portionsPerYear: 60, years: 1 }),
 };
 
-export const TABS = ['sum', 'norms', 'calc', 'cmp', 'life', 'src']; // #FR-89: «Сводка», «Соответствие нормам», «Подробный расчёт», затем прежние
+export const TABS = ['sum', 'cmp', 'life', 'norms', 'calc', 'site', 'spec', 'src']; // #FR-112/#FR-113/#FR-118: 8 вкладок в порядке экрана; // #FR-89: «Сводка», «Соответствие нормам», «Подробный расчёт», затем прежние
 
 export const FORBIDDEN = [
   /ваш риск/i,
@@ -60,6 +60,11 @@ export function split(text) {
   return { main: body, body };
 }
 
+// #FR-124: подписи и пояснение шкалы риска («0,01 на 1 000 000», «до 1 на 1 000 000» и т. д.) — уровни шкалы, а не R сценария
+const noScale = (s) => s
+  .replace(/0,01 на 1 000 000 1 50 1 000 на 1 000 000/, '')
+  .replace(/Шкала логарифмическая, разделена на зоны:[^(]*\(уровни/, '(уровни');
+
 export function analyse(rendered) {
   const table = [];
   const forbidden = [];
@@ -68,7 +73,8 @@ export function analyse(rendered) {
 
   const areas = (entry) => {
     const list = [];
-    list.push({ name: 'main', text: split(entry.texts['sum']).main });
+    // #FR-117: второе число блока («Если есть так всю жизнь …») — не R за введённый срок; проверяется в tests/fr117_lifetime_eating.test.js, здесь его нет
+    list.push({ name: 'main', text: noScale(split(entry.texts['sum']).main).replace(/При таком же потреблении в течение \d+ \S+ \(с \d+ до \d+ лет\)\s*\d[\d ]*(?:,\d+)? на 1 000 000/, '').replace(/Потребление этого продукта добавило бы к ним [^()]*\(\d[\d ]*(?:,\d+)? на 1 000 000\)/, '') }); // число во фразе «Для сравнения» проверяется строкой main:фон ниже
     for (const tab of ['norms', 'cmp', 'life']) {
       list.push({ name: tab, text: split(entry.texts[tab]).body });
     }
@@ -96,9 +102,9 @@ export function analyse(rendered) {
       }
     }
 
-    const mainText = split(entry.texts['sum']).main;
+    const mainText = noScale(split(entry.texts['sum']).main);
     const mainAndNorms = mainText + ' ' + split(entry.texts['norms']).body; // блок C («Доза за самый нагруженный год») теперь на вкладке «Соответствие нормам»
-    const fm = mainText.match(/добавило бы к ним около (\d[\d ]*(?:,\d+)?)\./);
+    const fm = mainText.match(/добавило бы к ним (?:около \d[\d ]* смерт\S+|меньше одной смерти) от рака \((\d[\d ]*(?:,\d+)?) на 1 000 000\)/); // #FR-123: после первого числа — запятая и второе число (питание всю жизнь)
     if (fm) {
       const number = fm[1];
       table.push({
@@ -111,7 +117,7 @@ export function analyse(rendered) {
     }
 
     const lifeText = split(entry.texts['life']).body;
-    const lm = lifeText.match(/— рак от облучения\s+(\d[\d ]*(?:,\d+)?)(?=\s+[А-ЯЁ])/); // #FR-93: строки по возрастанию, после строки питания может идти любая причина
+    const lm = lifeText.match(/— радиационно-индуцированный рак\s+(\d[\d ]*(?:,\d+)?)(?=\s+[А-ЯЁ])/); // #FR-93: строки по возрастанию, после строки питания может идти любая причина
     if (lm) {
       const number = lm[1];
       table.push({
@@ -125,7 +131,8 @@ export function analyse(rendered) {
 
     if (entry.result.ok && entry.result.totals.riskNominal !== null) {
       const mainCount = (mainText.match(/(\d[\d ]*(?:,\d+)?) на 1 000 000/g) || []).length;
-      if (mainCount !== 1) {
+      const mainExpected = entry.result.eating && entry.result.eating.ok ? 3 : 2; // #FR-117/#FR-123: число за введённый срок, второе число (всю жизнь) и «(N на 1 000 000)» во фразе «Для сравнения»
+      if (mainCount !== mainExpected) {
         missing.push(`${name}: число «на 1 000 000» на главном экране найдено ${mainCount} раз`);
       }
       if (entry.texts['life'].includes('Бытовые риски за') && !lm) {
@@ -157,8 +164,8 @@ export function analyse(rendered) {
     }
 
     if (entry.result.totals.doseMaxYearTech !== null) {
-      const verbal = mainAndNorms.match(/Оценка по дозе самого нагруженного года \((\d[\d ,]*\s?(?:мкЗв|мЗв|Зв))/);
-      const dose = mainAndNorms.match(/Доза за самый нагруженный год: (\d[\d ,]*\s?(?:мкЗв|мЗв|Зв))/);
+      const verbal = mainAndNorms.match(/Оценка по наибольшей годовой дозе \((\d[\d ,]*\s?(?:мкЗв|мЗв|Зв))/);
+      const dose = mainAndNorms.match(/Наибольшая годовая доза: (\d[\d ,]*\s?(?:мкЗв|мЗв|Зв))/);
       if (!verbal || !dose || verbal[1].replace(/ /g, '') !== dose[1].replace(/ /g, '')) {
         doseMismatch.push({
           scenario: name,

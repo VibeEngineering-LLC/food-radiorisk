@@ -1,4 +1,4 @@
-import { fmtNum } from './fmt.js';
+import { fmtNum, levelWord } from './fmt.js';
 import { ciKm2ToKBqM2, kBqM2ToCiKm2 } from '../calc/units.js';
 import { transferOptions, concentrationFor, TUM_HINT } from './product.js';
 import { decodeSpe, parseSpeHeader, speToForm, concentrationFromMasses } from './spe.js';
@@ -29,12 +29,12 @@ export const AGE_LABEL = {
   '10y': '10 лет', '12-17y': '12–17 лет', '15y': '15 лет', 'adult': 'Взрослый'
 };
 export const SOURCE_LABEL = {
-  ICRP119_F1: 'ICRP 119 (Publ. 72)', NRB2009_App2: 'НРБ-99/2009, прил. 2'
+  ICRP119_F1: 'МКРЗ, Публикация 119', NRB2009_App2: 'НРБ-99/2009, прил. 2'
 };
 
 export function doseSourceOptions(choices) {
   return choices.doseSources
-    .filter(s => s !== 'NRB2009_App2a')
+    .filter(s => s !== 'NRB2009_App2a' && s !== 'NRC1999') // #FR-126: NRC1999 — коэффициенты только для радона-222 в воде, не самостоятельный источник e(g)
     .map(v => ({ value: v, label: SOURCE_LABEL[v] || v }));
 }
 
@@ -63,11 +63,11 @@ export function transferGroups(choices, nuclide) {
       const centralStr = c === null ? 'нет среднего' : `${fmtNum(c * rec.unit_factor)} м²/кг`;
       let basis = 'основа не указана';
       if (rec.mass_basis === 'dry') basis = 'сухая';
-      else if (rec.mass_basis === 'fresh') basis = 'сырая';
+      else if (rec.mass_basis === 'fresh') basis = 'свежая';
       
       map.get(rec.source).push({
         id: rec.id,
-        label: `${rec.item_ru} — ${rec.quantity} ${centralStr} · ${basis} · ${rec.level}`,
+        label: `${rec.item_ru} — ${rec.quantity} ${centralStr} · ${basis} · ${levelWord(rec.level)}`,
         disabled: false
       });
     }
@@ -95,7 +95,7 @@ export function processingOptions(choices, nuclide, entry = null) {
         : rec.value_max != null ? (rec.value_min != null && rec.value_min !== rec.value_max ? `${fmtNum((rec.value_min + rec.value_max) / 2)} (середина диапазона ${fmtNum(rec.value_min)}–${fmtNum(rec.value_max)}, рекомендованного нет)` : `${fmtNum(rec.value_max)} (одно значение, рекомендованного нет)`)
         : (rec.value_min != null && rec.value_max != null ? `${fmtNum(rec.value_min)}–${fmtNum(rec.value_max)}` : fmtNum(rec.value_min ?? rec.value_max));
       // #FR-22: название продукта на экране — по-русски (словарь); в данных и провенансе остаётся оригинал первоисточника
-      opts.push({ value: rec.id, id: rec.id, label: `${FOOD_RU[rec.food] ?? rec.food} — ${rec.process_ru}: Fr ${v} [${rec.level}]` });
+      opts.push({ value: rec.id, id: rec.id, label: `${FOOD_RU[rec.food] ?? rec.food} — ${rec.process_ru}: Fr ${v} [${levelWord(rec.level)}]` });
     }
   }
   return opts.sort((a, b) => a.label.localeCompare(b.label, 'ru'));
@@ -198,6 +198,22 @@ export function presetRadGear() {
   };
 }
 
+// #FR-109: второй пример — черника дикорастущая сушёная (Cs-137 + Sr-90); группа ТР ТС и K=5 подставляет autoFill по названию и виду
+export function presetBilberry() {
+  return {
+    age: 'adult', doseSource: 'ICRP119_F1',
+    portionKg: 0.05, portionsPerYear: 20, years: 1, eatDate: null, dryMatterPercent: null,
+    processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' },
+    foodGroupCode: 'berries_wild',
+    product: { name: 'черника дикорастущая', state: 'dried' },
+    nuclides: [['Cs-137', 4400], ['Sr-90', 100]].map(([nuclide, a]) => ({
+      samplePrep: { mode: 'as_is', concentrationFactor: 1 },
+      nuclide, source: 'measured', measuredBqPerKg: a, measuredUncertaintyBqPerKg: 0,
+      sampleDate: null, depositionKBqPerM2: null, depositionDate: null, transferId: null, variant: 'central'
+    }))
+  };
+}
+
 // --- DOM Functions ---
 
 // #FR-48: список с галочками (div) — отмеченное сохраняется при перезаполнении
@@ -258,14 +274,14 @@ function fillTransferSelect(sel, groups, fallback = false, query = '') {
 
 /** #FR-86: подпись списка КП — нет явных ключей у продукта, продукт не распознан или неоднозначен: весь список с пометкой */
 export const TRANSFER_HINT = {
-  no_keys: 'Для этого продукта коэффициентов перехода в словаре нет — показан весь список; записи в нём не для этого продукта, выбор — на ваше усмотрение.',
+  no_keys: 'Для этого продукта коэффициентов перехода в словаре нет — показан весь список; записи в нём не для этого продукта, выбор остаётся за пользователем.',
   unknown: 'Продукт не распознан словарём — показан весь список коэффициентов перехода; записи в нём не подобраны к продукту.',
   ambiguous: 'Название продукта неоднозначно — уточните его; пока показан весь список коэффициентов перехода.',
   partial: 'Название распознано не полностью — подтвердите продукт выше; пока показан весь список коэффициентов перехода.' // #FR-85 v11
 };
 export function transferHint(o, query) {
   if (o.fallback) return TRANSFER_HINT[o.reason] || TRANSFER_HINT.unknown;
-  return !String(query || '').trim() ? 'Введите продукт — сводная оценка строится по записям этого продукта. Показан весь список КП.' : `Записей для продукта: ${o.matched}. ${TUM_HINT}`;
+  return !String(query || '').trim() ? 'Введите продукт — сводная оценка строится по записям этого продукта. Показан весь список коэффициентов перехода (КП).' : `Записей для продукта: ${o.matched}. ${TUM_HINT}`;
 }
 
 // список КП карточки: по элементу нуклида и по введённому продукту; при отсутствии совпадений — весь список с пометкой

@@ -5,6 +5,7 @@
 import FOOD_RU from '../ui/food_ru.json' with { type: 'json' };
 import SHORT from '../ui/source_short.json' with { type: 'json' };
 import { locRu } from '../ui/ru.js';
+import { levelWord } from '../ui/fmt.js';
 // #FR-106 v46: во внешний текст — не внутренний id записи данных
 const procName = (r) => [FOOD_RU[r.food] ?? r.food, r.process_ru].filter(Boolean).join(' — ') || 'способ обработки';
 /** #FR-106 v46: пояснение к записи с аномалией источника — без внутренних пометок («текстовый слой», номера строк, пути); исходный текст остаётся только в данных */
@@ -47,12 +48,12 @@ export function resolveProcessing(records, processing, prov, warn, nuclide = nul
       }
 
       if (pRec.quantity !== 'Fr') {
-        throw new Error('запись не Fr — выбрать Fr; Pf/кратность в модель не подставляются');
+        throw new Error('выбрана запись не с коэффициентом Fr; значения Pf и кратность очистки в расчёте не используются');
       }
 
       // #FR-88 v19 (D-029, Q1): запись «радионуклиды (не уточнено)» к конкретному нуклиду не применяется — Fr = 1 и сообщение
       if (nuclide && isGenericNuclide(pRec)) {
-        warn(`обработка «${procName(pRec)}»: коэффициент перехода для ${nuclide} не установлен (в источнике ${sourceWhere(pRec)} значение дано для радионуклидов вообще) — Fr = 1`);
+        warn(`обработка «${procName(pRec)}»: коэффициент перехода для ${nuclide} не установлен (в источнике ${sourceWhere(pRec)} значение дано без указания радионуклида) — Fr = 1`);
         continue;
       }
 
@@ -102,7 +103,7 @@ export function resolveProcessing(records, processing, prov, warn, nuclide = nul
       });
 
       if (pRec.level !== '✅' || pRec.source_anomaly) {
-        warn(`обработка «${procName(pRec)}»: уровень проверки ${pRec.level}${pRec.source_anomaly ? ', аномалия источника' : ''}`);
+        warn(`обработка «${procName(pRec)}»: уровень проверки — ${levelWord(pRec.level)}${pRec.source_anomaly ? ', аномалия источника' : ''}`);
         prov.push({
           step: 'обработка',
           what: pRec.process_ru,
@@ -112,7 +113,7 @@ export function resolveProcessing(records, processing, prov, warn, nuclide = nul
           level: pRec.level,
           value: null,
           unit: null,
-          note: pRec.source_anomaly ? ANOMALY_NOTE : 'уровень не ✅'
+          note: pRec.source_anomaly ? ANOMALY_NOTE : 'уровень проверки: не «сверено с источником»'
         });
       }
     }

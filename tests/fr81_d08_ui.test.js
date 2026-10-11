@@ -13,7 +13,7 @@ test('D08: при питании больше года на экране пом�
 
 test('D08: отметка «активность постоянна» есть в форме и попадает в ввод расчёта', async () => {
   const f = await screen({ comp: ['src/react/Form.jsx', 'default', () => ({ choices: ch, raw: S.initialRaw(ch), setRaw() {}, tab: 1, setTab() {}, onPreset() {}, onExport() {} })] });
-  assert.match(f.html, /Активность продукта постоянна во все годы/);
+  assert.match(f.html, /Удельная активность продукта постоянна во все годы/);
   const s = await screen({ field: { constAct: true } });
   assert.equal(s.input.constantActivity, true);
   assert.equal((await screen({})).input.constantActivity, false);

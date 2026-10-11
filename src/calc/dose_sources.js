@@ -71,20 +71,21 @@ export function buildDoseSlices(comparison, radonDoseSv, opts = {}) {
   const parts = comparison.parts;
 
   // Radon slice
+  const radonHint = 'ОА — объёмная активность радона-222 в воздухе жилища; без ввода берётся среднее значение выбранного региона (торон учтён только в среднем значении)'; // #FR-124 (R5): одна строка на оба сектора
   let radonSlice;
   if (radonDoseSv != null) {
     radonSlice = {
       id: 'radon',
-      label: `Радон в жилище (${fmtNum(opts.radonC)} Бк/м³, ${opts.radonIsDefault ? 'по умолчанию' : 'по вашему вводу'})`,
+      label: `Радон в жилище (${fmtNum(opts.radonC)} Бк/м³, ${opts.radonIsDefault ? 'по умолчанию' : 'введено пользователем'})`,
       doseSv: radonDoseSv,
-      hint: 'ОА — объёмная активность радона-222 в воздухе жилища; без ввода берётся среднее значение выбранного региона (торон учтён только в среднем значении)'
+      hint: radonHint
     };
   } else {
     radonSlice = {
       id: 'radon',
       label: 'Радон и торон в воздухе помещений (среднее)',
       doseSv: parts.radon.msv * k * H,
-      hint: 'ОА — объёмная активность радона-222 в воздухе жилища; без ввода берётся среднее значение выбранного региона (торон учтён только в среднем значении)'
+      hint: radonHint
     };
   }
 
@@ -93,7 +94,7 @@ export function buildDoseSlices(comparison, radonDoseSv, opts = {}) {
   // 1. Product
   rawSlices.push({
     id: 'product',
-    label: 'Этот продукт (по вашему расчёту)',
+    label: 'Этот продукт (по расчёту)',
     doseSv: productDose
   });
 
@@ -109,8 +110,8 @@ export function buildDoseSlices(comparison, radonDoseSv, opts = {}) {
     } else {
       // med_ct
       const ctLabel = split.ctAll
-        ? `Компьютерная томография (все виды; доля грудной клетки для региона не найдена; ${fmtNum(split.ctN)} в год, ${split.ctIsDefault ? 'по умолчанию — среднее на жителя' : 'по вашему вводу'})`
-        : `Компьютерная томография грудной клетки (${fmtNum(split.ctN)} в год, ${split.ctIsDefault ? 'по умолчанию — среднее на жителя' : 'по вашему вводу'})`;
+        ? `Компьютерная томография (все виды; доля грудной клетки для региона не найдена; ${fmtNum(split.ctN)} в год, ${split.ctIsDefault ? 'по умолчанию — среднее на жителя' : 'введено пользователем'})`
+        : `Компьютерная томография грудной клетки (${fmtNum(split.ctN)} в год, ${split.ctIsDefault ? 'по умолчанию — среднее на жителя' : 'введено пользователем'})`;
       const ctHint = `доза процедуры ${fmtNum(parts.ct.doseProc)} мЗв${parts.ct.derived ? ' (средняя на одну КТ: доза на жителя, делённая на число КТ на жителя)' : ''}; входит в среднюю медицинскую дозу, не добавляется к ней`;
       rawSlices.push({
         id: 'med_ct',
@@ -120,7 +121,7 @@ export function buildDoseSlices(comparison, radonDoseSv, opts = {}) {
       });
 
       // med_rad
-      const radLabel = `Рентгенография и флюорография (${fmtNum(split.radN)} в год, ${split.xrayIsDefault ? 'по умолчанию — среднее на жителя' : 'по вашему вводу'})`;
+      const radLabel = `Рентгенография и флюорография (${fmtNum(split.radN)} в год, ${split.xrayIsDefault ? 'по умолчанию — среднее на жителя' : 'введено пользователем'})`;
       const radHint = `доза процедуры ${fmtNum(parts.rad.doseProc)} мЗв${parts.rad.derived ? ' (средняя на один снимок: доза на жителя, делённая на число снимков на жителя)' : ''}; входит в среднюю медицинскую дозу, не добавляется к ней`;
       rawSlices.push({
         id: 'med_rad',
@@ -144,7 +145,7 @@ export function buildDoseSlices(comparison, radonDoseSv, opts = {}) {
   // 4. Flights
   rawSlices.push({
     id: 'flights',
-    label: `Авиаперелёты (${fmtNum(flightN)} × 3 ч в год, ${flightDefault ? 'по умолчанию' : 'по вашему вводу'})`,
+    label: `Авиаперелёты (${fmtNum(flightN)} × 3 ч в год, ${flightDefault ? 'по умолчанию' : 'введено пользователем'})`,
     doseSv: flightN * flightMsv * k * H
   });
 
@@ -161,7 +162,7 @@ export function buildDoseSlices(comparison, radonDoseSv, opts = {}) {
   if (dwellingSv != null) {
     terrSlice = {
       id: 'terrestrial',
-      label: `Гамма-фон в вашем жилище (по вашему дозиметру${opts.dwellU != null ? `, ${fmtNum(opts.dwellU)} мкЗв/ч` : ''}); на улице — среднее`,
+      label: `Гамма-фон в жилище (по показанию дозиметра${opts.dwellU != null ? `, ${fmtNum(opts.dwellU)} мкЗв/ч` : ''}); на улице — среднее`,
       doseSv: (parts.terrOutdoorMsv ?? 0) * k * H + dwellingSv
     };
   } else {
@@ -178,7 +179,7 @@ export function buildDoseSlices(comparison, radonDoseSv, opts = {}) {
     rawSlices.push({
       id: 'techno',
       label: 'Техногенное (глобальные выпадения, Чернобыль, предприятия)',
-      hint: `значение получено по разности итога, природной и медицинской доз — расчёт, не измерение; в статье указано только «менее 0,3 %»`,
+      hint: `значение получено по разности итога, природной и медицинской доз — расчёт, не измерение; в источнике (Барковский и др., 2021) указано только «менее 0,3 %»`,
       doseSv: parts.techno.msv * k * H
     });
   }
@@ -187,7 +188,7 @@ export function buildDoseSlices(comparison, radonDoseSv, opts = {}) {
   rawSlices.push({
     id: 'internal',
     label: 'Природные радионуклиды в пище и воде (калий-40, полоний-210 и др.)',
-    hint: 'внутреннее облучение без радона; включает малую долю от вдыхания пыли (уран, торий); в этом секторе — природные радионуклиды обычного рациона, а в секторе «Этот продукт» учтены только введённые вами нуклиды (природный калий-40 есть и в вашем продукте, но не входит в «ваш расчёт»)',
+    hint: 'внутреннее облучение без радона; включает малую долю от вдыхания пыли (уран, торий); в этом секторе — природные радионуклиды обычного рациона, а в секторе «Этот продукт» учтены только радионуклиды, введённые в форме (природный калий-40 содержится и в самом продукте, но в расчёт по продукту не входит)',
     doseSv: parts.ingest.msv * k * H
   });
 

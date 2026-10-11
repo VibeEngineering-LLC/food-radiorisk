@@ -14,7 +14,7 @@ const fig = (id) => html.match(new RegExp('data-chart="' + id + '"[^]*?</figure>
 test('FR-89 v29: у каждого сектора подсказка с полным названием, долей и величиной; у тонких — зона наведения', () => {
   const ds = doseSlices(result.comparison, homeRadonDoseSv(input, result.comparison, 100), { radonC: 100, radonIsDefault: false });
   const part = fig('dose');
-  for (const s of ds.slices) assert.ok(part.includes(`<title>${s.id === 'product' ? 'Этот продукт: молоко (Cs-137) — по вашему расчёту' : s.label}: ${fmtShare(s.share)};`), 'подсказка сектора ' + s.id); // строка питания названа с продуктом из формы
+  for (const s of ds.slices) assert.ok(part.includes(`<title>${s.id === 'product' ? 'Этот продукт: молоко (Cs-137) — по расчёту' : s.label}: ${fmtShare(s.share)};`.replace(/ /g, ' ')), 'подсказка сектора ' + s.id); // строка питания названа с продуктом из формы
   assert.equal((part.match(/<path class="pie-sl[^>]*tabindex="0"/g) || []).length, ds.slices.length, 'сектора доступны с клавиатуры');
   assert.ok(/<line class="pie-hit"/.test(part), 'тонкий сектор питания имеет зону наведения');
 });

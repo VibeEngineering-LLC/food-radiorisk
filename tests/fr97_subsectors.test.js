@@ -43,7 +43,7 @@ test('сумма углов круга = 360° без двойного счёт�
 
 test('подсказка и клавиатура подсектора', () => {
   assert.ok(inner[0].body.includes('tabindex="0"'), 'Should contain tabindex="0"');
-  const shareStr = fmtShare(sub.neverB / rs.total);
+  const shareStr = fmtShare(sub.neverB / rs.total).replace(/ /g, ' '); // #FR-124: экран в тесте нормализован
   assert.ok(inner[0].body.includes(`<title>`), 'Should contain <title>');
   assert.ok(inner[0].body.includes(shareStr), `Should contain share string: ${shareStr}`);
   assert.ok(inner[0].body.includes('радон'), 'Should contain word "радон"');

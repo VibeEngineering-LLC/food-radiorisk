@@ -1,23 +1,23 @@
-# processing.yaml -- влияние кулинарной и технологической обработки на содержание радионуклидов в пище
+# processing.yaml —влияние кулинарной и технологической обработки на содержание радионуклидов в пище
 # Собрано 2026-09-30 (метод sci-search). Отчёт: audit/sci-processing-2026-09-30.md
 #
 # ВЕЛИЧИНЫ (quantity):
-#   Fr -- доля активности сырья, оставшаяся в готовом продукте (0..1; для сушки/варки без потерь = 1)
-#   Pe -- выход продукта (масса готового / масса сырья); у записей TRS-472 Pe лежит в полях pe_best/pe_min/pe_max ЭТОЙ ЖЕ записи
-#   Pf -- отношение удельных активностей после/до (Бк/кг), Fr = Pf * Pe (TRS-472 разд. 11, ф. 51); Pf > 1 -- удельная активность растёт
-#   reduction_factor -- "кратность снижения" из русских источников; если источник не сказал иное, это 1/Pf; к чему отнесена кратность
-#                       (Бк/кг или общая активность) -- смотри note каждой записи, там где источник молчит, так и написано
-# ПОЛЯ ЗНАЧЕНИЙ: value_best -- точечное значение (для TRS-472 это Ref. value или единственное число в столбце Value);
-#   value_min/value_max -- границы диапазона. Одиночное НЕ жирное число в столбце Range таблиц 75/76 записано как min=max при value_best=null.
+#   Fr —доля активности сырья, оставшаяся в готовом продукте (0..1; для сушки/варки без потерь = 1)
+#   Pe —выход продукта (масса готового / масса сырья); у записей TRS-472 Pe лежит в полях pe_best/pe_min/pe_max ЭТОЙ ЖЕ записи
+#   Pf —отношение удельных активностей после/до (Бк/кг), Fr = Pf * Pe (TRS-472 разд. 11, ф. 51); Pf > 1 —удельная активность растёт
+#   reduction_factor —"кратность снижения" из русских источников; если источник не сказал иное, это 1/Pf; к чему отнесена кратность
+#                       (Бк/кг или общая активность) —смотри note каждой записи, там где источник молчит, так и написано
+# ПОЛЯ ЗНАЧЕНИЙ: value_best —точечное значение (для TRS-472 это Ref. value или единственное число в столбце Value);
+#   value_min/value_max —границы диапазона. Одиночное НЕ жирное число в столбце Range таблиц 75/76 записано как min=max при value_best=null.
 #   "Производное" значение (пересчитано из "удалено X %" в Fr = 1 - X) помечено в note словом ПРОИЗВОДНОЕ.
-# cumulative: true -- значение отсчитано от исходного сырья (накопленное); false -- поэтапное (относительно предыдущего продукта/шага);
-#   null -- одна операция либо в источнике не сказано; основание -- в cumulative_basis (для TRS-472) или в note.
-# level: ✅ значение прочитано в источнике и сверено скриптом с текстом (для TRS-472 -- с текстовым слоем PDF, стр. отрисованы и сверены глазами);
-#   📗 -- не использован; ⚠️ -- расхождение источников, двусмысленная формулировка или сомнительный вторичный источник.
+# cumulative: true —значение отсчитано от исходного сырья (накопленное); false —поэтапное (относительно предыдущего продукта/шага);
+#   null —одна операция либо в источнике не сказано; основание —в cumulative_basis (для TRS-472) или в note.
+# level: ✅ значение прочитано в источнике и сверено скриптом с текстом (для TRS-472 —с текстовым слоем PDF, стр. отрисованы и сверены глазами);
+#   📗 —не использован; ⚠️ —расхождение источников, двусмысленная формулировка или сомнительный вторичный источник.
 # Дополнительные поля против шаблона задания: pe_best/pe_min/pe_max, cumulative_basis, also_in (соответствие в TECDOC-1616).
-# Для TRS-472 nuclide -- ЭЛЕМЕНТ ("Cs", "Sr"), как в таблице; изотопы указаны там, где так сказано в таблице (Cs-137, Sr-90).
+# Для TRS-472 nuclide —ЭЛЕМЕНТ ("Cs", "Sr"), как в таблице; изотопы указаны там, где так сказано в таблице (Cs-137, Sr-90).
 # Грибы: записаны строки TRS-472 табл. 77/78 (совпали с Cs-137-griby-kulinarnaya-obrabotka-TECDOC-1616.md, расхождений нет) и данные, которых в справке нет.
-# Таблицы 81 (сроки хранения) и текстовые оговорки в YAML не вынесены -- см. отчёт.
+# Таблицы 81 (сроки хранения) и текстовые оговорки в YAML не вынесены —см. отчёт.
 #
 - id: trs69_vegetables_berries_and_f_washing_of_vegetables_berries_an_cs
   source: TRS472
@@ -379,7 +379,7 @@
   food_group: "fruit"
   food: "Olives"
   process: "Pressing of olives - Oil"
-  process_ru: "Прессование маслин - масло"
+  process_ru: "Прессование маслин —масло"
   quantity: "Fr"
   value_best: 0.13
   value_min: null
@@ -401,7 +401,7 @@
   food_group: "fruit"
   food: "Olives"
   process: "Pressing of olives - Cake"
-  process_ru: "Прессование маслин - жмых"
+  process_ru: "Прессование маслин —жмых"
   quantity: "Fr"
   value_best: 0.43
   value_min: null
@@ -1039,7 +1039,7 @@
   food_group: "cereals"
   food: "Brown, savoury, 'easy cook' white rice"
   process: "Boiling"
-  process_ru: "Варка (бурый, ароматизированный, \"быстрого приготовления\" белый рис)"
+  process_ru: "Варка (бурый, ароматизированный, «быстрого приготовления» белый рис)"
   quantity: "Fr"
   value_best: null
   value_min: 0.3
@@ -1215,7 +1215,7 @@
   food_group: "tea_infusions"
   food: "Tea"
   process: "Brewing 2–8 minutes"
-  process_ru: "Заваривание чая 2-8 минут"
+  process_ru: "Заваривание чая 2–8 минут"
   quantity: "Fr"
   value_best: null
   value_min: 0.4
@@ -1237,7 +1237,7 @@
   food_group: "tea_infusions"
   food: "Tea"
   process: "Brewing 2–8 minutes"
-  process_ru: "Заваривание чая 2-8 минут"
+  process_ru: "Заваривание чая 2–8 минут"
   quantity: "Fr"
   value_best: 0.9
   value_min: null
@@ -4235,7 +4235,7 @@
   food_group: "mushrooms"
   food: "Mushrooms"
   process: "Boiling (30–60 min)"
-  process_ru: "Варка грибов 30-60 мин"
+  process_ru: "Варка грибов 30–60 мин"
   quantity: "Fr"
   value_best: null
   value_min: 0.1
@@ -4257,7 +4257,7 @@
   food_group: "mushrooms"
   food: "Mushrooms"
   process: "Boiling (30–60 min)"
-  process_ru: "Варка грибов 30-60 мин"
+  process_ru: "Варка грибов 30–60 мин"
   quantity: "Fr"
   value_best: null
   value_min: 0.2
@@ -4763,7 +4763,7 @@
   food_group: "mushrooms"
   food: "Lactarius deliciosus, L. necator, Russula delica (fresh weight)"
   process: "Salting in 2–3% salt solution for 72 h"
-  process_ru: "Соление в 2-3 % растворе 72 ч"
+  process_ru: "Соление в 2–3 % растворе 72 ч"
   quantity: "Fr"
   value_best: null
   value_min: 0.003
@@ -5093,7 +5093,7 @@
   food_group: "fish"
   food: "Shrimp"
   process: "Washing with 1–3% solution of NaCl"
-  process_ru: "Мытьё 1-3 % раствором NaCl"
+  process_ru: "Мытьё 1–3 % раствором NaCl"
   quantity: "Fr"
   value_best: 0.9
   value_min: null
@@ -5115,7 +5115,7 @@
   food_group: "fish"
   food: "Shrimp"
   process: "Washing with 1–3% solution of NaCl"
-  process_ru: "Мытьё 1-3 % раствором NaCl"
+  process_ru: "Мытьё 1–3 % раствором NaCl"
   quantity: "Fr"
   value_best: null
   value_min: 0.3
@@ -5203,7 +5203,7 @@
   food_group: "fish"
   food: "Oyster"
   process: "Washing with 1–3% solution of NaCl"
-  process_ru: "Мытьё 1-3 % раствором NaCl"
+  process_ru: "Мытьё 1–3 % раствором NaCl"
   quantity: "Fr"
   value_best: 0.8
   value_min: null
@@ -5225,7 +5225,7 @@
   food_group: "fish"
   food: "Oyster"
   process: "Washing with 1–3% solution of NaCl"
-  process_ru: "Мытьё 1-3 % раствором NaCl"
+  process_ru: "Мытьё 1–3 % раствором NaCl"
   quantity: "Fr"
   value_best: null
   value_min: 0.7
@@ -5357,7 +5357,7 @@
   food_group: "fish"
   food: "Clam"
   process: "Washing with 1–3% solution of NaCl"
-  process_ru: "Мытьё 1-3 % раствором NaCl"
+  process_ru: "Мытьё 1–3 % раствором NaCl"
   quantity: "Fr"
   value_best: null
   value_min: 0.5
@@ -5379,7 +5379,7 @@
   food_group: "fish"
   food: "Clam"
   process: "Washing with 1–3% solution of NaCl"
-  process_ru: "Мытьё 1-3 % раствором NaCl"
+  process_ru: "Мытьё 1–3 % раствором NaCl"
   quantity: "Fr"
   value_best: null
   value_min: 0.3
@@ -5594,8 +5594,8 @@
   nuclide: "Cs-137"
   food_group: "bone"
   food: "Кости (конечный продукт)"
-  process: "Варка (30-40 мин.)"
-  process_ru: "Варка 30-40 мин"
+  process: "Варка (30–40 мин.)"
+  process_ru: "Варка 30–40 мин"
   quantity: reduction_factor
   value_best: null
   value_min: 3
@@ -5611,8 +5611,8 @@
   nuclide: "Cs-137"
   food_group: "meat"
   food: "Мышцы (конечный продукт)"
-  process: "Варка (30-40 мин.)"
-  process_ru: "Варка 30-40 мин"
+  process: "Варка (30–40 мин.)"
+  process_ru: "Варка 30–40 мин"
   quantity: reduction_factor
   value_best: null
   value_min: 3
@@ -6207,7 +6207,7 @@
   food_group: "milk_products"
   food: "Сливки"
   process: "Двух-трёхкратная промывка сливок тёплой водой и обезжиренным молоком"
-  process_ru: "Промывка сливок 2-3 раза"
+  process_ru: "Промывка сливок 2–3 раза"
   quantity: reduction_factor
   value_best: null
   value_min: 50
@@ -6445,7 +6445,7 @@
   food_group: "meat"
   food: "Мясо (солонина)"
   process: "Длительное хранение в засоленном виде и последующее вымачивание, четыре обработки со сменой раствора"
-  process_ru: "Хранение в соли и вымачивание, 4 обработки со сменой раствора"
+  process_ru: "Хранение в соли и вымачивание, 4 обработки со сменой рассола"
   quantity: Fr
   value_best: null
   value_min: 0.01
@@ -6513,7 +6513,7 @@
   food_group: "milk_products"
   food: "Сливки"
   process: "Двух-трёхкратная промывка сливок тёплой питьевой водой и обезжиренным молоком"
-  process_ru: "Промывка сливок 2-3 раза"
+  process_ru: "Промывка сливок 2–3 раза"
   quantity: reduction_factor
   value_best: null
   value_min: 50
@@ -6998,7 +6998,7 @@
   quote: "а из мяса взрослых животных — 85...87%, что позволяет снизить концентрацию цезия в вываренном мясе в 3...6 раз по сравнению с сырым продуктом"
   checked_against: "PDF p.258"
   level: "✅"
-  note: "ПРОИЗВОДНОЕ: в бульон 85-87 %, Fr 0.13-0.15; TRS-472: варка мяса Cs Fr 0.4 (0.2-0.7) - выше в 2-3 раза"
+  note: "ПРОИЗВОДНОЕ: в бульон 85-87 %, Fr 0.13-0.15; TRS-472: варка мяса Cs Fr 0.4 (0.2-0.7) - выше в 2–3 раза"
 - id: "lysenko17_meat_boil_cs_conc"
   source: "Lysenko2017"
   loc: "Учебник по радиобиологии.pdf.md:12254-12256"
@@ -7015,7 +7015,7 @@
   quote: "что позволяет снизить концентрацию цезия в вываренном мясе в 3...6 раз по сравнению с сырым продуктом"
   checked_against: "PDF p.258"
   level: "✅"
-  note: "кратность по концентрации; Атлас МЧС 2009 даёт 3-6 для мышц при варке 30-40 мин - то же число"
+  note: "кратность по концентрации; Атлас МЧС 2009 даёт 3-6 для мышц при варке 30–40 мин - то же число"
 - id: "lysenko17_meat_salting_soaking"
   source: "Lysenko2017"
   loc: "Учебник по радиобиологии.pdf.md:12260-12262"
@@ -7209,8 +7209,8 @@
   nuclide: [Sr-90, Cs-137, I-131]
   food_group: "milk_products"
   food: "Сливки"
-  process: "Промывание сливок 2-3 раза тёплой водой"
-  process_ru: "Промывание сливок тёплой водой 2-3 раза"
+  process: "Промывание сливок 2–3 раза тёплой водой"
+  process_ru: "Промывание сливок тёплой водой 2–3 раза"
   quantity: reduction_factor
   value_best: null
   value_min: 50
@@ -7379,8 +7379,8 @@
   nuclide: "радионуклиды (не уточнено)"
   food_group: "potato"
   food: "Картофель"
-  process: "Вымачивание 3-4 ч в слегка подсоленной воде"
-  process_ru: "Вымачивание 3-4 ч в слегка подсоленной воде"
+  process: "Вымачивание 3–4 ч в слегка подсоленной воде"
+  process_ru: "Вымачивание 3–4 ч в слегка подсоленной воде"
   quantity: Fr
   value_best: null
   value_min: 0.6
@@ -7814,7 +7814,7 @@
   quote: "7,20  [...]  7,46  [...]  6,09"
   checked_against: ".md (MinerU OCR)"
   level: "✅"
-  note: "по видам: 7,20 / 7,46 / 6,09; среднее 6,9 назвал автор (l.86); столбец таблицы назван \"После отваривания\", число отваров указано только в тексте (l.86: \"3-разового отваривания\"); TECDOC-1616: варка 30-60 мин Fr 0.1-0.3 (кратность 3,3-10)"
+  note: "по видам: 7,20 / 7,46 / 6,09; среднее 6,9 назвал автор (l.86); столбец таблицы назван \"После отваривания\", число отваров указано только в тексте (l.86: \"3-разового отваривания\"); TECDOC-1616: варка 30–60 мин Fr 0.1-0.3 (кратность 3,3-10)"
 - id: "nevdakh_frying"
   source: "Nevdakh"
   loc: "Невдах, К. Г. Определение способов снижения удельной активности ${}^{137}$ Cs в.pdf.md:84"

@@ -52,13 +52,16 @@ const parseRu = (s) => {
 test('FR-89: состав и порядок вкладок', async () => {
   const html = await resultHtml(ADULT());
   const labels = [...html.matchAll(/<button[^>]*role="tab"[^>]*>([^<]*)<\/button>/g)].map(m => m[1]);
-  assert.equal(labels.length, 6);
+  assert.equal(labels.length, 8); // #FR-112/#FR-113: добавлены «Место сбора и величины» и «Для специалиста»
   assert.equal(labels[0], 'Сводка');
-  assert.equal(labels[1], 'Соответствие нормам');
-  assert.equal(labels[2], 'Подробный расчёт');
-  assert.equal(labels[3], 'Сравнение с облучением');
-  assert.ok(labels[4].startsWith('Бытовые риски'));
-  assert.equal(labels[5], 'Источники'); // #FR-92: расчётов на вкладке больше нет
+  // #FR-118 (оператор 2026-10-11): «Сравнение с облучением» и «Бытовые риски» — на втором и третьем месте
+  assert.equal(labels[1], 'Сравнение доз');
+  assert.ok(labels[2].startsWith('Бытовые риски'));
+  assert.equal(labels[3], 'Соответствие нормам');
+  assert.equal(labels[4], 'Подробный расчёт');
+  assert.equal(labels[5], 'Место сбора и величины');
+  assert.equal(labels[6], 'Для специалиста');
+  assert.equal(labels[7], 'Источники'); // #FR-92: расчётов на вкладке больше нет
 });
 
 test('FR-89: вкладка по умолчанию — Сводка, прежних карточек над вкладками нет', async () => {
@@ -222,7 +225,7 @@ test('FR-89: мелкая доля питания различима', async () 
   const pieCount = (dosePart.match(/class="pie-sl/g) || []).length;
   assert.equal(pieCount, 10, '10 секторов: питание, радон, КТ, рентгенография, остальная медицина, перелёты, космическое, земля, внутреннее, техногенное (#FR-101 v41)');
   
-  assert.ok(dosePart.includes(`Этот продукт (молоко): ${fmtShare(productShare)}`), 'product label with share');
+  assert.ok(dosePart.includes(`Этот продукт (молоко): ${fmtShare(productShare)}`.replace(/ /g, ' ')), 'product label with share');
   assert.ok(dosePart.includes('pie-me'), 'pie-me present');
   
   // Проверка HTML для риска
@@ -256,7 +259,7 @@ test('FR-89: подробный расчёт — доза собирается �
       const block = html.substring(startIdx, endIdx);
       
       // (a) Таблица шагов
-      const aMatch = block.match(/<td>A — активность[^<]*<\/td><td class="num">([^<]*)</);
+      const aMatch = block.match(/<td>A — удельная активность[^<]*<\/td><td class="num">([^<]*)</);
       const frMatch = block.match(/<td>Fr — доля[^<]*<\/td><td class="num">([^<]*)</);
       const mMatch = block.match(/<td>M — масса[^<]*<\/td><td class="num">([^<]*)</);
       const i0Match = block.match(/<td>I₀ = A · Fr · M[^<]*<\/td><td class="num">([^<]*)</);

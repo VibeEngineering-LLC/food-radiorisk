@@ -27,5 +27,5 @@ test('V09: нет абзацев о заболеваемости и коэффи
 test('V09: в таблице нет колонки риска', async () => {
   const t = await draw();
   assert.doesNotMatch(t, /Риск, порядок величины/);
-  assert.ok(t.includes('Источник облучения') && t.includes('Шкала (логарифмическая)'));
+  assert.ok(t.includes('Источник облучения') && t.includes('Шкала (линейная)'));
 });

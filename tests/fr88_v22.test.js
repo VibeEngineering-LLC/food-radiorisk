@@ -49,19 +49,19 @@ test('D-7: огромная активность — предупреждени�
   const w = r.warnings.join(' | ');
   assert.ok(/линейн\S* беспороговой модел\S* не применим/.test(w), w);
   assert.ok(/МКРЗ.{0,20}103/.test(w), w);
-  assert.ok(/100 мЗв/.test(w), w);
+  assert.ok(/100\sмЗв/.test(w), w); // #FR-124: между числом и единицей неразрывный пробел
   const sp = summaryParts(r, input);
   assert.ok(!/10⁷|\d{4,} ?\d{3}/.test(sp.number), sp.number);
-  assert.ok(/больше 100 %/.test(sp.number), sp.number);
+  assert.ok(/больше 100\s%/.test(sp.number), sp.number);
   const st = statusText({ result: r, input });
-  assert.ok(/больше 100 %/.test(st), st);
-  assert.ok(!/10⁷|\d{4,} ?\d{3} на 1 000 000/.test(st), st);
-  assert.equal(fmtPerMillion(1.6), 'расчёт неприменим (вероятность больше 100 %)');
+  assert.ok(/больше 100\s%/.test(st), st);
+  assert.ok(!/10⁷|\d{4,}\s?\d{3}\sна\s1\s000\s000/.test(st), st);
+  assert.equal(fmtPerMillion(1.6), 'расчёт неприменим (вероятность больше 100 %)');
   // обычная доза: предупреждения нет, число печатается
   const okIn = milk([['Cs-137', 50]]);
   const ok = computeScenario(data, okIn);
   assert.ok(!/беспороговой/.test(ok.warnings.join(' | ')));
-  assert.ok(/на 1 000 000/.test(summaryParts(ok, okIn).number));
+  assert.ok(/на\s1\s000\s000/.test(summaryParts(ok, okIn).number)); // #FR-124: неразрывные пробелы
 });
 
 // Z117 (D-7б): при вердикте «не соответствует» оговорка «вердикт «соответствует» неполон» не нужна и противоречит
@@ -70,9 +70,9 @@ test('D-7: предупреждение о неполноте B не говор�
   assert.equal(bad.limits.compliance.verdict, 'nonconforms');
   const wb = bad.warnings.filter(w => /B рассчитан не по всем/.test(w));
   assert.equal(wb.length, 1);
-  assert.ok(!/«соответствует» неполон/.test(wb[0]), wb[0]);
+  assert.ok(!/«соответствует» неполно/.test(wb[0]), wb[0]);
   // при вердикте «соответствует» оговорка сохраняется
   const good = computeScenario(data, milk([['Cs-137', 5]]));
   assert.equal(good.limits.compliance.verdict, 'conforms');
-  assert.ok(good.warnings.some(w => /«соответствует» неполон/.test(w)));
+  assert.ok(good.warnings.some(w => /«соответствует» неполно/.test(w)));
 });

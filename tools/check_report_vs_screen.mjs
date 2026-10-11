@@ -79,7 +79,7 @@ export function buildScenario(scn) {
 
 const META = { datasets: 3, records: 9, sha: 'abcdef0123456789' };
 const ISO = '2026-10-10T12:00:00.000Z';
-const TABS = ['sum', 'norms', 'calc', 'cmp', 'life', 'src']; // #FR-89: все вкладки результата, экран = их объединение
+const TABS = ['sum', 'cmp', 'life', 'norms', 'calc', 'site', 'spec', 'src']; // #FR-112/#FR-113/#FR-118: // #FR-89: все вкладки результата, экран = их объединение
 
 // Собирает список ожидаемых сниппетов для одного сценария.
 function collectExpectations(input, result) {
@@ -102,7 +102,7 @@ function collectExpectations(input, result) {
   // 1. Сводка (summaryParts)
   const p = summaryParts(result, input);
   const parts = [
-    p.head, p.natural, p.number, p.caption, p.background, p.equiv, p.verbal,
+    p.natural ? p.head : p.headShort, p.natural, p.termCap, p.number, p.life?.cap, p.life?.number, p.caption, p.background, p.equiv, p.verbal, // #FR-123: заголовок один, подписи чисел
     ...(p.notes || []), p.link,
     p.verdict.title, ...(p.verdict.lines || []).map(l => l.text), p.verdict.sep,
     p.dose.head, ...(p.dose.lines || []),
@@ -182,14 +182,14 @@ function collectExpectations(input, result) {
   if (result.diet) {
     const d = result.diet;
     expect('рацион: ряд', seriesLabel(d.series));
-    if (d.year) expect('рацион: год ряда', `${d.year} г.`);
+    if (d.year) expect('рацион: год ряда', `${d.year} год`); // #FR-124: «г.» в значении «год» заменено словом
   }
 
   // 12. Природные нуклиды
   if (t.naturalNuclides?.length) expect('природные нуклиды', t.naturalNuclides.join(', '));
 
   // 13. Мета-строка
-  expect('мета', `Данные: ${META.datasets} наборов, ${META.records} записей, sha ${META.sha.slice(0, 8)}`);
+  expect('мета', `Данные: ${META.datasets} наборов, ${META.records} записей, контрольная сумма ${META.sha.slice(0, 8)}`); // #FR-124
 
   return out;
 }

@@ -1,6 +1,7 @@
 import SOURCES from '../../public/data/sources.json' with { type: 'json' };
 import { SOURCE_SHORT } from './form.js';
 import { citeParts } from './render.js';
+import { nb } from './fmt.js';
 
 export const RISK_COEFF_SOURCE = 'NRB2009';
 export const LIFE_SOURCES = ['ROSSTAT_DEMOG2023', 'WHO_MORTDB'];
@@ -184,7 +185,7 @@ export function buildBibliography(result) {
     return entries.map((e, i) => ({
         n: i + 1,
         id: e.id,
-        text: e.text,
+        text: nb(e.text),
         doi: e.doi,
         url: e.url
     }));

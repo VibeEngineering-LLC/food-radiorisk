@@ -13,12 +13,12 @@ const S5 = () => inputFor('mushrooms_fresh', 'грибы свежие', [['Cs-13
 const norm = (s) => s.replace(/\s/g, ' ');
 
 test('V14: текст строки состояния', () => {
-  assert.equal(norm(statusText(calcOf(S1()))), 'Cs-137 · риск 16 на 1 000 000 за 10 лет · доза самого нагруженного года 32,5 мкЗв · ТР ТС: не соответствует');
-  assert.ok(norm(statusText(calcOf(S2()))).includes('риск 87 на 1 000 000 с 3 до 13 лет · доза самого нагруженного года 211 мкЗв · ТР ТС: соответствует'));
+  assert.equal(norm(statusText(calcOf(S1()))), 'Cs-137 · риск 16 на 1 000 000 за 10 лет · наибольшая годовая доза 32,5 мкЗв · ТР ТС: не соответствует');
+  assert.ok(norm(statusText(calcOf(S2()))).includes('риск 87 на 1 000 000 с 3 до 13 лет · наибольшая годовая доза 211 мкЗв · ТР ТС: соответствует'));
   assert.ok(norm(statusText(calcOf(S2()))).startsWith('Cs-137, Sr-90 · '));
   assert.equal(statusText(null), 'Загрузка данных…');
   assert.equal(statusText({ input: {}, result: { ok: false } }), 'Расчёт не выполнен — исправьте ввод');
-  assert.ok(statusText(calcOf(inputFor(null, 'вода', [['Ra-226', 1]], {}))).includes('только природные нуклиды'));
+  assert.ok(statusText(calcOf(inputFor(null, 'вода', [['Ra-226', 1]], {}))).includes('только природные радионуклиды'));
 });
 
 test('V14: цвет значка — худший из вердикта и класса дозы (S1 красный, S5 зелёный, S4 жёлтый)', () => {

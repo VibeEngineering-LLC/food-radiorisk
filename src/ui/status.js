@@ -18,7 +18,7 @@ export function statusText(calc) {
   const nuclides = result.rows.map(x => x.nuclide).join(', ');
 
   if (result.totals.riskNominal === null) {
-    return `${nuclides} · только природные нуклиды: главное число и словесная оценка не считаются`;
+    return `${nuclides} · только природные радионуклиды: основной результат и словесная оценка не рассчитываются`;
   }
 
   const span = input.lifetime

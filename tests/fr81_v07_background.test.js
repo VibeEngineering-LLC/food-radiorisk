@@ -5,6 +5,7 @@ import { data, inputFor } from './fr81_helpers.js';
 import { computeScenario } from '../src/calc/model.js';
 import { renderTabs } from './fr89_render.js';
 import { fmtCount, fmtPerMillion } from '../src/ui/fmt.js';
+import { deathsPhrase } from '../src/ui/texts_v.js';
 
 const META = { datasets: 0, records: 0, sha: '00000000' };
 const norm = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&nbsp;|\s+/g, ' ');
@@ -21,7 +22,7 @@ test('V07: S1 — строка фона на экране из расчёта', 
   assert.ok(Math.abs(result.background.F - 0.1564102702) < 1e-7);
   // формат чисел (160 000 и 16) проверяет V03 (tests/fr81_v03_fmt.test.js), здесь числа берутся из тех же функций
   const F = fmtCount(1e6 * result.background.F), k = fmtPerMillion(result.totals.riskNominal);
-  assert.ok(main.includes(`из 1 000 000 человек в возрасте 20 лет от новообразований (рака и других опухолей) за всю оставшуюся жизнь (до конца жизни, без границы по возрасту) умирают около ${F} (Россия, 2019 г.). Это питание добавило бы к ним около ${k}.`));
+  assert.ok(main.includes(`из 1 000 000 человек в возрасте 20 лет от новообразований (рака и других опухолей) за всю оставшуюся жизнь (без ограничения возрастом 70 лет) умирают около ${F} (Россия, 2019 г.). Потребление этого продукта добавило бы к ним ${deathsPhrase(result.totals.riskNominal, fmtCount, fmtPerMillion)} при потреблении в течение 10 лет и около ${fmtCount(result.eating.riskNominal * 1e6)} — при таком же потреблении в течение ${result.eating.H} лет.`.replace(/ /g, ' '))); // #FR-123 (#FR-124: ожидаемая строка с неразрывными пробелами приведена к виду нормализованного экрана): одна фраза с обоими числами, единица названа
 });
 
 test('V07: возраст a — из режима «с a до b лет», иначе по возрастной группе', () => {
@@ -35,6 +36,6 @@ test('V07: нет таблицы дожития — строки фона нет
   assert.equal(result.ok, true);
   assert.equal(result.background, null);
   assert.ok(!main.includes('Для сравнения'));
-  assert.ok(main.includes('Риск от этого питания за 10 лет'));
+  assert.ok(main.includes('Риск при потреблении этого продукта') && main.includes('При потреблении в течение 10 лет'));
   assert.ok(main.includes('Соответствие продукта нормам'));
 });

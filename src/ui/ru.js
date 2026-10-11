@@ -10,7 +10,7 @@ export function unitRu(u) {
   // Exact-match table
   const exactMap = {
     'dimensionless': 'безразм.',
-    '% of fresh mass': '% сырой массы',
+    '% of fresh mass': '% свежей массы',
     'fraction of carcass weight': 'доля массы туши',
     '% of daily ration intake per 1 kg (L) of product': '% суточного поступления на 1 кг (л) продукта',
     'y': 'лет',
@@ -90,7 +90,7 @@ export function locRu(loc) {
   // STEP A: Remove internal working notes
 
   // 1. Remove parenthesised groups containing md/txt references and preceding whitespace
-  s = s.replace(/\s*\([^()]*(?:\.?md\b|md line|\.txt\b)[^()]*\)/gi, '');
+  s = s.replace(/\s*\([^()]*(?:\.?md\b|md line|\.txt\b|complexdoc)[^()]*\)/gi, ''); // #FR-124 (I13): «PDF (complexdoc) p.159» — служебная пометка в скобках вырезается, указатель «PDF p.159» остаётся
 
   // 2. Номера строк .md вырезаются ДО отбора сегментов, иначе «Атлас МЧС 2009, .md lines …» выпадает целиком
   s = s.replace(/,?\s*(?:djvu\s*)?\.?md lines? [\d\s,–-]+/gi, '');
@@ -157,7 +157,9 @@ export function locRu(loc) {
 // документ уже назван в столбце «Источник», в месте оставляем только таблицу/страницу
 const EXTRA = [[/\s*\([^()]*(?:\.docx?\b|docx-|complexdoc|\btxt\b)[^()]*\)?/gi, ''], [/;?\s*\.docx? строка[^;]*/g, ''], [/PDF \(complexdoc\) /g, 'PDF '],
   [/plane source, beta = infinity/g, 'плоский источник, β = ∞'], [/uniform layer/g, 'равномерный слой'], [/meadow plots, June/g, 'луговые участки, июнь'],
-  [/\bsource \[/g, 'первичный источник ['], [/NCRP parameters/g, 'параметры NCRP'], [/RESRAD 6 Manual App\. /g, 'руководство RESRAD 6, прил. '], [/\bpoint\b/g, 'пункт']];
+  [/\bsource \[/g, 'первичный источник ['], [/NCRP parameters/g, 'параметры NCRP'], [/RESRAD 6 Manual App\. /g, 'руководство RESRAD 6, прил. '], [/\bpoint\b/g, 'пункт'],
+  // #FR-124 (I14): единое «с.», «т. 21, № 3» с неразрывными пробелами
+  [/печ\.\s*стр\.\s*(?=\d)/g, 'печ. с. '], [/(?<![А-Яа-яЁё])стр\.\s*(?=\d)/g, 'с. '], [/(?<![А-Яа-яЁё])т\.\s*(?=\d)/g, 'т. '], [/(т\. \d+)\s+(?=№)/g, '$1, '], [/№\s*(?=\d)/g, '№ ']];
 function tidyLoc(s) {
   for (const [p, r] of EXTRA) s = s.replace(p, r);
   const parts = s.split(', ');

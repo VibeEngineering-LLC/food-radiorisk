@@ -80,7 +80,7 @@ test('FR-101: фон жилища по дозиметру заменяет, а �
     const bgTerr = sumRec(IDS[r].terrestrial) * 1e-3 * H;
     assert.ok(closeTo(terr.doseSv, (cmp.parts.terrOutdoorMsv ?? 0) * 1e-3 * H + sv), 'приземный фон с жилищем');
     assert.ok(terr.doseSv < bgTerr + sv, 'фон жилища заменяет, а не прибавляется');
-    assert.ok(terr.label.includes('по вашему дозиметру'), 'подпись с дозиметром');
+    assert.ok(terr.label.includes('по показанию дозиметра'), 'подпись с дозиметром');
     const dsNoDw = buildDoseSlices(cmp, null, {});
     const terrNoDw = byId(dsNoDw, 'terrestrial');
     assert.ok(terrNoDw.label.includes('среднее'), 'подпись без дозиметра');
@@ -108,7 +108,7 @@ test('FR-101: перелёты — частота меняет только св
     assert.ok(baseFlights.label.includes('по умолчанию'), 'подпись по умолчанию');
     const dsCustom = buildDoseSlices(cmp, null, { flightN: 4, flightDefault: false });
     const flightsCustom = byId(dsCustom, 'flights');
-    assert.ok(flightsCustom.label.includes('по вашему вводу'), 'подпись по вводу');
+    assert.ok(flightsCustom.label.includes('введено пользователем'), 'подпись по вводу');
   }
 });
 

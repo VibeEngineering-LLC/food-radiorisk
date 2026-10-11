@@ -119,7 +119,7 @@ export function dietWarnText(rec, group) {
     label: group ? group.label_ru : '',
     series: seriesLabel(rec.series),
     source: shortSource(rec.source),
-    year: rec.year ? `, ${rec.year} г.` : '',
+    year: rec.year ? `, ${rec.year} год` : '',
     loc: locRu(rec.loc),
     scope: group && dietScopeText(group) ? ' ' + dietScopeText(group) : ''
   });
@@ -129,7 +129,7 @@ export function dietSummaryText(rec) {
   return fill(T.DIET_SUMMARY, {
     value: fmtNum(rec.value),
     series: seriesLabel(rec.series),
-    year: rec.year ? `, ${rec.year} г.` : ''
+    year: rec.year ? `, ${rec.year} год` : ''
   });
 }
 

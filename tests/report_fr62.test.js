@@ -32,11 +32,11 @@ test('Markdown: buildReport md structure and content', () => {
   
   const text = res.text;
   assert.ok(text.startsWith('# Доза и риск от радионуклидов в пище'), 'starts with title');
-  assert.ok(text.includes('## Расчёт по нуклидам'), 'contains nuclide section');
-  assert.ok(text.includes('## Источники чисел'), 'contains sources section');
+  assert.ok(text.includes('## Расчёт по радионуклидам'), 'contains nuclide section');
+  assert.ok(text.includes('## Значения величин и их источники'), 'contains sources section');
   assert.match(text, /\|\s*---:?\s*\|/, 'contains GFM separator');
   assert.ok(text.includes(result.rows[0].nuclide), `contains nuclide ${result.rows[0].nuclide}`);
-  assert.ok(text.includes('sha abcdef01'), 'contains sha');
+  assert.ok(text.includes('контрольная сумма abcdef01'), 'contains sha');
   assert.ok(text.endsWith('\n'), 'ends with newline');
   assert.ok(!text.includes('<a '), 'no html links');
   assert.ok(!text.includes('&amp;'), 'no escaped ampersands');
@@ -110,7 +110,7 @@ test('Missing optional parts do not throw and omit headings', () => {
   const resNoLimits = buildReport('md', { input, result: { ...result, limits: undefined } }, null, ISO);
   assert.ok(typeof resNoLimits.text === 'string');
   assert.ok(!resNoLimits.text.includes('Нормы РФ'), 'no RF norms heading');
-  assert.ok(!resNoLimits.text.includes('Зарубежные нормы'), 'no foreign norms heading');
+  assert.ok(!resNoLimits.text.includes('Нормы других стран'), 'no foreign norms heading');
 
   // Missing warnings
   const resNoWarnings = buildReport('md', { input, result: { ...result, warnings: undefined } }, null, ISO);
@@ -137,19 +137,20 @@ test('Тип содержимого: md — text/markdown, html — text/html, j
 });
 
 test('Склонение лет в итоговой таблице (md и html): 2 года, 5 лет, 11 лет, 21 год', () => {
-  for (const [n, word] of [[2, 'года'], [5, 'лет'], [11, 'лет'], [21, 'год']]) {
+  for (const [n, word, gen] of [[2, 'года', 'лет'], [5, 'лет', 'лет'], [11, 'лет', 'лет'], [21, 'год', 'года']]) {
     const c = { input: { ...input, years: n }, result };
     for (const fmt of ['md', 'html']) {
       const text = buildReport(fmt, c, meta, ISO).text;
-      assert.ok(text.includes(`Доза за ${n} ${word}`), `${fmt}: «Доза за ${n} ${word}»`);
-      assert.ok(text.includes(`Риск от этого питания за ${n} ${word}`), `${fmt}: «Риск от этого питания за ${n} ${word}»`);
+      assert.ok(text.includes(`Ожидаемая эффективная доза за ${n} ${word} потребления`), `${fmt}: «Ожидаемая эффективная доза за ${n} ${word} потребления»`);
+      // #FR-123: заголовок один («Риск от этого питания»), срок — в подписи числа, в родительном падеже после «в течение»
+      assert.ok(text.includes('Риск при потреблении этого продукта') && text.includes(`При потреблении в течение ${n} ${gen}`), `${fmt}: «При потреблении в течение ${n} ${gen}»`);
     }
   }
 });
 
 test('Склонение лет: при years = 1 строк «за N …» нет, «70 лет» нормы не меняется', () => {
   const one = buildReport('md', { input: { ...input, years: 1 }, result }, meta, ISO).text;
-  assert.ok(!one.includes('Доза за 1 '), 'строка «Доза за N» при years = 1 не выводится');
+  assert.ok(!one.includes('Ожидаемая эффективная доза за 1 '), 'строка «доза за N лет» при years = 1 не выводится');
   const many = buildReport('md', { input: { ...input, years: 2 }, result }, meta, ISO).text;
   assert.ok(many.includes('Доза и нормы облучения'), 'блок «Доза и нормы облучения» на месте');
 });

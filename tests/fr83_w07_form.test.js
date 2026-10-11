@@ -53,7 +53,7 @@ test('«черника»: «не установлено», кнопка «Вве
 test('год берётся из данных: подмена года в записи баланса меняет подпись', async () => {
   const ch2 = { ...ch, diet: ch.diet.map(r => r.id === 'diet_bal2025_potato' ? { ...r, year: 2024 } : r) };
   const { text } = await page(mk('Картофель'), ch2);
-  assert.ok(text.includes('2024 г.'));
+  assert.ok(text.includes('2024 год'));
 });
 
 test('«знаю»: поля ввода доступны, строки умолчания нет', async () => {
@@ -77,7 +77,7 @@ test('«высокое»: мясо — 10-я децильная группа; к
 test('охват группы: для мяса «принято, что вся она — ваш продукт», для картофеля такой строки нет', async () => {
   const { html: h1, text: t1 } = await page(mk('Говядина'));
   assert.ok(h1.includes('id="dietScope"'));
-  assert.ok(t1.includes('вся она — ваш продукт'));
+  assert.ok(t1.includes('вся она приходится на данный продукт'));
 
   const { html: h2 } = await page(mk('Картофель'));
   assert.ok(!h2.includes('id="dietScope"'));

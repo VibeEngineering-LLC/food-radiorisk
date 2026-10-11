@@ -108,17 +108,17 @@ test('п. 2: 14 названий проверки B не принимаются 
 test('п. 2: подтверждение — как ручной выбор, с отметкой в результате и отчёте', () => {
   const base = inputFor(null, 'мука кормовая', [['Cs-137', 10]]);
   const no = computeScenario(data, base);
-  assert.ok(!no.warnings.some((w) => /подтверждению пользователя/.test(w)));
+  assert.ok(!no.warnings.some((w) => /после подтверждения пользователем/.test(w)));
   const yes = computeScenario(data, { ...base, product: { name: 'мука кормовая', state: 'fresh', confirmId: 'p_muka' } });
   assert.ok(yes.ok);
-  const w = yes.warnings.find((x) => /подтверждению пользователя/.test(x));
+  const w = yes.warnings.find((x) => /после подтверждения пользователем/.test(x));
   assert.ok(w, yes.warnings.join(' | '));
   assert.match(w, /«Мука»/);
   assert.match(w, /«кормовая»/);
   assert.equal(code('мука кормовая', 'p_muka'), 'cereals');
   assert.equal(code('мука кормовая', 'p_moloko'), null);
   const md = buildReport('md', { input: { ...base, product: { name: 'мука кормовая', state: 'fresh', confirmId: 'p_muka' } }, result: yes }, { datasets: 1, records: 1, sha: '0' }, '2026-10-09T00:00:00.000Z').text;
-  assert.match(md, /подтверждению пользователя/);
+  assert.match(md, /после подтверждения пользователем/);
 });
 
 test('п. 2: форма — «частично»: текст, кнопка подтверждения, группы; подтверждение уходит в расчёт и сбрасывается сменой названия', () => {
@@ -198,9 +198,9 @@ test('п. 4: ключи КП, сухое вещество, обработка с
     ['p_volnushka_rozovaya', 'Рыжик, груздь, волнушка (Lactarius)'],
     ['p_belyy_gruzd', 'Рыжик, груздь, волнушка (Lactarius)'],
     ['p_gruzd_chernyy', 'Рыжик, груздь, волнушка (Lactarius)'],
-    ['p_dozhdevik_zhemchuzhnyy', 'слабонакапливающие грибы: опенок осенний, гриб зонтичный, дождевик'],
-    ['p_zontik_pestryy', 'слабонакапливающие грибы: опенок осенний, гриб зонтичный, дождевик'],
-    ['p_bolotnyy_podberezovik', 'средненакапливающие: лисичка, подберезовик, белый, подосиновик, рядовка серая'],
+    ['p_dozhdevik_zhemchuzhnyy', 'слабо накапливающие грибы: опенок осенний, гриб зонтичный, дождевик'],
+    ['p_zontik_pestryy', 'слабо накапливающие грибы: опенок осенний, гриб зонтичный, дождевик'],
+    ['p_bolotnyy_podberezovik', 'средне накапливающие: лисичка, подберёзовик, белый, подосиновик, рядовка серая'],
     ['p_solenye_syroezhki', 'Сыроежка (Russula)'],
     ['p_lekarstvennoe_rastitelnoe_syre', '10 видов лекарственного растительного сырья, Воронежская обл. (не ягоды)']
   ];

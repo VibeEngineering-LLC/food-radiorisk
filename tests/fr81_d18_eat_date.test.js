@@ -22,16 +22,18 @@ test('D18: после даты начала распад идёт по года�
   near(r.rows[0].intakeBqTotal, 1000 * Math.pow(2, -3652 / (T * 365.25)) * (T / Math.LN2) * (1 - Math.pow(2, -10 / T)));
 });
 
-test('D18: дата начала раньше даты пробы — понятная ошибка', () => {
-  const r = run(null, 'продукт', [['Cs-137', 1000]], { eatDate: '2010-01-01', nuclides: [{ nuclide: 'Cs-137', source: 'measured', measuredBqPerKg: 1000, measuredUncertaintyBqPerKg: 0, sampleDate: '2016-06-01', variant: 'central', samplePrep: { mode: 'as_is', concentrationFactor: 1 } }] });
-  assert.equal(r.ok, false);
-  assert.match(r.errors[0], /раньше даты пробы/);
+// #FR-108 (решение оператора 2026-10-11): раньше даты пробы — не ошибка, а пересчёт назад с одним предупреждением; ошибка остаётся для неверной даты
+test('D18: дата начала раньше даты пробы — активность пересчитана назад, одно предупреждение', () => {
+  const r = run(null, 'продукт', [['Cs-137', 1000]], { eatDate: '2010-01-01', constantActivity: true, years: 1, nuclides: [{ nuclide: 'Cs-137', source: 'measured', measuredBqPerKg: 1000, measuredUncertaintyBqPerKg: 0, sampleDate: '2016-06-01', variant: 'central', samplePrep: { mode: 'as_is', concentrationFactor: 1 } }] });
+  assert.equal(r.ok, true);
+  assert.equal(r.warnings.filter(w => /раньше даты пробы/.test(w)).length, 1);
+  near(r.rows[0].intakeBqPerYear, 1000 * Math.pow(2, 2343 / (T * 365.25)));
 });
 
 test('D18: по умолчанию дата начала питания — сегодня; поле есть в форме и попадает в ввод расчёта', async () => {
   assert.equal(initialRaw(ch).eatDate, todayISO());
   assert.match(todayISO(new Date(2026, 9, 5)), /^2026-10-05$/);
   const s = await screen({ field: { eatDate: '2026-10-05' }, comp: ['src/react/Form.jsx', 'default', () => ({ choices: ch, raw: initialRaw(ch, '2026-10-05'), setRaw() {}, tab: 1, setTab() {}, onPreset() {}, onExport() {} })] });
-  assert.match(s.html, /Дата начала питания/);
+  assert.match(s.html, /Дата начала потребления/);
   assert.equal((await screen({ field: { eatDate: '2026-10-05' } })).input.eatDate, '2026-10-05');
 });

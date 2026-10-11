@@ -8,7 +8,7 @@ import { REGIONS } from '../src/calc/region.js';
 import { buildReport } from '../src/ui/report.js';
 
 const META = { datasets: 3, records: 9, sha: 'abcdef0123456789' };
-const TABS = ['sum', 'norms', 'calc', 'cmp', 'life', 'src'];
+const TABS = ['sum', 'cmp', 'life', 'norms', 'calc', 'site', 'spec', 'src']; // #FR-112/#FR-113/#FR-118: 8 вкладок в порядке экрана
 const MARK = /audit\/|#FR|D-0\d|fr1\d\d|gaps-|оператор|исследования fr/i;
 
 const SC = [

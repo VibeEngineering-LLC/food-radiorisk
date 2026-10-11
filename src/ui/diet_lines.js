@@ -9,7 +9,7 @@ export function dietLines(pick, recs, mode) {
   }
 
   const valueRec = (id) => (recs || []).find(r => r.kind === 'value' && r.id === id) || null;
-  const yearText = (r) => r.year ? `, ${r.year} г.` : '';
+  const yearText = (r) => r.year ? `, ${r.year} год` : '';
 
   const infoLine = (p) => {
     if (p.info && p.group && p.group.info_label) {

@@ -1,7 +1,7 @@
-import { esc, fmtNum } from './fmt.js';
+import { esc, fmtNum, NB, levelWord } from './fmt.js';
 import { matchProduct } from '../calc/products.js';
 
-export const TUM_HINT = "ТУМ — тип условий местопроизрастания (эдатоп по Погребняку). Буква — богатство почвы: А — бор, В — суборь, С — сугрудок, D — груд. Цифра — влажность: 1 сухой, 2 свежий, 3 влажный, 4 сырой, 5 мокрый. Переход Cs-137 растёт с влажностью: для одного вида КП от А2 до А5 различается в разы.";
+export const TUM_HINT = "ТУМ — тип условий местопроизрастания (эдатоп по Погребняку). Буква — богатство почвы: А — бор, В — суборь, С — сугрудок, D — груд. Цифра — влажность: 1 сухой, 2 свежий, 3 влажный, 4 сырой, 5 мокрый. Переход Cs-137 растёт с влажностью: для одного вида коэффициент перехода (КП) от А2 до А5 различается в несколько раз.";
 
 export function normRu(s) {
     return String(s ?? '').toLowerCase().replace(/ё/g, 'е').trim().replace(/\s+/g, ' ');
@@ -38,20 +38,20 @@ export function transferValueText(rec) {
     const fLo = lo != null ? fmtNum(lo * (rec.unit_factor || 1)) : null;
     const fHi = hi != null ? fmtNum(hi * (rec.unit_factor || 1)) : null;
 
-    if (fC && fLo && fHi) return `${fC} м²/кг (${fLo}–${fHi})`;
-    if (fC) return `${fC} м²/кг`;
-    if (!fC && fLo && fHi) return `${fLo}–${fHi} м²/кг`;
-    if (!fC && fLo) return `≥ ${fLo} м²/кг`;
-    if (!fC && fHi) return `≤ ${fHi} м²/кг`;
+    if (fC && fLo && fHi) return `${fC}${NB}м²/кг (${fLo}–${fHi})`;
+    if (fC) return `${fC}${NB}м²/кг`;
+    if (!fC && fLo && fHi) return `${fLo}–${fHi}${NB}м²/кг`;
+    if (!fC && fLo) return `≥${NB}${fLo}${NB}м²/кг`;
+    if (!fC && fHi) return `≤${NB}${fHi}${NB}м²/кг`;
     return 'нет значения';
 }
 
 export function transferLabel(rec) {
-    const basis = rec.mass_basis === 'fresh' ? 'сырая' : rec.mass_basis === 'dry' ? 'сухая' : 'основа не указана';
-    return `${rec.item_ru} — ${QTY_RU[rec.quantity] ?? rec.quantity} ${transferValueText(rec)} · ${basis} · ${rec.level}`;
+    const basis = rec.mass_basis === 'fresh' ? 'свежая' : rec.mass_basis === 'dry' ? 'сухая' : 'основа не указана';
+    return `${rec.item_ru} — ${QTY_RU[rec.quantity] ?? rec.quantity} ${transferValueText(rec)} · ${basis} · ${levelWord(rec.level)}`;
 }
 // #FR-31: Tag (МАГАТЭ) и КП — одна величина, коэффициент перехода «плотность загрязнения → продукт», м²/кг
-const QTY_RU = { Tag: 'КП', KP: 'КП', CR: 'коэф. накопления', Fv: 'коэф. накопления почва → растение', Fm: 'коэф. перехода в молоко', Ff: 'коэф. перехода в мясо' };
+const QTY_RU = { Tag: 'КП', KP: 'КП', CR: 'коэффициент накопления', Fv: 'коэффициент накопления почва → растение', Fm: 'коэффициент перехода в молоко', Ff: 'коэффициент перехода в мясо' };
 
 export function transferOptions(choices, nuclide, query, confirmId = null) {
     const el = elementOf(nuclide);
@@ -107,11 +107,11 @@ export function depositionHtml(rows) {
     if (!valid.length) return '';
 
     let html = '<h3>Оценка плотности загрязнения места сбора</h3><div class="tablewrap"><table>';
-    html += '<tr><th>Нуклид</th><th>Коэффициент перехода</th><th>Основа</th><th>A на основе КП, Бк/кг</th><th>D, кБк/м² (центр)</th><th>Диапазон D, кБк/м²</th><th>Диапазон D, Ки/км²</th></tr>';
+    html += '<tr><th>Радионуклид</th><th>Коэффициент перехода (КП)</th><th>Основа массы</th><th>Удельная активность по КП, Бк/кг</th><th>D, кБк/м² (центр)</th><th>Диапазон D, кБк/м²</th><th>Диапазон D, Ки/км² (традиционная единица)</th></tr>';
 
     for (const r of valid) {
         const d = r.depositionEstimate;
-        const basis = d.basis === 'fresh' ? 'сырая' : d.basis === 'dry' ? 'сухая' : 'основа не указана';
+        const basis = d.basis === 'fresh' ? 'свежая' : d.basis === 'dry' ? 'сухая' : 'основа не указана';
         const act = isFiniteNum(d.activityOnBasis) ? fmtNum(d.activityOnBasis) : '—';
         const kD = d.kBqPerM2;
         const cD = isFiniteNum(kD.central) ? fmtNum(kD.central) : '—';
@@ -119,13 +119,13 @@ export function depositionHtml(rows) {
         const rg = d.range;
         const end = (v, inf) => isFiniteNum(v) ? fmtNum(v) : (inf ? '∞' : '—');
         const minD = end(rg?.kBqPerM2.lo), maxD = end(rg?.kBqPerM2.hi, kD.unbounded);
-        const rangeCi = `${end(rg?.ciPerKm2.lo)} – ${end(rg?.ciPerKm2.hi, kD.unbounded)}`;
+        const rangeCi = `${end(rg?.ciPerKm2.lo)}–${end(rg?.ciPerKm2.hi, kD.unbounded)}`;
 
-        const kp = d.summary ? `сводная оценка по ${d.summary.used} записям КП (${d.summary.sources} ист.): медиана ${cD}; квартили (25–75 %) ${fmtNum(kD.min)} – ${fmtNum(kD.max)}; min–max ${fmtNum(d.summary.fullMin)} – ${fmtNum(d.summary.fullMax)} кБк/м². Это разброс по источникам КП, а не погрешность оценки; «диапазон D» справа — квартили, расширенные на погрешность измерения${d.summary.early ? `; записи 1986 г. не учтены — ${d.summary.early}` : ''}${d.summary.notStated ? `; основа массы по выводу — ${d.summary.notStated}` : ''}` : null;
-        html += `<tr><td>${esc(r.nuclide)}</td><td>${kp ? esc(kp) : d.itemName ? esc(d.itemName) : `<code>${esc(d.transferId)}</code>`}</td><td>${esc(d.summary ? 'по записи' : basis)}</td><td class="num">${esc(act)}</td><td class="num">${esc(cD)}</td><td class="num">${esc(minD)} – ${esc(maxD)}</td><td class="num">${esc(rangeCi)}</td></tr>`;
+        const kp = d.summary ? `сводная оценка по ${d.summary.used} записям КП (источников: ${d.summary.sources}): медиана ${cD}; квартили (25–75${NB}%) ${fmtNum(kD.min)}–${fmtNum(kD.max)}; минимум–максимум ${fmtNum(d.summary.fullMin)}–${fmtNum(d.summary.fullMax)}${NB}кБк/м². Это разброс по источникам КП, а не погрешность оценки; «диапазон D» справа — квартили, расширенные на погрешность измерения${d.summary.early ? `; записи 1986 г. не учтены — ${d.summary.early}` : ''}${d.summary.notStated ? `; основа массы по выводу — ${d.summary.notStated}` : ''}` : null;
+        html += `<tr><td>${esc(r.nuclide)}</td><td>${kp ? esc(kp) : d.itemName ? esc(d.itemName) : `<code>${esc(d.transferId)}</code>`}</td><td>${esc(d.summary ? 'по записи' : basis)}</td><td class="num">${esc(act)}</td><td class="num">${esc(cD)}</td><td class="num">${esc(minD)}–${esc(maxD)}</td><td class="num">${esc(rangeCi)}</td></tr>`;
     }
 
     html += '</table></div>';
-    html += '<p class="hint">Оценка обратным пересчётом: D = A / (1000 · КП). КП для одного вида различается в разы в зависимости от типа леса и влажности почвы, поэтому это порядок величины, а не измерение. Активность всегда приводится к исходному (свежему) продукту: A<sub>свеж</sub> = A<sub>суш</sub> / коэффициент концентрирования при сушке; для КП на сухую массу — A<sub>свеж</sub> · 100 / % сухого вещества. Диапазон D учитывает разброс КП и погрешность измеренной активности A: нижняя граница — большой КП и A − u, верхняя — малый КП и A + u. 1 Ки/км² = 37 кБк/м².</p>';
+    html += '<p class="hint">Оценка обратным пересчётом: D = A / (1000 · КП). КП для одного вида различается в несколько раз в зависимости от типа леса и влажности почвы, поэтому это порядок величины, а не измерение. Удельная активность всегда приводится к исходному (свежему) продукту: A<sub>свеж</sub> = A<sub>суш</sub> / коэффициент концентрирования при сушке; для КП на сухую массу — A<sub>свеж</sub> · 100 / % сухого вещества. Диапазон D учитывает разброс КП и погрешность измеренной удельной активности A: нижняя граница — большой КП и A − u, верхняя — малый КП и A + u. 1&nbsp;Ки/км² = 37&nbsp;кБк/м² (Ки/км² — традиционная единица зонирования загрязнённых территорий).</p>';
     return html;
 }
