@@ -544,6 +544,7 @@ function calcLimits(data, input, rows, warnings) {
         if (!Number.isFinite(f.value) || !(f.unit === 'Bq/kg' || (f.unit === 'Bq/L' && isWater))) continue;
         const classRank = classRankOf(f.food_category_ru, pcs); // #FR-81 E09: 0 — самая узкая категория продукта
         if (classRank < 0) continue; // только категория исследуемого продукта
+        if (prodEntry?.water_kind === 'mineral' && f.nuclides.includes('Rn-222')) continue; // v55 (Б-1): Директива 2013/51/Евратом, ст. 3, п. 2(a), природные минеральные воды исключает
         // нуклид записан либо именем («Cs-137»), либо группой ЕС («group: … notably Cs-134 and Cs-137»)
         // сравнивать по нуклиду, не по элементу: у Codex Sr-89 и Sr-90 в разных группах (1000 и 100 Бк/кг)
         // #FR-52: утратившие силу не показываются. #FR-60 (оператор «да»): аварийные уровни (Euratom 2016/52, Codex CXS 193, FDA DIL) показываются с пометкой силы документа

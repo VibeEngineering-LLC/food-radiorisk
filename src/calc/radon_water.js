@@ -15,9 +15,18 @@ export function isWaterInput(data, input) {
   return classes.includes('water');
 }
 
-// v53: неупакованная вода (кран, колодец, скважина, родник) — признак записи словаря продуктов `intervention` (как для уровней вмешательства Прил. 2а); остальная вода — упакованная
+// v55: вид воды по записи словаря: unpacked — признак `intervention` (кран, колодец, скважина, родник; как для уровней вмешательства Прил. 2а), packaged / mineral — поле `water_kind`;
+// нет явного признака (своё название, «вода» до выбора варианта) — unknown, расчёт консервативный: как неупакованная
+export function waterPackaging(data, input) {
+  const entry = productEntry(data.products, input.product?.name, input.product?.confirmId ?? null);
+  if (entry?.intervention === 'nrb2009_app2a') return 'unpacked';
+  if (entry?.water_kind === 'mineral' || entry?.water_kind === 'packaged') return entry.water_kind;
+  return 'unknown';
+}
+
 export function isUnpackedWater(data, input) {
-  return productEntry(data.products, input.product?.name, input.product?.confirmId ?? null)?.intervention === 'nrb2009_app2a';
+  const k = waterPackaging(data, input);
+  return k === 'unpacked' || k === 'unknown';
 }
 
 export function radonUvExtra(data) {
@@ -48,19 +57,22 @@ export function radonWater(data, input, rows, years) {
   const share = withInhalation ? (risk('who_gdwq2017_rnw_inhalation_share')?.value ?? null) : null;
 
   const ruRec = risk('nrb2009_p535_rn222_water_uv');
-  const ru = ruRec ? { id: ruRec.id, uv: ruRec.value, ratio: A / ruRec.value, document: 'НРБ-99/2009', loc: ruRec.loc } : null;
+  // v55 (Б-1): минеральные и лечебные воды — НРБ-99/2009, п. 5.3.5: «специальные нормативы»; Директива 2013/51/Евратом, ст. 3, п. 2(a), исключает природные минеральные воды; сравнения с этими нормами не делаются
+  const packaging = waterPackaging(data, input);
+  const mineral = packaging === 'mineral';
+  const ru = ruRec && !mineral ? { id: ruRec.id, uv: ruRec.value, ratio: A / ruRec.value, document: 'НРБ-99/2009', loc: ruRec.loc } : null;
 
   const sanpinRec = risk('sanpin1_2_3685_21_t312_rn222_uv');
-  const sanpin = sanpinRec ? { id: sanpinRec.id, uv: sanpinRec.value, ratio: A / sanpinRec.value, document: 'СанПиН 1.2.3685-21', loc: 'п. 18, табл. 3.12' } : null;
+  const sanpin = sanpinRec && !mineral ? { id: sanpinRec.id, uv: sanpinRec.value, ratio: A / sanpinRec.value, document: 'СанПиН 1.2.3685-21', loc: 'п. 18, табл. 3.12' } : null;
 
   const euParamRec = foreign('eu_2013_51_rn222_param');
-  const euParam = euParamRec ? { id: euParamRec.id, value: euParamRec.value, ratio: A / euParamRec.value, loc: euParamRec.loc } : null;
+  const euParam = euParamRec && !mineral ? { id: euParamRec.id, value: euParamRec.value, ratio: A / euParamRec.value, loc: euParamRec.loc } : null;
 
   const euRemedialRec = foreign('eu_2013_51_rn222_remedial');
-  const euRemedial = euRemedialRec ? { id: euRemedialRec.id, value: euRemedialRec.value, ratio: A / euRemedialRec.value, loc: euRemedialRec.loc } : null;
+  const euRemedial = euRemedialRec && !mineral ? { id: euRemedialRec.id, value: euRemedialRec.value, ratio: A / euRemedialRec.value, loc: euRemedialRec.loc } : null;
 
   const whoRec = foreign('who_gdwq2017_rn222_no_guidance');
-  const who = whoRec ? { id: whoRec.id, value: null, loc: whoRec.loc, quote: whoRec.quote, url: whoRec.url } : null;
+  const who = whoRec && !mineral ? { id: whoRec.id, value: null, loc: whoRec.loc, quote: whoRec.quote, url: whoRec.url } : null;
 
   const provenance = (withInhalation ? [ratio, dcf, hours, f] : []).map(rec => ({
     step: 'вдыхание радона из воды',
@@ -75,6 +87,8 @@ export function radonWater(data, input, rows, years) {
 
   return {
     nuclide: RN,
+    packaging,
+    mineral,
     activityBqPerKg: A,
     years,
     ingestion: {

@@ -5,7 +5,7 @@
  "source_parts": [
   "products.yaml"
  ],
- "source_sha256": "018788b5e6378a382baf0bfe288a0172bf26d640b3c089496d56affbea38466c",
+ "source_sha256": "3971031232145e87b9342190365192be04f9be376fbd205aca0eb55d6b75a5c8",
  "record_count": 502,
  "records": [
   {
@@ -5700,6 +5700,7 @@
    "id": "p_voda_mineralnaya",
    "kind": "product",
    "name_ru": "Вода минеральная",
+   "water_kind": "mineral",
    "synonyms": [
     "вода минеральная"
    ],
@@ -5735,6 +5736,7 @@
    "id": "p_voda_pitevaya",
    "kind": "product",
    "name_ru": "Вода питьевая упакованная (бутилированная)",
+   "water_kind": "packaged",
    "synonyms": [
     "вода питьевая бутилированная",
     "вода питьевая упакованная",

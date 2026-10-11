@@ -71,6 +71,7 @@
       }
     },
     "intervention": { "enum": ["nrb2009_app2a"] },
+    "water_kind": { "enum": ["packaged", "mineral"] },
     "options": { "type": "array", "minItems": 2, "items": { "type": "string", "pattern": "^p_[a-z0-9_]+$" }, "uniqueItems": true },
     "states": { "type": "array", "minItems": 1, "items": { "enum": ["fresh", "dried", "cooked"] }, "uniqueItems": true },
     "modifiers_change_product": { "type": "boolean" },

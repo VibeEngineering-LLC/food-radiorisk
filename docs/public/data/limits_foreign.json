@@ -5,7 +5,7 @@
  "source_parts": [
   "limits_foreign.yaml"
  ],
- "source_sha256": "0b096abeed24fff29071e93ab995490257925dcfed9dd1bd6065aa86a511e45d",
+ "source_sha256": "7be6f692b2499066b414eed976ee76e31bcb285a5e90f0263977881fe605d9be",
  "record_count": 58,
  "records": [
   {
@@ -817,7 +817,7 @@
    "unit": "Bq/L",
    "loc": "Приложение I, примечание 1(b)",
    "url": "https://www.legislation.gov.uk/eudr/2013/51/annex/I",
-   "quote": "Note 1 (b): Remedial action is deemed to be justified on radiation protection grounds without further analysis where radon concentrations exceed 1 000 Bq/l.",
+   "quote": "Remedial action is deemed to be justified on radiological protection grounds, without further consideration, where radon concentrations exceed 1 000 Bq/l.",
    "level": "✅",
    "retrieved": "2026-10-11",
    "unit_norm": "Bq/L",
@@ -836,7 +836,7 @@
    "food_category_ru": "Питьевая вода",
    "value": null,
    "unit": "Bq/L",
-   "loc": "гл. 9, вводная часть и разд. 9.7.1",
+   "loc": "гл. 9, вводная часть и разд. 9.7.1, 9.7.3",
    "url": "https://www.ncbi.nlm.nih.gov/books/NBK442362/",
    "quote": "the setting of screening levels and guidance levels to limit the dose from ingestion of radon ... is not usually necessary",
    "level": "✅",

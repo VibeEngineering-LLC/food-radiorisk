@@ -9,7 +9,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 ALLOWED_SET_KEYS = {
     'name_ru', 'synonyms', 'hidden_synonyms', 'states', 'modifiers_change_product',
     'norm', 'codex', 'diet', 'processing', 'transfer', 'dry_matter', 'note',
-    'decided', 'options', 'words', 'stopwords', 'forms', 'neutral', 'generic', 'blockers', 'regroup', 'intervention', 'caption'
+    'decided', 'options', 'words', 'stopwords', 'forms', 'neutral', 'generic', 'blockers', 'regroup', 'intervention', 'caption', 'water_kind'
 }
 
 PRODUCT_KEYS = [
@@ -80,6 +80,8 @@ def emit(header_lines, records):
             lines.append(f"  caption: {J(r['caption'])}")
         if 'intervention' in r:  # #FR-85 v14: вода нецентрализованного водоснабжения — уровни вмешательства НРБ-99/2009 Прил. 2а
             lines.append(f"  intervention: {J(r['intervention'])}")
+        if 'water_kind' in r:  # #FR-128 v55: вид упакованной воды (packaged — бутилированная, mineral — природная минеральная/лечебная)
+            lines.append(f"  water_kind: {J(r['water_kind'])}")
 
     return "\n".join(lines) + "\n"
 

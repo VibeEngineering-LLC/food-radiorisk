@@ -89,6 +89,7 @@ export default function RadonWater({ radon }) {
     <div className="radon-water" id="radonWater">
       <h4 className="subhead">{T.RN_TITLE}</h4>
       <p className="hint">{T.RN_NATURAL}</p>
+      {radon.packaging === 'unknown' && <p className="hint" id="rnPackUnknown">{T.RN_PACK_UNKNOWN}</p>}
 
       <div className="tablewrap">
         <table>
@@ -137,6 +138,7 @@ export default function RadonWater({ radon }) {
         })}
       </p>}
 
+      {radon.mineral ? <p className="hint" id="rnMineral">{T.RN_MINERAL}</p> : <>
       <div className="tablewrap">
         <table>
           <thead>
@@ -159,6 +161,7 @@ export default function RadonWater({ radon }) {
       <p className="hint">{T.RN_RU}</p>
       <p className="hint">{T.RN_EU}</p>
       <p className="hint">{T.RN_WHO}</p>
+      </>}
       <p className="hint">{T.RN_BOIL}</p>
     </div>
   );

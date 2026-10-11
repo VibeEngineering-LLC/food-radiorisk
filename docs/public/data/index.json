@@ -33,8 +33,8 @@
    "dataset": "limits_foreign",
    "file": "limits_foreign.json",
    "record_count": 58,
-   "source_sha256": "0b096abeed24fff29071e93ab995490257925dcfed9dd1bd6065aa86a511e45d",
-   "json_sha256": "7509fe32b3a567d248db6a23298ad6050e1a315670dccba7934e77b68ee6fced"
+   "source_sha256": "7be6f692b2499066b414eed976ee76e31bcb285a5e90f0263977881fe605d9be",
+   "json_sha256": "de84b3c88ea0e611327a175b805af4c3285d346908317accf483e36779ac132c"
   },
   {
    "dataset": "limits_ru",
@@ -47,8 +47,8 @@
    "dataset": "nuclides",
    "file": "nuclides.json",
    "record_count": 62,
-   "source_sha256": "08bdb4e38af51bdaf17b98b0e8ad5f35b4af0099e17516cfe6819b6c3fd4512d",
-   "json_sha256": "c76bf13ae4cffe082f6b8126d9cf1317f637499b094b9661cc9caf583af57d50"
+   "source_sha256": "63727e90be082d667a97a729efb8cc866483ed69f2aa060d9a711b7bee28c349",
+   "json_sha256": "d69cfd3849e87ccb3b008953982636c087942515129cd34a893c23cdffc801ff"
   },
   {
    "dataset": "organ_dose",
@@ -75,8 +75,8 @@
    "dataset": "products",
    "file": "products.json",
    "record_count": 502,
-   "source_sha256": "018788b5e6378a382baf0bfe288a0172bf26d640b3c089496d56affbea38466c",
-   "json_sha256": "61cb3d560aed5ca092c0c57480daa9e796b449b5092a29deb9e18cfa7bcf6060"
+   "source_sha256": "3971031232145e87b9342190365192be04f9be376fbd205aca0eb55d6b75a5c8",
+   "json_sha256": "c50d9b062fdf042905914b3d018ca2a8ba4d50e2aa0420e3317cdb55ef42caf7"
   },
   {
    "dataset": "risk",

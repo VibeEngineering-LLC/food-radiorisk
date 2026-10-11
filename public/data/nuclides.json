@@ -5,7 +5,7 @@
  "source_parts": [
   "nuclides.yaml"
  ],
- "source_sha256": "08bdb4e38af51bdaf17b98b0e8ad5f35b4af0099e17516cfe6819b6c3fd4512d",
+ "source_sha256": "63727e90be082d667a97a729efb8cc866483ed69f2aa060d9a711b7bee28c349",
  "record_count": 62,
  "records": [
   {
@@ -1233,7 +1233,7 @@
    "uncertainty_days": 0.0008,
    "source": "DDEP / LNE-LNHB/CEA Table de Radionucleides, Rn-222 (eval. V. Chisté, M.M. Bé, 05/01/2007 - 7/12/2010), раздел 2 Nuclear Data",
    "loc": "PDF p.1, section 2 Nuclear Data",
-   "url": "http://www.lnhb.fr/nuclides/Ra-226_tables.pdf",
+   "url": "http://www.lnhb.fr/nuclides/Rn-222_tables.pdf",
    "retrieved": "2026-10-11",
    "quote": "T1/2(222Rn ) : 3,8232 (8) d",
    "checked_against": "DDEP, карточка Rn-222: 3,8232(8) d; то же значение в карточке Ra-226 (раздел «Nuclear Data», дочерний нуклид); EPA FGR 13 (данные ICRP 38/72) 3,8235 d (отличие 0,0003 d = 0,008 %, в пределах 0,4 сигма DDEP)",

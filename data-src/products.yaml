@@ -1284,6 +1284,7 @@
 - id: p_voda_mineralnaya
   kind: product
   name_ru: "Вода минеральная"
+  water_kind: "mineral"
   synonyms: ["вода минеральная"]
   states: ["fresh"]
   modifiers_change_product: false
@@ -1298,6 +1299,7 @@
 - id: p_voda_pitevaya
   kind: product
   name_ru: "Вода питьевая упакованная (бутилированная)"
+  water_kind: "packaged"
   synonyms: ["вода питьевая бутилированная", "вода питьевая упакованная", "вода бутилированная", "вода упакованная", "вода в бутылках", "питьевая вода в бутылках"]
   states: ["fresh"]
   modifiers_change_product: false

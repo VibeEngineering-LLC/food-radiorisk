@@ -161,10 +161,10 @@ export default function Result({ result, input, meta, initialTab = '', onRegion 
       const cls = (limits.foreignClasses || []).map(c => FOOD_CLASS_RU[c] || c).join(', ');
       return <>
         <h4 className="subhead">Нормы других стран</h4>
-        <p className="hint">{limits.foreign.every(l => l.nuclides.every(x => x === 'Rn-222')) ? 'Радон-222' : 'Цезий и стронций'}{cls ? ` — категория: ${cls}` : ''}.</p>
+        <p className="hint">{limits.foreign.every(l => l.nuclides.every(x => x === 'Rn-222')) ? 'Радон-222' : limits.foreign.some(l => l.nuclides.includes('Rn-222')) ? 'Радон-222, цезий и стронций' : 'Цезий и стронций'}{cls ? ` — категория: ${cls}` : ''}.</p>
         {limits.foreign.some(l => l.emergency) && <p className="hint">Аварийные уровни (Кодекс Алиментариус, Евратом 2016/52, Управление по санитарному надзору за качеством пищевых продуктов и медикаментов США, FDA) действуют только после радиационной аварии; уровень FDA — ориентир для решения, не допустимый уровень и не предел для продукта на рынке. Юридическая сила каждого документа указана в колонке.</p>}
         {(() => { const K = limits.foreign.find(l => l.reconstitution > 1)?.reconstitution; return K ? <p className="hint">{fill(T.NORMS_FOREIGN_DRIED, { K: fmtNum(K) })}</p> : null; })()}
-        {!input.foodGroupCode && !limits.foreign.every(l => l.nuclides.every(x => x === 'Rn-222')) && <p className="hint">Группа продукта не выбрана — показаны нормы для прочих пищевых продуктов.</p>}
+        {!input.foodGroupCode && !(limits.foreignClasses || []).includes('water') && !limits.foreign.every(l => l.nuclides.every(x => x === 'Rn-222')) && <p className="hint">Группа продукта не выбрана — показаны нормы для прочих пищевых продуктов.</p>}
         <DataTable rows={limits.foreign} cols={[
           { h: 'Радионуклид', f: l => l.nuclides.join(' + ') }, // #FR-81 E10
           { h: 'Юрисдикция', f: l => JUR_RU[l.jurisdiction] || l.jurisdiction },

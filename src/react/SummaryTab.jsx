@@ -50,6 +50,7 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
     ? (() => { const label = kind === 'risk' ? `Этот продукт: ${pname} — радиационно-индуцированный рак` : `Этот продукт: ${pname}${nucl ? ` (${nucl})` : ''} — по расчёту`; return { label, short: pname.length <= 24 ? label : `Этот продукт: ${trunc(pname, 24)}`, callout: `Этот продукт (${trunc(pname, 26)})` }; })()
     : { label: kind === 'risk' ? 'Этот продукт — радиационно-индуцированный рак' : 'Этот продукт — по расчёту', short: 'Этот продукт', callout: 'Этот продукт' };
 
+  const rnOnly = !!result.radon && !(result.rows || []).some(r => r.nuclide !== 'Rn-222'); // v55 (Н-1): в продукте только радон-222 — диаграммы скрыты намеренно, указываем на блок радона
   // Есть ли доля продукта в срезах
   const hasProductDose = !!(ds && ds.slices.some(s => s.id === 'product'));
   const hasProductRisk = !!(rs && rs.slices.some(s => s.id === 'product'));
@@ -120,7 +121,7 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
             ) : null}
           </>
         ) : (
-          <p className="hint" id="sumNoChartA">{cmp ? T.SUM_NO_CHART_DATA : T.SUM_NO_CHART}</p>
+          <p className="hint" id="sumNoChartA">{rnOnly ? T.SUM_RN_ONLY : cmp ? T.SUM_NO_CHART_DATA : T.SUM_NO_CHART}</p>
         )}
 
         {/* Диаграмма B: риски */}
@@ -156,7 +157,7 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
             {!hasProductRisk ? <p className="hint">{T.SUM_CHART_B_NO_PRODUCT}</p> : null}
           </>
         ) : (
-          <p className="hint">{T.SUM_NO_CHART}</p>
+          <p className="hint">{rnOnly ? T.SUM_RN_ONLY : T.SUM_NO_CHART}</p>
         )}
 
         {/* Пометка о малой доле продукта */}
