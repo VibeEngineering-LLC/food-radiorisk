@@ -118,6 +118,13 @@ export function computeScenario(data, input) {
   // #FR-81 P2-10: срок питания определяется ОДИН раз (periodYears) и дальше везде берётся из него: в режиме «с N до M» поле years игнорируется
   const period = { years: periodYears(input) };
   input = { ...input, years: period.years };
+  // v54: радон-222 считается только для питьевой воды; в другом продукте строка, доза и сектор на «Сводке» не создаются — только предупреждение (если радон единственный нуклид — ошибка ввода)
+  const rnSkipped = !isWaterInput(data, input) && input.nuclides.some(n => n.nuclide === RN);
+  if (rnSkipped) {
+    input = { ...input, nuclides: input.nuclides.filter(n => n.nuclide !== RN) };
+    if (input.nuclides.length === 0) return { ok: false, errors: [T.RN_NOT_WATER], warnings, rows, totals: {}, limits: {} };
+    warnings.push(T.RN_NOT_WATER);
+  }
   for (const n of input.nuclides) {
     try { rows.push(rowFor(data, input, n, warnings, riskCoeff)); } catch (e) { const msg = e.plain ? e.message : `${n.nuclide}: ${e.message}`; if (!errors.includes(msg)) errors.push(msg); } // #FR-108: одинаковая ошибка дат — один раз на весь расчёт
   }
@@ -130,21 +137,22 @@ export function computeScenario(data, input) {
   // #FR-126: радон-222 в воде — ингаляция выделившегося радона отдельной строкой (в суммы доз не входит) и нормативы; параметры ингаляции — в провенанс строки нуклида
   const radon = radonWater(data, input, rows, period.years);
   if (radon) rows.find(r => r.nuclide === RN).provenance.push(...radon.provenance);
-  else if (rows.some(r => r.nuclide === RN) && !isWaterInput(data, input)) warnings.push(T.RN_NOT_WATER);
 
-  const doseY = rows.reduce((s, r) => s + (r.doseSvPerYear || 0), 0);
-  const doseT = rows.reduce((s, r) => s + (r.doseSvTotal || 0), 0);
-  const riskT = rows.reduce((s, r) => s + (r.riskTotal || 0), 0);
+  // v54 (оператор): радон-222 — природный, в основной (техногенный) результат не входит и в итоги не суммируется: Ē₅, доли нормы, сравнение с облучением, эквиваленты, сектор продукта, пожизненный риск считаются по остальным нуклидам; радон показан в своём блоке и в строке нуклида
+  const aggRows = rows.filter(r => r.nuclide !== RN);
+  const doseY = aggRows.reduce((s, r) => s + (r.doseSvPerYear || 0), 0);
+  const doseT = aggRows.reduce((s, r) => s + (r.doseSvTotal || 0), 0);
+  const riskT = aggRows.reduce((s, r) => s + (r.riskTotal || 0), 0);
   // F3 (audit/risk-fields-review-2026-10-03.md): пределы НРБ — только для техногенной части
   const lim0 = doseLimits(data); // #FR-81 D20: пределы 1 и 70 мЗв и порог 10 мкЗв — из набора risk
   const tech = rows.filter(r => !r.natural);
   // #FR-81 D13: пределы доз и ПГП — только для техногенных нуклидов (НРБ-99/2009 п. 3.1.3); природные показаны, но не нормируются
-  const nat = rows.filter(r => r.natural).map(r => r.nuclide);
+  const nat = aggRows.filter(r => r.natural).map(r => r.nuclide); // v54: радон-222 здесь не называется — он вне итогов и описан в своём блоке
   if (nat.length) warnings.push(`для природных радионуклидов (${nat.join(', ')}) предел 1 мЗв/год и ПГП не применяются (НРБ-99/2009 п. 3.1.3); их доза и риск показаны, в долю предела и в ПГП не входят`);
   // #FR-81 D08: пометка на экране (формулировка оператора 05.10)
   if (!input.constantActivity && period.years > 1) warnings.push('Многолетнее потребление: учтён только радиоактивный распад; очищение почвы и продуктов не учтено — оценка консервативна. Для лесных грибов и ягод удельная активность новых урожаев может не снижаться — отметьте поле «Удельная активность продукта постоянна во все годы».');
   // #FR-81 D10: ряды доз по годам; Ē₅ — наибольшая средняя за 5 лет подряд (окно с нулями за пределами срока), максимум года — для предела 5 мЗв
-  const yearsAll = sumSeries(rows.map(r => r.yearly.map(y => y.doseSv))), yearsTech = sumSeries(tech.map(r => r.yearly.map(y => y.doseSv)));
+  const yearsAll = sumSeries(aggRows.map(r => r.yearly.map(y => y.doseSv))), yearsTech = sumSeries(tech.map(r => r.yearly.map(y => y.doseSv)));
   const doseAvg5 = avg5(yearsAll), techAvg5 = avg5(yearsTech), doseMaxYear = Math.max(...yearsAll), techMaxYear = Math.max(0, ...yearsTech);
   const techY = tech.reduce((s, r) => s + (r.doseSvPerYear || 0), 0);
   const techT = tech.reduce((s, r) => s + (r.doseSvTotal || 0), 0);
@@ -154,20 +162,20 @@ export function computeScenario(data, input) {
   const limits = calcLimits(data, input, rows, warnings);
 
   // #FR-81 V02 (D-022): главное число R = r·ΣE_k по техногенным нуклидам за весь срок; словесная оценка — по дозе самого нагруженного года (техногенные)
-  const riskY = rows.length ? riskFromDose(doseY, riskCoeff) : 0; // риск от поступления первого года
+  const riskY = aggRows.length ? riskFromDose(doseY, riskCoeff) : 0; // риск от поступления первого года
   const maxIdx = tech.length ? yearsTech.indexOf(techMaxYear) : -1;
   const doseClass = tech.length ? doseClassOf(techMaxYear, lim0) : null;
   const uniformYears = tech.length > 0 && yearsTech.every(v => Math.abs(v - techMaxYear) <= 1e-9 * techMaxYear);
 
-  const organs = rows.length ? organDoses(rows, input, data.organ_dose) : null; // #FR-75
+  const organs = aggRows.length ? organDoses(aggRows, input, data.organ_dose) : null; // #FR-75
   const result = {
     ok: true, errors, warnings, rows, period,
     totals: {
-      doseSvPerYear: rows.length ? doseY : null,
-      doseSvTotal: rows.length ? doseT : null,
-      riskTotal: rows.length ? riskT : null,
-      riskPerYear: rows.length ? riskY : null,
-      doseSvAvg5: rows.length ? doseAvg5 : null, doseSvMaxYear: rows.length ? doseMaxYear : null,
+      doseSvPerYear: aggRows.length ? doseY : null,
+      doseSvTotal: aggRows.length ? doseT : null,
+      riskTotal: aggRows.length ? riskT : null,
+      riskPerYear: aggRows.length ? riskY : null,
+      doseSvAvg5: aggRows.length ? doseAvg5 : null, doseSvMaxYear: aggRows.length ? doseMaxYear : null,
       riskNominal: tech.length ? riskFromDose(techT, riskCoeff) : null, // R: смерть от рака, номинально, техногенные нуклиды, весь срок
       riskAssessment: tech.length ? riskAssessmentOf(data.risk, riskFromDose(techT, riskCoeff)) : null, // #FR-116: зона риска по уровням НРБ п. 2.3 (цвет блока и маркер шкалы)
       doseMaxYearTech: tech.length ? techMaxYear : null, doseMaxYearIndex: maxIdx >= 0 ? maxIdx + 1 : null,
@@ -184,11 +192,11 @@ export function computeScenario(data, input) {
     limits, radon,
     diet: dietCk.rec ? dietResult(input.diet.mode, dietCk.rec, dietCk.group, dietCk.manual) : null, // #FR-83 W06
     // #FR-73: сравнение с другими источниками облучения
-    comparison: rows.length ? buildComparison(data.compare, { doseSvPerYear: doseY, doseSvTotal: doseT, naturalNuclides: rows.filter(r => r.natural).map(r => r.nuclide) }, input, riskCoeff) : null,
-    organs, organRisk: rows.length ? organRisk(rows, input, data.organ_risk, organs, riskCoeff) : null
+    comparison: aggRows.length ? buildComparison(data.compare, { doseSvPerYear: doseY, doseSvTotal: doseT, naturalNuclides: aggRows.filter(r => r.natural).map(r => r.nuclide) }, input, riskCoeff) : null,
+    organs, organRisk: aggRows.length ? organRisk(aggRows, input, data.organ_risk, organs, riskCoeff) : null
   };
   // #FR-79: добавочный риск от продукта рядом с обычными рисками жизни (data-src/life_risks.yaml); считается по готовому результату
-  result.lifeRisks = rows.length ? lifeRisks(result, input, data.life_risks) : null;
+  result.lifeRisks = aggRows.length ? lifeRisks(result, input, data.life_risks) : null;
   // #FR-81 V07: строка A4 главного экрана
   result.background = tech.length ? backgroundOf(recordsFor(data.life_risks, input.region), input) : null; // #FR-101: фон рака — по таблице выбранного региона
   // #FR-117: второе число — риск, если питаться так всю жизнь (режим «с возраста a до a+H» этой же модели, без второй реализации)
@@ -213,7 +221,7 @@ function rowFor(data, input, n, warnings, riskCoeff) {
   const isWater = input.foodGroupCode === 'water';
   const dcRec = pickDose(data.dose_coeff, n.nuclide, input.age, input.doseSource, isWater);
   if (!dcRec) throw doseMissing(data.dose_coeff, n.nuclide, input.age, input.doseSource, isWater);
-  prov.push({ step: 'доза', what: `дозовый коэффициент ожидаемой эффективной дозы при поступлении с ${dcRec.source === 'NRB2009_App2a' ? 'питьевой водой (НРБ-99/2009, прил. 2а)' : 'пищей'}`, id: dcRec.id, source: dcRec.source, loc: dcRec.loc, level: dcRec.level, value: dcRec.value, unit: dcRec.unit });
+  prov.push({ step: 'доза', what: `дозовый коэффициент ожидаемой эффективной дозы при поступлении с ${dcRec.source === 'NRB2009_App2a' ? 'питьевой водой (НРБ-99/2009, прил. 2а)' : isWaterInput(data, input) ? 'питьевой водой' : 'пищей'}`, id: dcRec.id, source: dcRec.source, loc: dcRec.loc, level: dcRec.level, value: dcRec.value, unit: dcRec.unit });
 
   // 2. Raw activity
   let rawBqPerKg = null, atSampleBqPerKg = null;

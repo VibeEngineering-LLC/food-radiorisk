@@ -50,12 +50,13 @@ function blocks(calc, meta, isoDate) {
   [sp.natural ? sp.head : sp.headShort, sp.natural, sp.termCap, sp.number, sp.life?.cap, sp.life?.number, sp.life?.unavailable, sp.caption, sp.background, sp.equiv, sp.verbal, ...sp.notes, sp.link].filter(Boolean).forEach(text => b.push({ kind: 'p', text }));
   b.push({ kind: 'p', text: `${sp.verdict.title}. ${sp.verdict.lines.map(l => l.text).join(' ')} ${sp.verdict.sep}` });
   b.push({ kind: 'p', text: `${sp.dose.head}. ${sp.dose.lines.join(' ')}` });
+  const hasAgg = totals.doseSvPerYear != null; // v54: радон-222 в итоги не входит; если он единственный нуклид, итоговых доз нет
   const summaryRows = [
-    ['Ожидаемая эффективная доза за первый год потребления', fmtDose(totals.doseSvPerYear)],
+    ...(hasAgg ? [['Ожидаемая эффективная доза за первый год потребления', fmtDose(totals.doseSvPerYear)]] : []),
     ['Возрастная группа и источник коэффициентов', `${AGE_LABEL[input.age] || input.age}; ${SOURCE_LABEL[input.doseSource] || input.doseSource}`]
   ];
-  summaryRows.splice(1, 0, ['Потребление продукта', dietReportText(input, result)]); // #FR-83 W08
-  if (input.years > 1) summaryRows.push(['Ожидаемая эффективная доза за ' + input.years + ' ' + yearsWord(input.years) + ' потребления', fmtDose(totals.doseSvTotal)]);
+  summaryRows.splice(hasAgg ? 1 : 0, 0, ['Потребление продукта', dietReportText(input, result)]); // #FR-83 W08
+  if (hasAgg && input.years > 1) summaryRows.push(['Ожидаемая эффективная доза за ' + input.years + ' ' + yearsWord(input.years) + ' потребления', fmtDose(totals.doseSvTotal)]);
   summaryRows.push(['Горизонт ожидаемой дозы (МКРЗ 103, прил. B, п. (f))', input.lifetime ? 'до 70 лет возраста (потребление с ' + input.lifetime.fromAge + ' до ' + input.lifetime.toAge + ' лет)' : input.age === 'adult' ? '50 лет после поступления (взрослый)' : 'до 70 лет возраста (ребёнок)']);
   summaryRows.push(['Коэффициент риска, Зв⁻¹', '0,05 (НРБ-99/2009, п. 2.3)']);
   if (totals.naturalNuclides?.length) summaryRows.push(['Природные радионуклиды (предел дозы не установлен)', totals.naturalNuclides.join(', ')]);
@@ -114,8 +115,11 @@ function blocks(calc, meta, isoDate) {
     const rn = result.radon;
     b.push({ kind: 'h2', text: T.RN_TITLE });
     b.push({ kind: 'p', text: T.RN_NATURAL });
-    b.push({ kind: 'table', head: ['Путь поступления', 'Доза за 1 год', 'Доза за весь срок'], body: [[T.RN_ROW_ING, fmtDose(rn.ingestion.doseSvPerYear), fmtDose(rn.ingestion.doseSvTotal)], [T.RN_ROW_INH, fmtDose(rn.inhalation.doseSvPerYear), fmtDose(rn.inhalation.doseSvTotal)]], num: [false, true, true] });
-    if (Number.isFinite(rn.inhalationShare)) b.push({ kind: 'p', text: fill(T.RN_NOT_SUM, { share: fmtNum(rn.inhalationShare * 100, 2) }) });
+    const rnRows = [[T.RN_ROW_ING, fmtDose(rn.ingestion.doseSvPerYear), fmtDose(rn.ingestion.doseSvTotal)]];
+    if (rn.inhalation) rnRows.push([T.RN_ROW_INH, fmtDose(rn.inhalation.doseSvPerYear), fmtDose(rn.inhalation.doseSvTotal)]);
+    b.push({ kind: 'table', head: ['Путь поступления', 'Доза за 1 год', 'Доза за весь срок'], body: rnRows, num: [false, true, true] });
+    if (rn.inhalation && Number.isFinite(rn.inhalationShare)) b.push({ kind: 'p', text: fill(T.RN_NOT_SUM, { share: fmtNum(rn.inhalationShare * 100, 2), screen: fmtNum(100 * rn.inhalation.doseSvPerYear / (rn.inhalation.doseSvPerYear + rn.ingestion.doseSvPerYear), 2) }) });
+    b.push({ kind: 'p', text: rn.inhalation ? T.RN_HOME : T.RN_NO_INHAL });
     for (const k of ['RN_ING_NOTE', 'RN_RU', 'RN_EU', 'RN_WHO', 'RN_BOIL']) b.push({ kind: 'p', text: T[k] });
   }
 

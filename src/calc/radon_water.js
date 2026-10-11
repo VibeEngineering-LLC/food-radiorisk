@@ -37,13 +37,15 @@ export function radonWater(data, input, rows, years) {
   const dcf = risk('unscear2000_rnw_inhal_dcf');
   const hours = risk('unscear2000_rnw_occupancy');
   const f = risk('unscear2000_rnw_equilibrium_f');
-  if (!ratio || !dcf || !hours || !f) return null;
+  // v54: вдыхание радона, выделившегося из воды, — модель НКДАР ООН 2000 (п. 157) описывает бытовое использование водопроводной воды (кран, душ); для неупакованной воды строка есть, для упакованной (бутилированной, минеральной) не выводится
+  const withInhalation = isUnpackedWater(data, input);
+  if (withInhalation && (!ratio || !dcf || !hours || !f)) return null;
 
   const A = row.rawBqPerKg;
   const cWater = A * 1000;
-  const inhalPerYear = cWater * ratio.value * hours.value * f.value * dcf.value;
-  const airBqPerM3 = cWater * ratio.value;
-  const share = risk('who_gdwq2017_rnw_inhalation_share')?.value ?? null;
+  const inhalPerYear = withInhalation ? cWater * ratio.value * hours.value * f.value * dcf.value : null;
+  const airBqPerM3 = withInhalation ? cWater * ratio.value : null;
+  const share = withInhalation ? (risk('who_gdwq2017_rnw_inhalation_share')?.value ?? null) : null;
 
   const ruRec = risk('nrb2009_p535_rn222_water_uv');
   const ru = ruRec ? { id: ruRec.id, uv: ruRec.value, ratio: A / ruRec.value, document: 'НРБ-99/2009', loc: ruRec.loc } : null;
@@ -60,7 +62,7 @@ export function radonWater(data, input, rows, years) {
   const whoRec = foreign('who_gdwq2017_rn222_no_guidance');
   const who = whoRec ? { id: whoRec.id, value: null, loc: whoRec.loc, quote: whoRec.quote, url: whoRec.url } : null;
 
-  const provenance = [ratio, dcf, hours, f].map(rec => ({
+  const provenance = (withInhalation ? [ratio, dcf, hours, f] : []).map(rec => ({
     step: 'вдыхание радона из воды',
     what: rec.quantity,
     id: rec.id,
@@ -79,7 +81,7 @@ export function radonWater(data, input, rows, years) {
       doseSvPerYear: row.doseSvPerYear,
       doseSvTotal: row.doseSvTotal
     },
-    inhalation: {
+    inhalation: !withInhalation ? null : {
       doseSvPerYear: inhalPerYear,
       doseSvTotal: inhalPerYear * years,
       waterBqPerM3: cWater,

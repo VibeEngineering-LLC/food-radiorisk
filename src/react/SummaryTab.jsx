@@ -45,7 +45,7 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
   // строка питания называется явно, с продуктом из формы; длинное название — с многоточием в легенде, полностью в подсказке
   const pname = String(input.product?.name || result.limits?.productName || '').trim();
   const trunc = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
-  const nucl = (result.rows || []).map(r => r.nuclide).join(', ');
+  const nucl = (result.rows || []).filter(r => r.nuclide !== 'Rn-222').map(r => r.nuclide).join(', '); // v54: радон-222 в сектор продукта не входит
   const prod = (s, kind) => s.id !== 'product' ? {} : pname
     ? (() => { const label = kind === 'risk' ? `Этот продукт: ${pname} — радиационно-индуцированный рак` : `Этот продукт: ${pname}${nucl ? ` (${nucl})` : ''} — по расчёту`; return { label, short: pname.length <= 24 ? label : `Этот продукт: ${trunc(pname, 24)}`, callout: `Этот продукт (${trunc(pname, 26)})` }; })()
     : { label: kind === 'risk' ? 'Этот продукт — радиационно-индуцированный рак' : 'Этот продукт — по расчёту', short: 'Этот продукт', callout: 'Этот продукт' };
@@ -63,12 +63,12 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
     <>
       {/* Сводка рисков и блока доз */}
       <RiskSummary result={result} input={input} />
-      <p className="hint" id="sumDoses">
+      {result.totals.doseSvPerYear != null && <p className="hint" id="sumDoses">
         {fill(T.SUM_DOSES, {
           y: fmtDose(result.totals.doseSvPerYear),
           total: input.years > 1 ? fill(T.SUM_DOSES_TOTAL, { span: input.lifetime ? `${input.lifetime.fromAge}–${input.lifetime.toAge} лет` : `${input.years} ${yearsWord(input.years)}`, t: fmtDose(result.totals.doseSvTotal) }) : '',
         })}
-      </p>
+      </p>}
 
       <div className="sum-charts">
         {/* #FR-101: переключатель региона данных — над диаграммами; одна настройка на всё приложение */}
@@ -104,7 +104,7 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
                 years: yearsWord(ds.H),
                 r: fmtNum(ds.riskCoeff),
                 radon: ds.radonFromInput ? fill(T.SUM_RADON_INPUT, { C: fmtNum(ei.radonC), origin: ds.radonIsDefault ? T.SUM_RADON_ORIGIN_DEFAULT : T.SUM_RADON_ORIGIN_INPUT }) : fill(T.SUM_RADON_WORLD, { region: regionName(region) }),
-                rest: ds.dwellingFromInput ? fill(T.SUM_REST_DWELL, { indoor: fmtNum(ds.parts.terrestrial.msv), out: fmtNum(ds.parts.terrOutdoorMsv ?? 0), U: fmtNum(ei.dwellU), origin: T.SUM_RADON_ORIGIN_INPUT, h: fmtNum(cmp.dwell.hours) }) : fill(T.SUM_REST_WORLD, { region: regionName(region), cap: doseCaption(region), sum: fmtNum(ds.naturalSumMsv, 4), tot: fmtNum(ds.naturalTotalMsv), gap: fmtNum(Math.abs(ds.naturalGapMsv), 2) }),
+                rest: ds.dwellingFromInput ? fill(T.SUM_REST_DWELL, { indoor: fmtNum(ds.parts.terrestrial.msv), out: fmtNum(ds.parts.terrOutdoorMsv ?? 0), U: fmtNum(ei.dwellU), origin: T.SUM_RADON_ORIGIN_INPUT, h: fmtNum(cmp.dwell.hours) }) : fill(Math.abs(ds.naturalGapMsv) < 1e-9 ? T.SUM_REST_WORLD_EQ : T.SUM_REST_WORLD, { region: regionName(region), cap: doseCaption(region), sum: fmtNum(ds.naturalSumMsv, 4), tot: fmtNum(ds.naturalTotalMsv), gap: fmtNum(Math.abs(ds.naturalGapMsv), 2) }),
               })}
             </p>
             {!ds.parts.techno ? <p className="hint" id="sumTechnoNone">{T.SUM_TECHNO_NONE}</p> : null}

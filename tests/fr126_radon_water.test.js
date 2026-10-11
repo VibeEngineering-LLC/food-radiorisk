@@ -51,7 +51,8 @@ test('FR-126 v53: неупакованная вода — без пересчё�
   close(un.rows[0].doseSvPerYear, 100 * 730 * 3.5e-9, 1e-12, 'питьё, неупакованная');
   const f = Math.pow(2, -30 / HALF_DAYS);
   close(pk.rows[0].rawBqPerKg, 100 * f, 1e-9, 'упакованная');
-  close(pk.radon.inhalation.doseSvPerYear, 100 * f * 1000 * 1e-4 * 7000 * 0.4 * 9e-9, 1e-9, 'вдыхание, упакованная');
+  assert.equal(pk.radon.inhalation, null, 'v54: вдыхание у упакованной воды не выводится');
+  close(pk.radon.ingestion.doseSvPerYear, 100 * f * 730 * 3.5e-9, 1e-9, 'питьё, упакованная');
   assert.ok(un.rows[0].provenance.some(p => /не применён/.test(p.note || '')), 'в провенансе пометка, что распад не применён');
 });
 test('FR-126: распад Rn-222 от даты пробы до даты потребления — за 3,8232 сут вдвое (T½ из данных), на целых сутках A·2^(−d/3,8232)', () => {
@@ -62,8 +63,8 @@ test('FR-126: распад Rn-222 от даты пробы до даты пот�
     const r = computeScenario(data, withDates([['Rn-222', 100]], d));
     assert.ok(r.ok, r.errors?.join('; '));
     close(r.rows[0].rawBqPerKg, 100 * Math.pow(2, -d / HALF_DAYS), 1e-9, `d=${d}`);
-    // ингаляционная строка считается по активности воды на дату потребления (после распада)
-    close(r.radon.inhalation.doseSvPerYear, 100 * Math.pow(2, -d / HALF_DAYS) * 1000 * 1e-4 * 7000 * 0.4 * 9e-9, 1e-9, `ингаляция, d=${d}`);
+    // доза при питье считается по активности воды на дату потребления (после распада); v54: у упакованной воды строки вдыхания нет
+    close(r.radon.ingestion.doseSvPerYear, 100 * Math.pow(2, -d / HALF_DAYS) * 730 * 3.5e-9, 1e-9, `питьё, d=${d}`);
   }
 });
 
@@ -88,8 +89,7 @@ test('FR-126: ингаляция выделившегося радона — О�
   close(r.radon.inhalation.doseSvPerYear, inhal, 1e-12);
   close(r.radon.inhalation.doseSvTotal, 3 * inhal, 1e-12);
   close(r.radon.ingestion.doseSvPerYear, A * VOLUME_KG * 3.5e-9, 1e-12);
-  close(r.totals.doseSvPerYear, A * VOLUME_KG * 3.5e-9, 1e-12, 'в сумме доз только питьё');
-  assert.ok(Math.abs(r.totals.doseSvPerYear - (A * VOLUME_KG * 3.5e-9 + inhal)) > 1e-7, 'ингаляция не добавлена к дозе при питье');
+  assert.equal(r.totals.doseSvPerYear, null, 'v54: радон-222 не входит ни в один итог (ни питьё, ни вдыхание)');
   // активность в воде берётся на дату потребления (после распада)
   assert.equal(computeScenario(data, water([['Cs-137', 5]])).radon, null);
 });
@@ -107,7 +107,7 @@ test('FR-126: Rn-222 — природный: в главный риск (тех�
   assert.deepEqual(both.totals.naturalNuclides, ['Rn-222']);
 });
 
-test('FR-126: нормативы — НРБ-99/2009 п. 5.3.5 60 Бк/кг, ЕС 2013/51 100 Бк/л (100–1000; выше 1000 меры обязательны), ВОЗ — числа нет', () => {
+test('FR-126: нормативы — НРБ-99/2009 п. 5.3.5 60 Бк/кг, ЕС 2013/51 100 Бк/л (100–1000; выше 1000 меры по снижению считаются оправданными), ВОЗ — числа нет', () => {
   const r = run([['Rn-222', 30]]);
   const n = r.radon.norms;
   assert.equal(n.ru.uv, 60); close(n.ru.ratio, 30 / 60, 1e-12);
@@ -140,8 +140,10 @@ test('FR-126: экран и отчёт — отдельная строка «В�
 });
 
 test('FR-126: Rn-222 для продукта, не являющегося водой, — предупреждение (радон нормируется только в воде)', () => {
-  const r = computeScenario(data, inputFor('milk', 'молоко', [['Rn-222', A]], { portionKg: 0.5, portionsPerYear: 365 }));
+  // v54: радон единственный нуклид в молоке — ошибка ввода с тем же текстом; вместе с Cs-137 — предупреждение, а радон из расчёта исключён
+  const r = computeScenario(data, inputFor('milk', 'молоко', [['Rn-222', A], ['Cs-137', 5]], { portionKg: 0.5, portionsPerYear: 365 }));
   assert.ok(r.warnings.some(w => /Радон-222.*питьев/.test(w)), r.warnings.join(' | '));
   assert.equal(r.radon, null);
+  assert.deepEqual(r.rows.map(x => x.nuclide), ['Cs-137']);
   assert.ok(!run([['Rn-222', A]]).warnings.some(w => /только для питьевой воды/.test(w)));
 });

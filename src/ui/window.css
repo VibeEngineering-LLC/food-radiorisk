@@ -115,7 +115,7 @@ details.more > summary { cursor: pointer; color: var(--head); height: 18px; line
 .statusbar .lvl.ok { background: var(--ok); }
 .statusbar .lvl.warn { background: var(--warn); }
 .statusbar .lvl.bad { background: var(--bad); }
-.statusbar .cmds { display: flex; gap: 6px; }
+.statusbar .cmds { display: flex; flex-wrap: wrap; gap: 4px 6px; min-width: 0; max-width: 100%; } /* v54: на 360 px ряд «Пример…» + «Сохранить отчёт…» переносится, кнопка не обрезается */
 .statusbar select { font: inherit; height: 23px; border: 1px solid var(--line); border-radius: 0; background: var(--card); color: var(--ink); }
 
 /* Выпадающий список */

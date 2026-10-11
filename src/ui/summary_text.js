@@ -52,7 +52,7 @@ export function summaryParts(result, input) {
     if (totals.doseClass === 'c1') clsText = T.VERBAL_C1;
     else if (totals.doseClass === 'c2') clsText = T.VERBAL_C2;
     else clsText = totals.doseMaxYearTech > 5e-3 ? T.VERBAL_C3_OVER5 : T.VERBAL_C3;
-    verbal = `${prefix} ${clsText}`;
+    verbal = `${prefix.trimEnd()} ${clsText}`; // v54: префикс уже кончается пробелом — был двойной
   }
 
   // Оговорки (A7)

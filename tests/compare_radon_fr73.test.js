@@ -26,7 +26,7 @@ test('радон 100 Бк/м³, взрослый 50 лет: доза модул�
 });
 
 test('возраст начала облучения; без данных радона сравнение не меняется', () => {
-  assert.equal(startAge(inp()), 18);
+  assert.equal(startAge(inp()), 20); // v54: взрослый — 20 лет, как NOMINAL_AGE («Бытовые риски»); прежние 18 давали «с 18 до 68» рядом с «от 20 до 70»
   assert.equal(startAge(inp({ age: '5y' })), 5);
   assert.equal(startAge(inp({ lifetime: { fromAge: 10, toAge: 70 } })), 10);
   const c = cmp();

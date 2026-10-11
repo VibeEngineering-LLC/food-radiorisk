@@ -54,7 +54,7 @@ test('FR-117: строка с формулой в «Пожизненном ра�
   const input = mk(), result = computeScenario(data, input);
   const html = await renderJsx('src/react/Result.jsx', 'default', { result, input, meta: META, initialTab: 'calc' });
   assert.ok(html.includes('data-lt="eating:life"'));
-  assert.ok(flat(html).includes('в режиме «с возраста 18 до 68 лет»'));
+  assert.ok(flat(html).includes('в режиме «с возраста 20 до 70 лет»'));
   const { buildReport } = await import('../src/ui/report.js');
   const md = buildReport('md', { input, result }, META, '2026-10-11T00:00:00Z').text;
   assert.ok(md.includes('При таком же потреблении в течение'));

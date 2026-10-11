@@ -5,7 +5,7 @@
  "source_parts": [
   "limits_foreign.yaml"
  ],
- "source_sha256": "05ee3b16091b83eb97871287a5b2d1494bcb00a6b956baccb3580c3a4b9a7187",
+ "source_sha256": "0b096abeed24fff29071e93ab995490257925dcfed9dd1bd6065aa86a511e45d",
  "record_count": 58,
  "records": [
   {
@@ -810,7 +810,7 @@
    "nuclides": [
     "Rn-222"
    ],
-   "sum_rule": "Верхняя граница: выше 1 000 Бк/л меры по снижению радона обязательны (примечание 1(b))",
+   "sum_rule": "Верхняя граница: выше 1 000 Бк/л меры по снижению радона считаются оправданными без дальнейшего обоснования (примечание 1(b))",
    "food_category": "Water intended for human consumption",
    "food_category_ru": "Питьевая вода",
    "value": 1000,
@@ -836,7 +836,7 @@
    "food_category_ru": "Питьевая вода",
    "value": null,
    "unit": "Bq/L",
-   "loc": "гл. 9, вводная часть и Box 9.5",
+   "loc": "гл. 9, вводная часть и разд. 9.7.1",
    "url": "https://www.ncbi.nlm.nih.gov/books/NBK442362/",
    "quote": "the setting of screening levels and guidance levels to limit the dose from ingestion of radon ... is not usually necessary",
    "level": "✅",
@@ -848,19 +848,20 @@
   {
    "id": "jp_cs_drinking_water",
    "jurisdiction": "Japan",
-   "document": "Стандартные пределы (limits) радиоактивного цезия в пище, установлены MHLW (Ministry of Health, Labour and Welfare), действуют с 2012-04-01; администрирование стандартов безопасности пищи с 2024-04-01 передано в Consumer Affairs Agency (CAA). Источник текста: CAA, «Radioactive materials in foods - current situation and protective measures», слайд 4",
+   "document": "Стандартные пределы радиоактивного цезия в пище: Министерство здравоохранения, труда и социального обеспечения Японии, действуют с 2012-04-01; с 2024-04-01 администрирование стандартов безопасности пищи передано Агентству по делам потребителей Японии",
    "edition": "Действует с 1 апреля 2012 г. (взамен временных норм 17.03.2011-31.03.2012); документ CAA, файл от 26.06.2026 (Last-Modified)",
    "status": "действует без изменений значений (сверено: MHLW 2012 -> CAA 2026)",
    "nuclides": [
     "Cs-134",
     "Cs-137"
    ],
-   "sum_rule": "Норматив задан на «радиоактивный цезий» (Cs-134 и Cs-137); Sr-90, Ru-106, Pu учтены в расчёте (годовая доза 1 мЗв), отдельных норм не имеют. Явная формулировка суммы Cs-134 + Cs-137 дана во вторичных справках; текст правового акта (告示) не читался",
+   "sum_rule": "Норматив задан на «радиоактивный цезий» (Cs-134 и Cs-137); Sr-90, Ru-106, Pu учтены в расчёте (годовая доза 1 мЗв), отдельных норм не имеют",
+   "source_anomaly": "Текст правового акта на японском языке не читался: явная формулировка суммы Cs-134 + Cs-137 взята из вторичных справок (справка Агентства по делам потребителей и ответы Министерства здравоохранения)",
    "food_category": "Drinking water",
    "food_category_ru": "Питьевая вода",
    "value": 10,
    "unit": "Bq/kg",
-   "loc": "CAA English PDF, слайд 4 «Standard of radioactive cesium»; также MHLW 120801-1-saitama_2.pdf стр. 4 (飲料水 10)",
+   "loc": "Агентство по делам потребителей Японии, справка о нормативе радиоактивного цезия; Министерство здравоохранения Японии, питьевая вода 10 Бк/кг",
    "url": "https://www.caa.go.jp/policies/policy/standards_evaluation/food_pollution/criterion/assets/standards_cms105_260626_02.pdf",
    "quote": "(Bq/kg) Standard of radioactive cesium | Category | Limit | Drinking water | 10 | Milk | 50 | General Foods | 100 | Infant Foods | 50",
    "level": "✅",
@@ -872,7 +873,7 @@
   {
    "id": "jp_cs_milk",
    "jurisdiction": "Japan",
-   "document": "Стандартные пределы радиоактивного цезия в пище (MHLW, с 2012-04-01; ныне CAA), слайд 4",
+   "document": "Стандартные пределы радиоактивного цезия в пище: Министерство здравоохранения, труда и социального обеспечения Японии, действуют с 2012-04-01; с 2024-04-01 администрирование передано Агентству по делам потребителей Японии",
    "edition": "Действует с 1 апреля 2012 г.; файл CAA от 26.06.2026",
    "status": "действует без изменений значений",
    "nuclides": [
@@ -884,7 +885,7 @@
    "food_category_ru": "Молоко (молоко и молочные напитки по приказу о молоке и молочных продуктах; кисломолочные продукты, сыры сюда не входят)",
    "value": 50,
    "unit": "Bq/kg",
-   "loc": "CAA English PDF слайд 4; слайд 10 «The range of Milk and limits for Milk and Infant Foods»",
+   "loc": "Агентство по делам потребителей Японии, справка о нормативе радиоактивного цезия, слайды 4 и 10",
    "url": "https://www.caa.go.jp/policies/policy/standards_evaluation/food_pollution/criterion/assets/standards_cms105_260626_02.pdf",
    "quote": "Milk | 50  [и слайд 10: «50 Bq/kg which is half of the limit for General foods (100Bq/kg) applies to Milk and Infant foods»]",
    "level": "✅",
@@ -896,7 +897,7 @@
   {
    "id": "jp_cs_general_foods",
    "jurisdiction": "Japan",
-   "document": "Стандартные пределы радиоактивного цезия в пище (MHLW, с 2012-04-01; ныне CAA), слайд 4",
+   "document": "Стандартные пределы радиоактивного цезия в пище: Министерство здравоохранения, труда и социального обеспечения Японии, действуют с 2012-04-01; с 2024-04-01 администрирование передано Агентству по делам потребителей Японии",
    "edition": "Действует с 1 апреля 2012 г.; файл CAA от 26.06.2026",
    "status": "действует без изменений значений",
    "nuclides": [
@@ -908,7 +909,7 @@
    "food_category_ru": "Общие (прочие) пищевые продукты",
    "value": 100,
    "unit": "Bq/kg",
-   "loc": "CAA English PDF слайд 4; MHLW Q&A: пояснение о пределе 100 Бк/кг для пищевых продуктов общего назначения",
+   "loc": "Агентство по делам потребителей Японии, справка о нормативе радиоактивного цезия, слайд 4; Министерство здравоохранения Японии, ответы на вопросы: пояснение о пределе 100 Бк/кг для пищевых продуктов общего назначения",
    "url": "https://www.caa.go.jp/policies/policy/standards_evaluation/food_pollution/criterion/assets/standards_cms105_260626_02.pdf",
    "quote": "General Foods | 100",
    "level": "✅",
@@ -920,7 +921,7 @@
   {
    "id": "jp_cs_infant_foods",
    "jurisdiction": "Japan",
-   "document": "Стандартные пределы радиоактивного цезия в пище (MHLW, с 2012-04-01; ныне CAA), слайд 4",
+   "document": "Стандартные пределы радиоактивного цезия в пище: Министерство здравоохранения, труда и социального обеспечения Японии, действуют с 2012-04-01; с 2024-04-01 администрирование передано Агентству по делам потребителей Японии",
    "edition": "Действует с 1 апреля 2012 г.; файл CAA от 26.06.2026",
    "status": "действует без изменений значений",
    "nuclides": [
@@ -932,7 +933,7 @@
    "food_category_ru": "Детское питание (сухие смеси для младенцев, детское питание до 1 года и иные продукты, продаваемые как питание младенцев)",
    "value": 50,
    "unit": "Bq/kg",
-   "loc": "CAA English PDF слайд 4, слайд 10; MHLW Q&A (qanda_00001.html), Q1",
+   "loc": "Агентство по делам потребителей Японии, справка о нормативе радиоактивного цезия, слайды 4 и 10; Министерство здравоохранения Японии, ответы на вопросы, вопрос 1",
    "url": "https://www.caa.go.jp/policies/policy/standards_evaluation/food_pollution/criterion/assets/standards_cms105_260626_02.pdf",
    "quote": "Infant Foods | 50",
    "level": "✅",

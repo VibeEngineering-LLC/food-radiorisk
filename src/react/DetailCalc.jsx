@@ -58,8 +58,8 @@ export default function DetailCalc({ result, input, ext }) {
         if (n.halfLifeProv) {
           rows.push({
             name: 'T½ — период полураспада, сут',
-            value: fmtNum(n.halfLifeProv.value),
-            note: <Src html={sourceFull(n.halfLifeProv.source)} />,
+            value: n.halfLifeProv.value == null ? 'не применяется' : fmtNum(n.halfLifeProv.value), // v54: прочерк читался как «нет данных»; у неупакованной воды радон не распадается намеренно
+            note: n.halfLifeProv.value == null ? n.halfLifeProv.note : <Src html={sourceFull(n.halfLifeProv.source)} />,
           });
         }
         if (n.doseProv) {
@@ -70,7 +70,7 @@ export default function DetailCalc({ result, input, ext }) {
             note: (
               <>
                 <Src html={sourceFull(n.doseProv.source)} />
-                {loc ? <>, {loc}</> : null}
+                {loc ? <>, {nb(loc)}</> : null}
               </>
             ),
           });
@@ -81,7 +81,7 @@ export default function DetailCalc({ result, input, ext }) {
 
         return (
           <fieldset className="rgroup detail-nuclide" key={n.nuclide} data-nuclide={n.nuclide}>
-            <legend>{n.nuclide}{n.natural ? ' (природный, предел дозы не установлен)' : ''}</legend>
+            <legend>{n.nuclide}{n.nuclide === 'Rn-222' ? ' (природный, в итог не входит)' : n.natural ? ' (природный, предел дозы не установлен)' : ''}</legend>
             <DataTable rows={rows} cols={stepCols} />
             <div className="detail-years" data-nuclide={n.nuclide}>
               {n.years.length > 12 ? (
@@ -109,7 +109,8 @@ export default function DetailCalc({ result, input, ext }) {
       {/* Итоговый блок */}
       <fieldset className="rgroup detail-total">
         <legend>Итог</legend>
-        <p>{`Сумма доз по всем радионуклидам: E = ${fmtSci(d.doseTotalSv)} Зв (${fmtDose(d.doseTotalSv)}).`}</p>
+        {!d.nuclides.some(n => n.nuclide !== 'Rn-222') && <p>Радон-222 в итоговые дозы и риск не входит: его дозы — в блоке «Радон-222 в питьевой воде» на вкладке «Соответствие нормам».</p>}
+        {d.nuclides.some(n => n.nuclide !== 'Rn-222') && <p>{`Сумма доз по всем радионуклидам: E = ${fmtSci(d.doseTotalSv)} Зв (${fmtDose(d.doseTotalSv)}).`}</p>}
         {(d.techDoseTotalSv > 0 || d.nuclides.some(n => !n.natural)) && (
           <p>{`Из них техногенные радионуклиды (по ним считается риск): ${fmtSci(d.techDoseTotalSv)} Зв.`}</p>
         )}

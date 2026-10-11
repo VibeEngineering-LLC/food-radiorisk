@@ -9,22 +9,23 @@ import Organs from './Organs.jsx';
 export default function Reference({ result, input }) {
   const totals = result.totals;
 
-  // Природная доза: общая минус техногенная
+  // Природная доза: общая минус техногенная (v54: радон-222 в итог не входит и здесь не называется — он показан в своём блоке на вкладке «Соответствие нормам»)
   const nat = (totals.doseSvTotal ?? 0) - (totals.techDoseSvTotal ?? 0);
+  const natList = totals.naturalNuclides.filter(n => n !== 'Rn-222');
 
   return (
     <>
-      <KpiGrid totals={totals} input={input} />
+      {totals.doseSvPerYear != null && <KpiGrid totals={totals} input={input} />}
 
       <p className="hint">{T.REF_COEFF}</p>
 
       {/* #FR-101 v41: коэффициент равновесия радона региона в расчёте дозы радона (вкладки «Сводка» и «Сравнение с облучением») */}
       {result.comparison?.parts?.radonF != null && <p className="hint" id="refRadonF">Доза радона в жилище на «Сводке» и в «Сравнении» считается с коэффициентом равновесия региона «{regionName(input.region)}»: {radonFNote(result.comparison.parts)}.</p>}
 
-      {totals.naturalNuclides.length > 0 && (
+      {natList.length > 0 && (
         <p className="hint">
           {fill(T.REF_NATURAL, {
-            list: totals.naturalNuclides.join(', '),
+            list: natList.join(', '),
             E: fmtDose(nat),
             k: fmtPerMillion(0.05 * nat),
           })}

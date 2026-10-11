@@ -530,6 +530,8 @@ td.cond details p { margin: .3rem 0 0; }
 .scalelbl { position: relative; height: 1.5rem; margin-top: .15rem; font-size: 12px; line-height: 1.3; color: var(--muted); }
 .scalelbl span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
 .scalelbl span:first-child { transform: none; } .scalelbl span:last-child { transform: translateX(-100%); }
+/* v54: на узком экране подпись «1 000 на 1 000 000» уходит на вторую строку и не налезает на «50» */
+@media (max-width: 480px) { .scalelbl { height: 2.9rem; } .scalelbl span:last-child { top: 1.45rem; } }
 
 .poster-foot {
   margin-top: 1.2rem;

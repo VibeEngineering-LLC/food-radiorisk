@@ -15,7 +15,8 @@ export function statusText(calc) {
   }
 
   const v = input.product?.state === 'cooked' ? null : result.limits?.compliance?.verdict;
-  const nuclides = result.rows.map(x => x.nuclide).join(', ');
+  const shown = result.rows.filter(x => x.nuclide !== 'Rn-222'); // v54: радон-222 в итог не входит
+  const nuclides = (shown.length ? shown : result.rows).map(x => x.nuclide).join(', ');
 
   if (result.totals.riskNominal === null) {
     return `${nuclides} · только природные радионуклиды: основной результат и словесная оценка не рассчитываются`;

@@ -25,7 +25,7 @@ export default function RadonWater({ radon }) {
     rows.push(
       normRow(
         'ru',
-        'Уровень вмешательства, Российская Федерация',
+        'Уровень вмешательства по НРБ-99/2009, Российская Федерация',
         nb(`${fmtNum(uv)} Бк/кг`),
         fmtNum(radon.activityBqPerKg),
         fmtNum(ratio),
@@ -38,7 +38,7 @@ export default function RadonWater({ radon }) {
     rows.push(
       normRow(
         'sanpin',
-        'Уровень вмешательства, Российская Федерация',
+        'Уровень вмешательства по СанПиН 1.2.3685-21, Российская Федерация',
         nb(`${fmtNum(uv)} Бк/кг`),
         fmtNum(radon.activityBqPerKg),
         fmtNum(ratio),
@@ -64,7 +64,7 @@ export default function RadonWater({ radon }) {
     rows.push(
       normRow(
         'eu-remedial',
-        'Выше этого значения меры по снижению обязательны, Европейский союз',
+        'Выше этого значения меры по снижению считаются оправданными без дальнейшего обоснования, Европейский союз',
         nb(`${fmtNum(value)} Бк/л`),
         fmtNum(radon.activityBqPerKg),
         fmtNum(ratio),
@@ -109,23 +109,24 @@ export default function RadonWater({ radon }) {
               <td className="num">{fmtDose(ingestion.doseSvPerYear)}</td>
               <td className="num">{fmtDose(ingestion.doseSvTotal)}</td>
             </tr>
-            <tr>
+            {inh && <tr>
               <td>{T.RN_ROW_INH}</td>
               <td className="num">{fmtDose(inh.doseSvPerYear)}</td>
               <td className="num">{fmtDose(inh.doseSvTotal)}</td>
-            </tr>
+            </tr>}
           </tbody>
         </table>
       </div>
 
-      {Number.isFinite(radon.inhalationShare) && (
+      {inh && Number.isFinite(radon.inhalationShare) && (
         <p className="hint">
-          {fill(T.RN_NOT_SUM, { share: fmtNum(radon.inhalationShare * 100, 2) })}
+          {fill(T.RN_NOT_SUM, { share: fmtNum(radon.inhalationShare * 100, 2), screen: fmtNum(100 * inh.doseSvPerYear / (inh.doseSvPerYear + ingestion.doseSvPerYear), 2) })}
         </p>
       )}
+      {inh ? <p className="hint">{T.RN_HOME}</p> : <p className="hint">{T.RN_NO_INHAL}</p>}
 
       <p className="hint">{T.RN_ING_NOTE}</p>
-      <p className="hint">
+      {inh && <p className="hint">
         {fill(T.RN_METHOD, {
           C: fmtNum(inh.waterBqPerM3),
           ratio: fmtSci(inh.ratio, 1),
@@ -134,7 +135,7 @@ export default function RadonWater({ radon }) {
           dcf: fmtNum(inh.dcfSvPerBqHM3 * 1e9),
           air: fmtNum(inh.airBqPerM3),
         })}
-      </p>
+      </p>}
 
       <div className="tablewrap">
         <table>

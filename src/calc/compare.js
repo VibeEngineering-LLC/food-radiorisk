@@ -4,6 +4,7 @@
 
 import { normRegion, recordsFor } from './region.js';
 import { regionParts } from './region_parts.js';
+import { NOMINAL_AGE } from './years.js';
 
 const END_AGE = 70;
 const ADULT_HORIZON = 50;
@@ -16,10 +17,10 @@ export function horizonYears(input) {
   return Number.isFinite(a) ? END_AGE - a : ADULT_HORIZON;
 }
 
-// Возраст начала облучения для модуля радона (взрослый — 18 лет)
+// Возраст начала облучения для модуля радона и для расчёта «на всю жизнь» (взрослый — 20 лет, как NOMINAL_AGE в years.js: горизонт 50 лет заканчивается в 70 лет, как сказано в текстах «Сводки» и «Бытовых рисков»; v54: прежние 18 лет давали «с 18 до 68» рядом с «от 20 до 70»)
 export function startAge(input) {
   if (input.lifetime) return input.lifetime.fromAge;
-  return input.age === 'adult' ? 18 : (REP_AGE[input.age] ?? 18);
+  return input.age === 'adult' ? NOMINAL_AGE.adult : (REP_AGE[input.age] ?? NOMINAL_AGE.adult);
 }
 
 // Строка радона: доза за горизонт из модуля радона (МКРЗ 137), риск — тем же r, что у продукта; ставится в конец

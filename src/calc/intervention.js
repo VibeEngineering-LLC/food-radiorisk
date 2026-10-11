@@ -9,7 +9,7 @@ export function interventionLevels(doseCoeff, rows, extra = {}) {
     const d = list.find(x => x.nuclide === r.nuclide);
     const base = { nuclide: r.nuclide, activity: r.rawBqPerKg, unit: 'Bq/kg' };
     const x = !d && extra[r.nuclide];
-    if (x) return { ...base, uv: x.uv, ratio: r.rawBqPerKg / x.uv, age: null, id: x.id, loc: x.loc, doc: 'НРБ-99/2009, п. 5.3.5' };
+    if (x) return { ...base, uv: x.uv, ratio: r.rawBqPerKg / x.uv, age: null, id: x.id, loc: x.loc, doc: 'НРБ-99/2009' }; // v54: пункт назван в loc; прежнее «НРБ-99/2009, п. 5.3.5 (п. 5.3.5)» повторяло его
     if (!d) return { ...base, uv: null, ratio: null, age: null, id: null, loc: null };
     return { ...base, uv: d.uv_bq_per_kg, ratio: r.rawBqPerKg / d.uv_bq_per_kg, age: d.age, id: d.id, loc: d.loc };
   });

@@ -51,7 +51,8 @@ export function detailOf(result, input) {
   });
 
   // Суммарная доза по всем нуклидам
-  const doseTotalSv = nuclides.reduce((sum, n) => sum + n.doseTotalSv, 0);
+  // v54: радон-222 — природный, в итог не входит (его дозы — в блоке «Радон-222 в питьевой воде»)
+  const doseTotalSv = nuclides.filter(n => n.nuclide !== 'Rn-222').reduce((sum, n) => sum + n.doseTotalSv, 0);
 
   // Техногенная доза (только natural === false)
   const techDoseTotalSv = nuclides

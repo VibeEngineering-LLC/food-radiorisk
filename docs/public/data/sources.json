@@ -1361,7 +1361,7 @@
    "sha256": "455aa3fd03d988002bf22c9b7fd1e954b323afcb4dce29ae708ab89c5729471d",
    "evidence": [
     "sha256 455aa3fd03d988002bf22c9b7fd1e954b323afcb4dce29ae708ab89c5729471d (631 стр.)",
-    "гл. 9, Box 9.5 и разд. 9.7.4: audit/fr126-radon-water-primary-2026-10-11.md:24-30",
+    "гл. 9 (вводная часть), разд. 9.7.1 и 9.7.4: audit/fr126-radon-water-primary-2026-10-11.md:24-30",
     "data-src/risk.yaml: записи who_gdwq2017_rnw_*; data-src/limits_foreign.yaml: who_gdwq2017_rn222_no_guidance"
    ]
   },
