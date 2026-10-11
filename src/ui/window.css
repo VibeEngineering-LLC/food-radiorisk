@@ -72,9 +72,10 @@ details.prep .grid2 { padding: 6px 0 4px; }
 .suggest-host { display: block; position: relative; min-width: 0; }
 
 /* Кнопки */
-.btn, .statusbar button, .statusbar a.btn { font: inherit; height: 23px; padding: 0 10px; border: 1px solid var(--line); border-radius: 0; background: var(--btn); color: var(--ink); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; white-space: nowrap; }
-.btn:hover, .statusbar button:hover, .statusbar a.btn:hover { background: var(--sel); border-color: var(--accent); }
-.btn:disabled, .statusbar button:disabled { opacity: .5; cursor: default; }
+.presets { display: flex; flex-wrap: wrap; gap: 4px 6px; min-width: 0; max-width: 100%; margin: 4px 0 10px; } /* v56: кнопки примеров внизу вкладки 1; на 360 px ряд переносится */
+.btn, .statusbar button, .presets button, .statusbar a.btn { font: inherit; height: 23px; padding: 0 10px; border: 1px solid var(--line); border-radius: 0; background: var(--btn); color: var(--ink); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; white-space: nowrap; }
+.btn:hover, .statusbar button:hover, .presets button:hover, .statusbar a.btn:hover { background: var(--sel); border-color: var(--accent); }
+.btn:disabled, .statusbar button:disabled, .presets button:disabled { opacity: .5; cursor: default; }
 .btnrow { display: flex; gap: 6px; margin-top: 6px; }
 
 /* Сетка нуклидов */

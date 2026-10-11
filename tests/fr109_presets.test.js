@@ -30,8 +30,8 @@ test('FR-109: пример «черника» — ok-расчёт, группа 
   assert.equal(input.product.state, 'dried');
 });
 
-test('FR-109: в строке состояния две кнопки примера', () => {
-  const src = readFileSync(fileURLToPath(new URL('../src/react/App.jsx', import.meta.url)), 'utf8');
+test('FR-109 (v56: перенесено на вкладку 1): две кнопки примера', () => {
+  const src = readFileSync(fileURLToPath(new URL('../src/react/Form.jsx', import.meta.url)), 'utf8');
   assert.match(src, /id="preset"[^\n]*>Пример: грибы</);
   assert.match(src, /id="presetBilberry"[^\n]*>Пример: черника</);
 });

@@ -93,6 +93,8 @@ export function summaryParts(result, input) {
   let verdictLines = [];
   if (state === 'cooked') {
     verdictLines.push({ kind: 'plain', text: T.VERDICT_COOKED });
+  } else if (limits.mineralNorms) {
+    verdictLines.push({ kind: 'plain', text: T.VERDICT_MINERAL }); // v56 (Б-1): природная минеральная вода — табл. 4 ТР ЕАЭС 044/2017 не применяется
   } else if (!input.foodGroupCode && limits.ruNone) {
     verdictLines.push({ kind: 'plain', text: limits.intervention ? T.VERDICT_UV : fill(T.VERDICT_NO_RU_NORM, { entry: limits.productName }) }); // #FR-85 v11; v14 п. 7: вода из колодца
   } else if (!input.foodGroupCode) {

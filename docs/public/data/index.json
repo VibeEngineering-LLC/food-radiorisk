@@ -33,15 +33,15 @@
    "dataset": "limits_foreign",
    "file": "limits_foreign.json",
    "record_count": 58,
-   "source_sha256": "7be6f692b2499066b414eed976ee76e31bcb285a5e90f0263977881fe605d9be",
-   "json_sha256": "de84b3c88ea0e611327a175b805af4c3285d346908317accf483e36779ac132c"
+   "source_sha256": "94b418021f335e80e15ceb24a1efd9066739fb0e4092a4cca8f7241be3b66fad",
+   "json_sha256": "1bb767f37d96462de00207524fc7206e36086801dd0309ac8bd5d146cb5a09b5"
   },
   {
    "dataset": "limits_ru",
    "file": "limits_ru.json",
    "record_count": 86,
-   "source_sha256": "5935fa534065225c44f7f59d8673f0e73df8eb438fc2267d00e282ea518e7a19",
-   "json_sha256": "70e819a248b22edd074c72b0847969fc006f83335e744444a1144107cc255411"
+   "source_sha256": "30a54abda01386b67ef5565c2a42751ca93338b28bca82191483a6bd7678de58",
+   "json_sha256": "82772873746673747a81d516b7c5950e799c46a8b4ef1574ba667b6d15aefb79"
   },
   {
    "dataset": "nuclides",

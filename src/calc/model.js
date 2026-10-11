@@ -30,6 +30,8 @@ import { T, fill } from '../ui/texts_v.js';
 import { riskAssessmentOf } from './risk_zone.js';
 const LIMIT_MAX_YEAR_SV = 5e-3; // НРБ-99/2009 табл. 3.1: не более 5 мЗв в один год (записи в наборе risk нет; значение прежнее, вынесено в именованную константу)
 const RN_NO_DECAY = T.RN_NO_DECAY; // v53: в rowFor имя T занято периодом полураспада
+const RN_NO_BACK = T.RN_NO_BACK; // v56 (Б-2): то же — в rowFor имя T занято
+const RN_OLD_SAMPLE_WARN = T.RN_OLD_SAMPLE_WARN;
 const EAT_BEFORE_SAMPLE_WARN =T.EAT_BEFORE_SAMPLE_WARN; // #FR-108: в rowFor имя T занято периодом полураспада
 import { checkDietInput, dietWarnText, dietProvenance, dietResult } from './diet.js';
 import { checkInputRanges } from './input_check.js';
@@ -122,8 +124,10 @@ export function computeScenario(data, input) {
   const rnSkipped = !isWaterInput(data, input) && input.nuclides.some(n => n.nuclide === RN);
   if (rnSkipped) {
     input = { ...input, nuclides: input.nuclides.filter(n => n.nuclide !== RN) };
-    if (input.nuclides.length === 0) return { ok: false, errors: [T.RN_NOT_WATER], warnings, rows, totals: {}, limits: {} };
-    warnings.push(T.RN_NOT_WATER);
+    // v56 (Н-2): «вода» в группе рациона при неопознанном названии — не «только для питьевой воды», а причина и что сделать
+    const rnMsg = input.product?.dietGroup === 'water' ? fill(T.RN_NOT_WATER_DIET, { name: String(input.product?.name || '').trim() }) : T.RN_NOT_WATER;
+    if (input.nuclides.length === 0) return { ok: false, errors: [rnMsg], warnings, rows, totals: {}, limits: {} };
+    warnings.push(rnMsg);
   }
   for (const n of input.nuclides) {
     try { rows.push(rowFor(data, input, n, warnings, riskCoeff)); } catch (e) { const msg = e.plain ? e.message : `${n.nuclide}: ${e.message}`; if (!errors.includes(msg)) errors.push(msg); } // #FR-108: одинаковая ошибка дат — один раз на весь расчёт
@@ -224,7 +228,7 @@ function rowFor(data, input, n, warnings, riskCoeff) {
   prov.push({ step: 'доза', what: `дозовый коэффициент ожидаемой эффективной дозы при поступлении с ${dcRec.source === 'NRB2009_App2a' ? 'питьевой водой (НРБ-99/2009, прил. 2а)' : isWaterInput(data, input) ? 'питьевой водой' : 'пищей'}`, id: dcRec.id, source: dcRec.source, loc: dcRec.loc, level: dcRec.level, value: dcRec.value, unit: dcRec.unit });
 
   // 2. Raw activity
-  let rawBqPerKg = null, atSampleBqPerKg = null;
+  let rawBqPerKg = null, atSampleBqPerKg = null, noBackDecay = false;
   if (n.source === 'measured') {
     if (!Number.isFinite(n.measuredBqPerKg) || n.measuredBqPerKg < 0) throw new Error('измеренная удельная активность некорректна');
     rawBqPerKg = n.measuredBqPerKg;
@@ -245,11 +249,19 @@ function rowFor(data, input, n, warnings, riskCoeff) {
       if (!halfRec) { warn('нет периода полураспада — поправка на распад не применена'); prov.push({ step: 'распад', id: null, source: null, loc: null, level: null, value: null, unit: null, note: 'нет периода полураспада' }); }
       else {
         const days = daysBetween(n.sampleDate, input.eatDate, 'пробы', true);
+        if (days < 0 && n.nuclide === RN) {
+          // v56 (Б-2): дата розлива неизвестна, T½ радона-222 3,8232 сут — пересчёт назад на десятки суток даёт нереальную активность; принята измеренная
+          noBackDecay = true;
+          prov.push({ step: 'распад', id: null, source: null, loc: null, level: null, value: null, unit: null, note: RN_NO_BACK });
+        } else {
         rawBqPerKg *= decayFactor(halfRec.half_life_days, days); // days < 0 → 2^(+|Δt|/T): пересчёт назад
+        // v56 (Б-2, симметричный случай): проба намного раньше начала потребления — активность упала более чем в 1000 раз
+        if (n.nuclide === RN && days > 10 * halfRec.half_life_days) warnings.push(fill(RN_OLD_SAMPLE_WARN, { days: Math.round(days) }));
         if (days < 0) {
           if (!warnings.includes(EAT_BEFORE_SAMPLE_WARN)) warnings.push(EAT_BEFORE_SAMPLE_WARN); // #FR-108: одно предупреждение, не по нуклиду
           prov.push({ step: 'распад назад', what: 'период полураспада; удельная активность пересчитана назад к началу потребления', id: halfRec.id, source: halfRec.source, loc: null, level: null, value: halfRec.half_life_days, unit: 'days', note: `${-days} сут. до даты пробы` });
         } else prov.push({ step: 'распад', what: 'период полураспада', id: halfRec.id, source: halfRec.source, loc: null, level: null, value: halfRec.half_life_days, unit: 'days' });
+        }
       }
     }
   } else { // deposition
@@ -403,7 +415,7 @@ function rowFor(data, input, n, warnings, riskCoeff) {
   const pgpShare = natural ? null : worst.intakeBq / pgpBqPerYear;
 
   return {
-    nuclide: n.nuclide, natural, mode: n.source, rawBqPerKg, eatenBqPerKg, frUsed,
+    nuclide: n.nuclide, natural, mode: n.source, rawBqPerKg, noBackDecay, eatenBqPerKg, frUsed,
     intakeBqPerYear, intakeBqTotal, eSvPerBq: dcRec.value, doseSvPerYear, doseSvTotal, yearly, y90, lifetimeBands, riskTotal, pgpBqPerYear, pgpShare, depositionEstimate: depEst, provenance: prov
   };
 }
@@ -465,8 +477,10 @@ function calcLimits(data, input, rows, warnings) {
   const pstate = input.product?.state || 'fresh';
   const normOf = (n) => normIdFor(prodEntry, pstate, n);
   const t044 = (n) => data.limits_ru.some(x => x.food_group_code === 'water' && x.id.startsWith(T044_PREFIX) && x.nuclide === n && Number.isFinite(x.value));
+  // v56 (Б-1): табл. 4 ТР ЕАЭС 044/2017 — упакованная вода, кроме природной минеральной (data-src/limits_ru.yaml:441, :497); для воды с water_kind: mineral показатель B и заключение не выдаются
+  const mineralNorms = prodEntry?.water_kind === 'mineral' && (isWaterB || !input.foodGroupCode);
   for (const r of rows) {
-    if (r.nuclide === 'Cs-137' || r.nuclide === 'Sr-90' || (isWaterB && t044(r.nuclide))) {
+    if (!mineralNorms && (r.nuclide === 'Cs-137' || r.nuclide === 'Sr-90' || (isWaterB && t044(r.nuclide)))) {
       if (!input.foodGroupCode) continue;
       // у группы может быть две записи: свежий и «значение в скобках (сухой продукт)» — выбор по состоянию продукта
       // #FR-81 D02/E01: B считается только по ТР ТС 021/2011 Прил. 4; пункт внутри группы — по названию продукта
@@ -577,5 +591,5 @@ function calcLimits(data, input, rows, warnings) {
   const ruNone = !!prodEntry && !normIdFor(prodEntry, 'fresh') && !normIdFor(prodEntry, 'dried');
   // #FR-85 v14 п. 7: вода колодцев и скважин — не упакованная; норматива B нет, сравнение с уровнями вмешательства НРБ-99/2009 Прил. 2а
   const intervention = prodEntry?.intervention === 'nrb2009_app2a' ? interventionLevels(data.dose_coeff, rows, radonUvExtra(data)) : null; // #FR-126: УВ радона-222 — из набора risk (НРБ-99/2009 п. 5.3.5), в Прил. 2а его нет
-  return { ru, compliance, foreign, foreignClasses: pcs, formNote: adj.note, ruNone, intervention, productName: prodEntry?.name_ru ?? null, productCaption: prodEntry?.caption ?? null };
+  return { ru, compliance, foreign, foreignClasses: pcs, formNote: adj.note, ruNone, mineralNorms, intervention, productName: prodEntry?.name_ru ?? null, productCaption: prodEntry?.caption ?? null };
 }

@@ -132,6 +132,11 @@ export default function Form({ choices, raw, setRaw, tab, setTab, onPreset, onEx
         </div>
         <p className="hint" id="prepHint">{h.prep}</p>
       </details>
+      {/* v56 (оператор): кнопки примеров — внизу вкладки «1 · Продукт и проба», под блоком подготовки пробы; в строке состояния их нет */}
+      <div className="presets" id="presetRow">
+        <button type="button" id="preset" onClick={() => onPreset('mushrooms')} title="Пример: сушёные грибы, Cs-137">Пример: грибы</button>
+        <button type="button" id="presetBilberry" onClick={() => onPreset('bilberry')} title="Пример: сушёная черника, Cs-137 и Sr-90">Пример: черника</button>
+      </div>
       </div>
 
       <div {...page(1)}>

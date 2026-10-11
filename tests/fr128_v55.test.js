@@ -105,16 +105,15 @@ test('Н-2 (контроль): для неизвестного продукта 
 });
 
 // ---------- Н-3 ----------
-test('Н-3: вода без признака упаковки (своё название + группа «вода») — как неупакованная: без распада, с вдыханием, пометка', async () => {
+test('Н-3 (v56: заменено решением Н-2): своё название + явная группа норм «Упакованная питьевая вода» — вода упакованная: распад от даты пробы, без вдыхания, без пометки «упаковка не указана»', async () => {
   const input = water(CUSTOM, [['Rn-222', 100]], { eatDate: '2026-10-11' });
   input.nuclides.forEach(n => { n.sampleDate = '2026-09-11'; });
   const result = run(input);
-  assert.ok(result.radon.inhalation, 'вдыхание есть');
-  assert.equal(result.radon.packaging, 'unknown');
-  assert.ok(result.rows[0].provenance.some(p => /не применён/.test(p.note || '')), 'распад не применён');
-  assert.equal(result.rows[0].rawBqPerKg, 100);
-  assert.match(await view(result, input, 'norms'), /Упаковка воды не указана/);
-  assert.match(report('md', input, result), /Упаковка воды не указана/);
+  assert.equal(result.radon.inhalation, null, 'вдыхания нет');
+  assert.equal(result.radon.packaging, 'packaged');
+  assert.ok(result.rows[0].rawBqPerKg < 1, 'распад от даты пробы применён');
+  assert.doesNotMatch(await view(result, input, 'norms'), /Упаковка воды не указана/);
+  assert.doesNotMatch(report('md', input, result), /Упаковка воды не указана/);
 });
 
 test('Н-3: явные виды воды — без пометки; упакованная и минеральная не получают вдыхание, колодезная получает', async () => {

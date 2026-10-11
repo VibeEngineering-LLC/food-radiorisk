@@ -115,8 +115,6 @@ export default function App() {
       <footer className="statusbar">
         <span className="stat"><i className={'lvl ' + statusLevel(calc)} aria-hidden="true"></i><span className="txt" id="statusText">{statusText(calc)}</span></span>
         <span className="cmds">
-          <button type="button" id="preset" onClick={() => onPreset('mushrooms')} disabled={!boot?.choices} title="Пример: сушёные грибы, Cs-137">Пример: грибы</button>
-          <button type="button" id="presetBilberry" onClick={() => onPreset('bilberry')} disabled={!boot?.choices} title="Пример: сушёная черника, Cs-137 и Sr-90">Пример: черника</button>
           <select id="reportFormat" aria-label="Формат отчёта" value={format} onChange={e => setFormat(e.target.value)}>{FORMATS.map(f => <option key={f.id} value={f.id}>{f.label}</option>)}</select>
           <button type="button" id="exportJson" onClick={onExport} disabled={!calc?.input}>Сохранить отчёт…</button>        </span>
       </footer>

@@ -508,7 +508,7 @@
   edition: "OJ L 257/2020; изменён (EU) 2024/256 (см. eu_2020_1158_cs137_milk_infant)"
   status: "действует (см. eu_2020_1158_cs137_milk_infant)"
   nuclides: ["Cs-137"]
-  sum_rule: "Только Cs-137. Область: продукты (food, включая minor food, и feed по ст. 1 Euratom 2016/52) из третьих стран Annex I (Албания, Беларусь, Босния и Герцеговина, Косово, Северная Македония, Молдова, Черногория, Россия, Сербия, Швейцария, Турция, Украина, Великобритания без Сев. Ирландии —по вторичным источникам 2024 г.); обязательный сертификат и контроль для продуктов Annex II (грибы, ягоды Vaccinium и др.)"
+  sum_rule: "Только Cs-137. Область: продукты питания, включая малозначимые продукты, и корма по ст. 1 Регламента Евратом 2016/52, из третьих стран, перечисленных в приложении I (Албания, Беларусь, Босния и Герцеговина, Косово, Северная Македония, Молдова, Черногория, Россия, Сербия, Швейцария, Турция, Украина, Великобритания без Северной Ирландии — по вторичным источникам 2024 г.); обязательный сертификат и контроль для продуктов из приложения II (грибы, ягоды брусничных и др.)"
   food_category: "All other products concerned"
   food_category_ru: "Все прочие продукты, попадающие в область регламента (в т.ч. корма)"
   value: 600
@@ -687,7 +687,7 @@
   food_category_ru: "Все пищевые продукты во внутренней торговле и на импорт (единая норма, без отдельной категории для младенцев); для сухих/концентрированных —поправка на восстановление; для специй фактор разбавления 10"
   value: 160
   unit: "Bq/kg"
-  loc: "CPG 555.880, разд. IV, таблица «Derived Intervention Levels (DILs) for Each Radionuclide Group...», стр. 2-3 и сн. a, b; 1998 doc Table 2 стр. 14 (PDF-стр. 14)"
+  loc: "CPG 555.880, разд. IV, таблица «Derived Intervention Levels (DILs) for Each Radionuclide Group...», стр. 2-3 и сн. a, b; документ 1998 г., табл. 2, стр. 14 (PDF-стр. 14)"
   url: "https://www.fda.gov/media/72014/download"
   quote: "Radionuclide Group | DIL (Bq/kg) | Strontium-90 | 160"
   level: "✅"
@@ -704,7 +704,7 @@
   food_category_ru: "Все пищевые продукты (без категории для младенцев)"
   value: 170
   unit: "Bq/kg"
-  loc: "CPG 555.880, таблица DIL, стр. 2; 1998 doc Table 2, стр. 14"
+  loc: "CPG 555.880, таблица DIL, стр. 2; документ 1998 г., табл. 2, стр. 14"
   url: "https://www.fda.gov/media/72014/download"
   quote: "Iodine-131 | 170"
   level: "✅"
@@ -716,12 +716,12 @@
   edition: "Updated 11/19/20 (первичная редакция 07/29/2004)"
   status: "действует (руководство)"
   nuclides: ["Cs-134", "Cs-137"]
-  sum_rule: "Сумма Cs-134 + Cs-137 («Cesium-134 + Cesium-137»); «Each DIL applies to the sum of the concentrations of the radionuclides in the group at the time of measurement»"
+  sum_rule: "Сумма Cs-134 + Cs-137: каждый уровень относится к сумме концентраций радионуклидов группы на момент измерения"
   food_category: "Food in domestic commerce and food offered for import"
   food_category_ru: "Все пищевые продукты (без категории для младенцев)"
   value: 1200
   unit: "Bq/kg"
-  loc: "CPG 555.880, таблица DIL, стр. 3; 1998 doc Table 2, стр. 14"
+  loc: "CPG 555.880, таблица DIL, стр. 3; документ 1998 г., табл. 2, стр. 14"
   url: "https://www.fda.gov/media/72014/download"
   quote: "Cesium-134 + Cesium-137 | 1200"
   level: "✅"
@@ -738,7 +738,7 @@
   food_category_ru: "Все пищевые продукты (без категории для младенцев)"
   value: 2
   unit: "Bq/kg"
-  loc: "CPG 555.880, таблица DIL, стр. 3; 1998 doc Table 2, стр. 14"
+  loc: "CPG 555.880, таблица DIL, стр. 3; документ 1998 г., табл. 2, стр. 14"
   url: "https://www.fda.gov/media/72014/download"
   quote: "Plutonium-238 + Plutonium-239 + Americium-241 | 2"
   level: "✅"
@@ -755,7 +755,7 @@
   food_category_ru: "Все пищевые продукты (без категории для младенцев)"
   value: 6800
   unit: "Bq/kg"
-  loc: "CPG 555.880, таблица DIL, стр. 3, сн. c; 1998 doc Table 2, стр. 14"
+  loc: "CPG 555.880, таблица DIL, стр. 3, сн. c; документ 1998 г., табл. 2, стр. 14"
   url: "https://www.fda.gov/media/72014/download"
   quote: "Ruthenium-103 + Ruthenium-106c | ( C3 / 6800 ) + ( C6 / 450 ) < 1"
   level: "✅"
@@ -772,7 +772,7 @@
   food_category_ru: "Все пищевые продукты (без категории для младенцев)"
   value: 450
   unit: "Bq/kg"
-  loc: "CPG 555.880, таблица DIL, стр. 3, сн. c; 1998 doc Table 2, стр. 14"
+  loc: "CPG 555.880, таблица DIL, стр. 3, сн. c; документ 1998 г., табл. 2, стр. 14"
   url: "https://www.fda.gov/media/72014/download"
   quote: "Ruthenium-103 + Ruthenium-106c | ( C3 / 6800 ) + ( C6 / 450 ) < 1"
   level: "✅"

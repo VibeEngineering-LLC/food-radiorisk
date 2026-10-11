@@ -608,6 +608,8 @@ ol.biblio, ol.biblio li { max-width: none; text-align: left; }
 .riskbox ul, .riskbox li, .rs-notes, .rs-notes li, .tabbody ul, .tabbody li, .science li { max-width: none; text-align: left; }
 /* #FR-105 v45: заголовок числового столбца легенды переносится в границах max-width: 10rem (правило .pie-legend th.num с nowrap перебивало его и давало +15 px вбок на 1280 px) */
 .pie-legend thead th.num { white-space: normal; }
+/* v56: заголовок числового столбца «Бытовых рисков» («За 50 лет, на 1 000 000 человек») не выходит из своей ячейки на заголовок «Шкала»: nowrap в charts.css (.life-table th.num) давал текст шире ячейки на ~190 px при окне 620 px */
+.life-table thead th.num { white-space: normal; min-width: 7rem; max-width: 10rem; }
 /* #FR-101: переключатель региона данных */
 .region-switch { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: .4rem 0; }
 .region-switch .region-label { font-weight: 700; }

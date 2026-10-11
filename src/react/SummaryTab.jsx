@@ -157,7 +157,7 @@ export default function SummaryTab({ result, input, radonC = NaN, dwellU = NaN, 
             {!hasProductRisk ? <p className="hint">{T.SUM_CHART_B_NO_PRODUCT}</p> : null}
           </>
         ) : (
-          <p className="hint">{rnOnly ? T.SUM_RN_ONLY : T.SUM_NO_CHART}</p>
+          rnOnly ? null : <p className="hint">{T.SUM_NO_CHART}</p> /* v56 (Н-1): текст про радон-222 уже выведен под диаграммой A */
         )}
 
         {/* Пометка о малой доле продукта */}

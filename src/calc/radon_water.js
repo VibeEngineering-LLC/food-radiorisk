@@ -21,6 +21,8 @@ export function waterPackaging(data, input) {
   const entry = productEntry(data.products, input.product?.name, input.product?.confirmId ?? null);
   if (entry?.intervention === 'nrb2009_app2a') return 'unpacked';
   if (entry?.water_kind === 'mineral' || entry?.water_kind === 'packaged') return entry.water_kind;
+  // v56 (Н-2): группа норм «Упакованная питьевая вода» выбрана явно — вода упакованная и для радона (названия в словаре нет или оно без признака упаковки)
+  if (input.foodGroupCode === 'water') return 'packaged';
   return 'unknown';
 }
 
@@ -60,6 +62,7 @@ export function radonWater(data, input, rows, years) {
   // v55 (Б-1): минеральные и лечебные воды — НРБ-99/2009, п. 5.3.5: «специальные нормативы»; Директива 2013/51/Евратом, ст. 3, п. 2(a), исключает природные минеральные воды; сравнения с этими нормами не делаются
   const packaging = waterPackaging(data, input);
   const mineral = packaging === 'mineral';
+  const noBackExtrapolation = !!row.noBackDecay; // v56 (Б-2): проба позже начала потребления — активность назад не пересчитана, принята измеренная
   const ru = ruRec && !mineral ? { id: ruRec.id, uv: ruRec.value, ratio: A / ruRec.value, document: 'НРБ-99/2009', loc: ruRec.loc } : null;
 
   const sanpinRec = risk('sanpin1_2_3685_21_t312_rn222_uv');
@@ -89,6 +92,7 @@ export function radonWater(data, input, rows, years) {
     nuclide: RN,
     packaging,
     mineral,
+    noBackExtrapolation,
     activityBqPerKg: A,
     years,
     ingestion: {
