@@ -15,7 +15,7 @@ import { levelWord } from '../ui/fmt.js';
 const depErrRu = (e) => /unit not established/.test(e?.message || '') ? 'у выбранного коэффициента перехода единица измерения не установлена' : /no coefficient value/.test(e?.message || '') ? 'у выбранного коэффициента перехода нет значения' : 'выбранный коэффициент перехода не подходит для оценки загрязнения';
 const tName =(r) => [r.item_ru, r.nuclide].filter(Boolean).join(', ') || 'запись перехода';
 import { isNatural, LIMIT_YEAR_SV, LIMIT_LIFE_SV } from './origin.js';
-import { RN, isContinuousSupply, isWaterInput, isUnpackedWater, radonSkipMessage, radonUvExtra, radonWater } from './radon_water.js'; // #FR-126: радон-222 в питьевой воде
+import { RN, isContinuousSupply, isDefaultedWaterKind, isWaterInput, isUnpackedWater, radonSkipMessage, radonUvExtra, radonWater } from './radon_water.js'; // #FR-126: радон-222 в питьевой воде
 import { AGE_BANDS, periodYears } from './lifetime.js';
 import { yearPlan, DAYS_PER_YEAR, NOMINAL_AGE, avg5, sumSeries } from './years.js';
 import { yearlySeries, bandsOf } from './series.js';
@@ -129,6 +129,7 @@ export function computeScenario(data, input) {
     if (input.nuclides.length === 0) return { ok: false, errors: [rnMsg], warnings, rows, totals: {}, limits: {} };
     warnings.push(rnMsg);
   }
+  if (input.nuclides.some(n => n.nuclide === RN) && isDefaultedWaterKind(data, input)) warnings.push(fill(T.RN_WATER_KIND_DEFAULT, { name: String(input.product?.name || '').trim() })); // v58 (TODO-3)
   for (const n of input.nuclides) {
     try { rows.push(rowFor(data, input, n, warnings, riskCoeff)); } catch (e) { const msg = e.plain ? e.message : `${n.nuclide}: ${e.message}`; if (!errors.includes(msg)) errors.push(msg); } // #FR-108: одинаковая ошибка дат — один раз на весь расчёт
   }

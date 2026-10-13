@@ -11,7 +11,8 @@ export function statusText(calc) {
   const { result, input } = calc;
 
   if (!result.ok) {
-    return 'Расчёт не выполнен — исправьте ввод';
+    const why = String(result.errors?.[0] ?? '').trim(); // v58 (TODO-5в): первая причина из плашки
+    return why ? `Расчёт не выполнен — исправьте ввод: ${why}` : 'Расчёт не выполнен — исправьте ввод';
   }
 
   const v = input.product?.state === 'cooked' ? null : result.limits?.compliance?.verdict;

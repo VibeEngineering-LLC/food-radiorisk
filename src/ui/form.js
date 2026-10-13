@@ -202,14 +202,14 @@ export function presetRadGear() {
 export function presetBilberry() {
   return {
     age: 'adult', doseSource: 'ICRP119_F1',
-    portionKg: 0.05, portionsPerYear: 20, years: 1, eatDate: null, dryMatterPercent: null,
+    portionKg: 0.007, timesPerDay: 1, daysPerWeek: 4, weeksPerMonth: 3, monthsPerYear: 12, portionsPerYear: 144, years: 1, eatDate: null, dryMatterPercent: null,
     processing: { mode: 'none', fr: 1, recordId: null, variant: 'best' },
     foodGroupCode: 'berries_wild',
     product: { name: 'черника дикорастущая', state: 'dried' },
-    nuclides: [['Cs-137', 4400], ['Sr-90', 100]].map(([nuclide, a]) => ({
+    nuclides: [['Cs-137', 4400, null], ['Sr-90', 100, 'ALL']].map(([nuclide, a, transferId]) => ({
       samplePrep: { mode: 'as_is', concentrationFactor: 1 },
-      nuclide, source: 'measured', measuredBqPerKg: a, measuredUncertaintyBqPerKg: 0,
-      sampleDate: null, depositionKBqPerM2: null, depositionDate: null, transferId: null, variant: 'central'
+      nuclide, source: 'measured', measuredBqPerKg: a, measuredUncertaintyBqPerKg: a * 0.05, // ±5 %
+      sampleDate: '2024-04-26', depositionKBqPerM2: null, depositionDate: null, transferId, variant: 'central'
     }))
   };
 }

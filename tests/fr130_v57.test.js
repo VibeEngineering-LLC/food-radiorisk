@@ -78,7 +78,7 @@ const MATRIX = [
   [CUSTOM, 'water', false, { pack: 'packaged', inh: false }],
   [CUSTOM, 'water', true, { pack: 'packaged', inh: false }],
   [CUSTOM, 'milk', false, { msg: 'RN_NOT_WATER' }],
-  [CHOICE, null, false, { msg: 'RN_NOT_WATER_CHOICE' }],
+  [CHOICE, null, false, { pack: 'unpacked', inh: true }], // v58 (TODO-3): «Вода» без выбранного вида — принята неупакованная
   [CHOICE, 'water', false, { pack: 'packaged', inh: false }],
   [CHOICE, 'milk', false, { msg: 'RN_NOT_WATER_CHOICE' }]
 ];
@@ -131,7 +131,8 @@ const RN_SCENARIOS = () => [
   mk('milk', 'молоко', [['Cs-137', 5], ['Rn-222', 50]]),
   dietWater(mk(null, CUSTOM, [['Rn-222', 50], ['Cs-137', 5]])),
   mk('milk', MINERAL, [['Rn-222', 50], ['Cs-137', 5]]),
-  mk(null, CHOICE, [['Rn-222', 50], ['Cs-137', 5]])
+  mk('milk', CHOICE, [['Rn-222', 50], ['Cs-137', 5]]),
+  mk(null, CHOICE, [['Rn-222', 50], ['Cs-137', 5]]) // v58: «Вода» без вида — RN_WATER_KIND_DEFAULT
 ];
 test('Замечание 4: каждая строка RN_* достижима хотя бы в одном сценарии (экран, отчёт или сообщение расчёта) — мёртвого текста нет', async () => {
   let all = '';
@@ -197,14 +198,14 @@ test('Замечание 7: минеральная вода при группе 
   assert.match(w, /группа норм[^.]*не относится к питьевой воде/);
   assert.match(w, /Упакованная питьевая вода/);
 });
-test('Замечание 7: «Вода» без уточнения — сообщение просит выбрать вид воды в списке; если радон единственный нуклид — ошибка с тем же текстом', () => {
-  const both = run(mk(null, CHOICE, [['Rn-222', 50], ['Cs-137', 5]]));
+test('Замечание 7 (v58: при группе норм не «вода»): «Вода» — сообщение просит выбрать вид воды в списке; если радон единственный нуклид — ошибка с тем же текстом', () => {
+  const both = run(mk('milk', CHOICE, [['Rn-222', 50], ['Cs-137', 5]]));
   const w = both.warnings.find(x => /Радон-222/.test(x));
   assert.ok(w, both.warnings.join(' | '));
   assert.doesNotMatch(w, /только для питьевой воды/);
   assert.match(w, /«Вода»[^.]*несколько видов воды/);
   assert.match(w, /выберите[^.]*в списке продуктов/);
-  const only = computeScenario(data, mk(null, CHOICE, [['Rn-222', 50]]));
+  const only = computeScenario(data, mk('milk', CHOICE, [['Rn-222', 50]]));
   assert.equal(only.ok, false);
   assert.match(only.errors[0], /несколько видов воды/);
 });

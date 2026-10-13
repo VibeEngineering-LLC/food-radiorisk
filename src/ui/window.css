@@ -25,7 +25,7 @@ body { margin: 0; }
 .tabs button { font: inherit; flex: none; white-space: nowrap; height: 21px; padding: 0 9px; margin: 0 -1px 0 0; border: 1px solid var(--line); border-bottom: 0; border-radius: 0; background: var(--win); color: var(--ink); cursor: pointer; }
 .tabs button:hover { background: var(--hover); }
 .tabs button.on { height: 24px; margin-bottom: -1px; background: var(--card); border-bottom: 1px solid var(--card); position: relative; z-index: 1; cursor: default; }
-.tabbody { flex: 1; min-height: 0; overflow: auto; background: var(--card); border: 1px solid var(--line); padding: 8px 10px; }
+.tabbody { flex: 1; min-height: 0; overflow: auto; background: var(--card); border: 1px solid var(--line); padding: 8px 10px 18px; } /* v58 (TODO-5г): запас снизу — последняя строка («= 28 порц. в месяц…») не прижата к рамке прокрутки */
 
 /* Группы полей */
 fieldset.gbox { border: 1px solid var(--line); border-radius: 0; margin: 0 0 10px; padding: 6px 8px 8px; min-width: 0; }
@@ -65,7 +65,7 @@ label.opt { display: inline-flex; flex-direction: row; align-items: center; gap:
 .checklist label.check { display: flex; flex-direction: row; align-items: flex-start; gap: 5px; min-height: 19px; padding: 2px 4px; font-size: 12px; color: var(--ink); }
 .indent select { max-width: 200px; }
 .tabbody .hint { margin: 8px 0 0; font-size: 12px; color: var(--muted); max-width: 78ch; }
-.ration { margin-top: 8px; padding: 3px 6px; background: var(--win); border: 1px solid var(--hline); color: var(--ink); font-size: 12px; max-width: none; }
+.ration { margin: 8px 0 6px; padding: 3px 6px; background: var(--win); border: 1px solid var(--hline); color: var(--ink); font-size: 12px; max-width: none; }
 details.prep { border: 1px solid var(--line); border-radius: 0; padding: 4px 8px; margin: 0 0 10px; }
 details.prep > summary { cursor: pointer; color: var(--head); height: 18px; line-height: 18px; font-weight: 400; }
 details.prep .grid2 { padding: 6px 0 4px; }
@@ -76,7 +76,9 @@ details.prep .grid2 { padding: 6px 0 4px; }
 .btn, .statusbar button, .presets button, .statusbar a.btn { font: inherit; height: 23px; padding: 0 10px; border: 1px solid var(--line); border-radius: 0; background: var(--btn); color: var(--ink); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; white-space: nowrap; }
 .btn:hover, .statusbar button:hover, .presets button:hover, .statusbar a.btn:hover { background: var(--sel); border-color: var(--accent); }
 .btn:disabled, .statusbar button:disabled, .presets button:disabled { opacity: .5; cursor: default; }
-.btnrow { display: flex; gap: 6px; margin-top: 6px; }
+.btnrow { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+/* v58 (TODO-5а): кнопки вариантов продукта в плашке «Возможные варианты» переносят текст и не шире плашки */
+#productMatch .btn { white-space: normal; height: auto; min-height: 23px; max-width: 100%; box-sizing: border-box; padding-top: 2px; padding-bottom: 2px; text-align: left; }
 
 /* Сетка нуклидов */
 .nucgrid { border: 1px solid var(--line); height: 132px; overflow: auto; background: var(--card); }

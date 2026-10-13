@@ -9,8 +9,16 @@ export const RN = 'Rn-222';
 // Радон поступает из водоисточника непрерывно, поэтому распад по годам срока потребления к нему не применяется (распад от даты пробы до даты потребления считается как у остальных нуклидов).
 export const isContinuousSupply = (nuclide) => nuclide === RN;
 
+// v58 (TODO-3, оператор): общее название «Вода» (несколько видов воды в словаре), вид не выбран и группа норм не задана — принимается неупакованная вода (waterPackaging даёт 'unpacked' без записи словаря)
+export function isDefaultedWaterKind(data, input) {
+  if (input.foodGroupCode) return false;
+  const m = matchProduct(data.products, input.product?.name, input.product?.confirmId ?? null);
+  return m.status === 'ambiguous' && m.candidates.length > 0 && m.candidates.every(c => c.codex?.includes('water'));
+}
+
 export function isWaterInput(data, input) {
   if (input.foodGroupCode === 'water') return true;
+  if (isDefaultedWaterKind(data, input)) return true;
   const entry = productEntry(data.products, input.product?.name, input.product?.confirmId ?? null);
   const state = input.product?.state || 'fresh';
   const classes = classesFor(entry, normCodeFor(data.limits_ru, entry, state), input.foodGroupCode);
